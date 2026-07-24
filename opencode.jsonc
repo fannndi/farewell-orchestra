@@ -1,10 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // ═══ Profiles: set ORCHESTRA_HEAVY_MODEL + ORCHESTRA_LIGHT_MODEL di .env ═══
-  // Pro (default): HEAVY=ocg/deepseek-v4-pro  LIGHT=ocg/deepseek-v4-flash
-  // Flash (hemat):  HEAVY=ocg/deepseek-v4-flash LIGHT=oc/deepseek-v4-flash-free
-  // Custom:         edit .env, bebas mix-and-match
+  // ═══ Profiles: copy profiles/<name>.env → .env ═══
+  // Pro:    HEAVY=ocg/deepseek-v4-pro       LIGHT=ocg/deepseek-v4-flash
+  // Flash:  HEAVY=ocg/deepseek-v4-flash     LIGHT=oc/deepseek-v4-flash-free
+  // Free:   HEAVY=oc/deepseek-v4-flash-free  LIGHT=oc/deepseek-v4-flash-free
+  // Custom: edit profiles/custom.env, bebas mix-match
   "model": "{env:ORCHESTRA_HEAVY_MODEL}",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
