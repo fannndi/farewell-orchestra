@@ -28,7 +28,7 @@ User Request
 ┌─────────────────────────────────────────────────┐
 │            executor (subagent · #10b981)         │
 │  write-only · bash:allow                        │
-│  model: ocg/deepseek-v4-pro                     │
+│  model: ocg/deepseek-v4-flash                    │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -142,7 +142,7 @@ User Request
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` (dipanggil via task tool) |
-| **Model**   | `ocg/deepseek-v4-pro` |
+| **Model**   | `ocg/deepseek-v4-flash` |
 | **Color**   | `#10b981` (green) |
 | **Max Steps** | `50` |
 | **Visible** | Yes |
@@ -253,10 +253,10 @@ User Request
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `primary` |
-| **Model**   | `ocg/deepseek-v4-pro` |
+| **Model**   | `ocg/deepseek-v4-flash` |
 | **Hidden**  | Yes — tidak muncul di UI |
 
-**Purpose:** Agen internal untuk kompaksi konteks. Otomatis saat context window penuh. Kenapa Pro: compaction menghasilkan ringkasan yang dipakai di turn berikutnya — butuh reasoning kuat.
+**Purpose:** Agen internal untuk kompaksi konteks. Otomatis saat context window penuh. Kenapa Flash: summarization task — flash cukup untuk meringkas percakapan dengan efisien.
 
 **Konfigurasi:** `auto: true`, `prune: false`, `tail_turns: 2`
 
@@ -287,8 +287,8 @@ User Request
 
 | Model                       | Roles                                          | Context | Output |
 |-----------------------------|------------------------------------------------|---------|--------|
-| `ocg/deepseek-v4-pro`      | orchestrator, executor, compaction              | 1M      | 128K   |
-| `ocg/deepseek-v4-flash`    | researcher, reviewer, title, summary            | 1M      | 128K   |
+| `ocg/deepseek-v4-pro`      | orchestrator                                    | 1M      | 128K   |
+| `ocg/deepseek-v4-flash`    | researcher, reviewer, executor, title, summary, compaction | 1M | 128K |
 | *(bebas)*                   | build, plan, general, explore                   | —       | —      |
 
 ## Permission Matrix

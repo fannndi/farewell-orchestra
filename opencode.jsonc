@@ -165,7 +165,7 @@
     "executor": {
       "description": "Single implementation worker for a focused, non-overlapping change set.",
       "mode": "subagent",
-      "model": "9router/ocg/deepseek-v4-pro",
+      "model": "9router/ocg/deepseek-v4-flash",
       "color": "#10b981",
       "steps": 50,
       "prompt": "Implement only the scoped change provided by the orchestrator. First inspect relevant files and follow local conventions. Make focused edits, run the relevant verification commands, and report changed files plus results. Do not delegate work, broaden scope, or modify files outside the assigned change set.",
@@ -222,9 +222,9 @@
       "hidden": true
     },
 
-    // ── Internal: compaction · pro (strong, preserves context) ────────
+    // ── Internal: compaction · flash (efficient summarization) ─────────
     "compaction": {
-      "model": "9router/ocg/deepseek-v4-pro",
+      "model": "9router/ocg/deepseek-v4-flash",
       "mode": "primary",
       "hidden": true
     }
