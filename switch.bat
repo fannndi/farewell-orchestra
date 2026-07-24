@@ -16,14 +16,17 @@ if "%1"=="" (
     echo   ║  3. Free     all Free (max hemat)      ║
     echo   ║                                        ║
     echo   ║  4. Custom   edit .env manual          ║
+    echo   ║                                        ║
+    echo   ║  0. Exit                              ║
     echo   ╚════════════════════════════════════════╝
     echo.
-    set /p choice="  Pilih [1-4]: "
+    set /p choice="  Pilih [0-4]: "
 
     if "!choice!"=="1" set ARG=pro
     if "!choice!"=="2" set ARG=flash
     if "!choice!"=="3" set ARG=free
     if "!choice!"=="4" set ARG=custom
+    if "!choice!"=="0" exit /b 0
     if "!ARG!"=="" (
         echo  Invalid choice
         pause

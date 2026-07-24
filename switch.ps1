@@ -16,14 +16,17 @@ if (-not $Profile) {
     Write-Host "  ║  3. Free     all Free (max hemat)      ║"
     Write-Host "  ║                                        ║"
     Write-Host "  ║  4. Custom   edit .env manual          ║"
+    Write-Host "  ║                                        ║"
+    Write-Host "  ║  0. Exit                              ║"
     Write-Host "  ╚════════════════════════════════════════╝"
     Write-Host ""
-    $choice = Read-Host "  Pilih [1-4]"
+    $choice = Read-Host "  Pilih [0-4]"
     switch ($choice) {
         "1" { $Profile = "pro" }
         "2" { $Profile = "flash" }
         "3" { $Profile = "free" }
         "4" { $Profile = "custom" }
+        "0" { exit 0 }
         default { Write-Host "Invalid choice"; Read-Host "Press Enter"; exit 1 }
     }
 }
