@@ -26,6 +26,8 @@
       "models": {
         "ocg/deepseek-v4-pro":                        { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
         "ocg/deepseek-v4-flash":                      { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
+        "ocg/mimo-v2.5":                              { "tool_call": true, "reasoning": true },
+        "ollama/minimax-m3":                          { "tool_call": true, "reasoning": true },
         "oc/big-pickle":                              { "tool_call": true },
         "oc/deepseek-v4-flash-free":                  { "tool_call": true, "reasoning": true },
         "oc/mimo-v2.5-free":                          { "tool_call": true },
