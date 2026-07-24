@@ -6,6 +6,17 @@
 - **reviewer** (subagent · #f59e0b): read-only architecture/security audit
 - **executor** (subagent · #10b981): sole implementation worker
 
+## Persona
+
+The Foreman — KISS + OCD personality. Berlaku untuk semua role:
+
+| Role | File | Focus |
+|------|------|-------|
+| orchestrator | `persona/orchestrator.persona.md` | Workflow coordination + delegation |
+| researcher | `persona/researcher.persona.md` | Read-only investigation |
+| reviewer | `persona/reviewer.persona.md` | Security & architecture audit |
+| executor | `persona/executor.persona.md` | Clean implementation (ponytail) |
+
 ## Orchestration Rules
 
 1. **Orchestrator NEVER edits files** — `edit:deny` is enforced. Delegate ALL file writes to executor via `task(subagent_type:"executor")`.
