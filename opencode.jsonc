@@ -24,9 +24,14 @@
         "timeout": 300000, "headerTimeout": 90000, "chunkTimeout": 120000
       },
       "models": {
-        "ocg/deepseek-v4-pro":        { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
-        "ocg/deepseek-v4-flash":      { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
-        "oc/deepseek-v4-flash-free":  { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } }
+        "oc/big-pickle":                                  { "tool_call": true },
+        "oc/deepseek-v4-flash-free":                      { "tool_call": true, "reasoning": true },
+        "oc/mimo-v2.5-free":                              { "tool_call": true },
+        "oc/nemotron-3-ultra-free":                       { "tool_call": true, "reasoning": true },
+        "oc/north-mini-code-free":                        { "tool_call": true },
+        "oc/ling-3.0-flash-free":                         { "tool_call": true, "reasoning": true },
+        "openrouter/cohere/north-mini-code:free":         { "tool_call": true },
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free": { "tool_call": true, "reasoning": true }
       }
     }
   },
@@ -64,7 +69,7 @@
   "references": {
     "opencode-source": {
       "path": "C:\\Users\\FANNNDI\\Documents\\farewell-agent\\source\\opencode",
-      "description": "OpenCode source â€” AI coding agent yang diorkestrasi oleh project ini"
+      "description": "OpenCode source Ã¢â‚¬â€ AI coding agent yang diorkestrasi oleh project ini"
     }
   }
 }
