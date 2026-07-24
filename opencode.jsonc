@@ -1,11 +1,19 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // ═══ Model: edit profiles/current-heavy.txt + current-light.txt ═══
-  // Preset: copy profiles/pro-*.txt → current-*.txt   (Pro)
-  //         copy profiles/flash-*.txt → current-*.txt (Flash)
-  //         copy profiles/free-*.txt → current-*.txt  (Free)
-  "model": "9router/{file:./profiles/current-heavy.txt}",
+  // ╔══════════════════════════════════════════════════════════════════╗
+  // ║  MODEL CONFIG → edit .env, bukan di sini                        ║
+  // ║                                                                  ║
+  // ║  Pro:    HEAVY=ocg/deepseek-v4-pro        LIGHT=ocg/deepseek-v4-flash
+  // ║  Flash:  HEAVY=ocg/deepseek-v4-flash      LIGHT=oc/deepseek-v4-flash-free
+  // ║  Free:   HEAVY=oc/deepseek-v4-flash-free   LIGHT=oc/deepseek-v4-flash-free
+  // ║  Custom: HEAVY=...                        LIGHT=...
+  // ║                                                                  ║
+  // ║  Role mapping:                                                   ║
+  // ║    HEAVY → orchestrator                                          ║
+  // ║    LIGHT → researcher, reviewer, executor, title, summary, compaction
+  // ╚══════════════════════════════════════════════════════════════════╝
+  "model": "9router/{env:ORCHESTRA_HEAVY_MODEL}",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
@@ -24,9 +32,9 @@
         "timeout": 300000, "headerTimeout": 90000, "chunkTimeout": 120000
       },
       "models": {
-        "ocg/deepseek-v4-pro":   { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
-        "ocg/deepseek-v4-flash": { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
-        "oc/deepseek-v4-flash-free": { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } }
+        "ocg/deepseek-v4-pro":        { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
+        "ocg/deepseek-v4-flash":      { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
+        "oc/deepseek-v4-flash-free":  { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } }
       }
     }
   },
@@ -56,25 +64,25 @@
   "agent": {
     "orchestrator": {
       "description": "Workflow orchestrator — decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
-      "mode": "primary", "model": "9router/{file:./profiles/current-heavy.txt}", "color": "#7c3aed", "temperature": 0.2, "steps": 40,
+      "mode": "primary", "model": "9router/{env:ORCHESTRA_HEAVY_MODEL}", "color": "#7c3aed", "temperature": 0.2, "steps": 40,
       "prompt": "You are the workflow orchestrator. Decompose substantial requests into independent, non-overlapping work packages. For independent analysis, call researcher and reviewer concurrently in one assistant turn using foreground task calls. Wait for and synthesize their results before deciding implementation. Give each child a self-contained prompt with scope, relevant paths, constraints, expected output, and verification criteria. Delegate every file modification and command execution that changes the workspace to executor only, as one focused task after analysis is complete. Do not use background tasks. Do not duplicate child work. Keep task IDs only for the current workflow when continuation is necessary.",
       "permission": { "edit": "deny", "bash": "deny", "question": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "description": "Read-only codebase investigator.",
-      "mode": "subagent", "model": "9router/{file:./profiles/current-light.txt}", "color": "#3b82f6", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "color": "#3b82f6", "temperature": 0.1, "steps": 30,
       "prompt": "Perform read-only research. Inspect the requested code, configuration, tests, and documentation. Return concise evidence with file paths and line numbers, assumptions, risks, and concrete recommendations. Do not edit files, run shell commands, delegate work, or attempt implementation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "description": "Read-only security/architecture auditor.",
-      "mode": "subagent", "model": "9router/{file:./profiles/current-light.txt}", "color": "#f59e0b", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "color": "#f59e0b", "temperature": 0.1, "steps": 30,
       "prompt": "Review the supplied scope independently. Identify correctness, security, compatibility, concurrency, and maintainability risks. Return prioritized findings, acceptance criteria, and a verification plan with file paths and line numbers where applicable. Do not edit files, run shell commands, delegate work, or implement changes.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
       "description": "Sole implementation worker — writes files, runs shell.",
-      "mode": "subagent", "model": "9router/{file:./profiles/current-light.txt}", "color": "#10b981", "steps": 50,
+      "mode": "subagent", "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "color": "#10b981", "steps": 50,
       "prompt": "Implement only the scoped change provided by the orchestrator. First inspect relevant files and follow local conventions. Make focused edits, run the relevant verification commands, and report changed files plus results. Do not delegate work, broaden scope, or modify files outside the assigned change set.",
       "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -82,9 +90,9 @@
     "plan":       { "mode": "primary",   "color": "secondary", "permission": { "task": "deny" } },
     "general":    { "mode": "subagent",  "permission": { "task": "deny" } },
     "explore":    { "mode": "subagent",  "permission": { "task": "deny" } },
-    "title":      { "model": "9router/{file:./profiles/current-light.txt}", "mode": "primary", "hidden": true },
-    "summary":    { "model": "9router/{file:./profiles/current-light.txt}", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/{file:./profiles/current-light.txt}", "mode": "primary", "hidden": true }
+    "title":      { "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "mode": "primary", "hidden": true },
+    "summary":    { "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "mode": "primary", "hidden": true }
   },
 
   "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
