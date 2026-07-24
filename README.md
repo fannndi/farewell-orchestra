@@ -283,13 +283,42 @@ User Request
 7. orchestrator reports results to user
 ```
 
-## Model Allocation
+## Model Profiles
 
-| Model                       | Roles                                          | Context | Output |
-|-----------------------------|------------------------------------------------|---------|--------|
-| `ocg/deepseek-v4-pro`      | orchestrator                                    | 1M      | 128K   |
-| `ocg/deepseek-v4-flash`    | researcher, reviewer, executor, title, summary, compaction | 1M | 128K |
-| *(bebas)*                   | build, plan, general, explore                   | —       | —      |
+Switch profile via 2 environment variables — tanpa edit opencode.jsonc:
+
+| Profile | `ORCHESTRA_HEAVY_MODEL` | `ORCHESTRA_LIGHT_MODEL` | Token Cost |
+|---------|------------------------|------------------------|------------|
+| **Pro** (default) | `ocg/deepseek-v4-pro` | `ocg/deepseek-v4-flash` | Normal |
+| **Flash** | `ocg/deepseek-v4-flash` | `oc/deepseek-v4-flash-free` | Hemat |
+
+```bash
+# Pro Profile (default — tanpa env, work out of the box)
+# (no env needed — defaults to Pro/Flash)
+
+# Flash Profile (hemat token)
+set ORCHESTRA_HEAVY_MODEL=ocg/deepseek-v4-flash
+set ORCHESTRA_LIGHT_MODEL=oc/deepseek-v4-flash-free
+opencode run "Hello"
+```
+
+**Atau edit langsung** field `model` di agent section `opencode.jsonc`.
+
+### Role → Model Mapping
+
+| Tier | Roles | Pro Profile | Flash Profile |
+|------|-------|------------|--------------|
+| **Heavy** | orchestrator | Pro | Flash |
+| **Light** | researcher, reviewer, executor, title, summary, compaction | Flash | Free |
+| **Free** | build, plan, general, explore | bebas | bebas |
+
+### Registered Models
+
+| ID | Context | Output |
+|----|---------|--------|
+| `ocg/deepseek-v4-pro` | 1M | 128K |
+| `ocg/deepseek-v4-flash` | 1M | 128K |
+| `oc/deepseek-v4-flash-free` | 1M | 128K |
 
 ## Permission Matrix
 

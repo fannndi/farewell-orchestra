@@ -1,9 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // ═══ Top-Level Defaults ═══════════════════════════════════════════
-  "model": "9router/ocg/deepseek-v4-pro",
-  "small_model": "9router/ocg/deepseek-v4-flash",
+  // ═══════════════════════════════════════════════════════════════════
+  //  MODEL PROFILES (set via environment variables)
+  // ═══════════════════════════════════════════════════════════════════
+  //
+  //  Pro Profile (default):
+  //    set ORCHESTRA_HEAVY_MODEL=ocg/deepseek-v4-pro
+  //    set ORCHESTRA_LIGHT_MODEL=ocg/deepseek-v4-flash
+  //
+  //  Flash Profile (hemat token):
+  //    set ORCHESTRA_HEAVY_MODEL=ocg/deepseek-v4-flash
+  //    set ORCHESTRA_LIGHT_MODEL=oc/deepseek-v4-flash-free
+  //
+  //  Atau edit langsung field model di agent bagian bawah.
+  //  Default (jika env tidak diset): Pro Profile
+  // ═══════════════════════════════════════════════════════════════════
+
+  // ─── Top-Level Defaults ─────────────────────────────────────────
+  "model": "{env:ORCHESTRA_HEAVY_MODEL}",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
@@ -11,7 +26,7 @@
   "snapshot": true,
   "autoupdate": "notify",
 
-  // ═══ Provider: 9Router via OpenAI-compatible ══════════════════════
+  // ─── Provider: 9Router via OpenAI-compatible ─────────────────────
   "enabled_providers": ["9router"],
   "provider": {
     "9router": {
@@ -36,15 +51,21 @@
           "reasoning": true,
           "limit": { "context": 1000000, "output": 128000 },
           "modalities": { "input": ["text"], "output": ["text"] }
+        },
+        "oc/deepseek-v4-flash-free": {
+          "tool_call": true,
+          "reasoning": true,
+          "limit": { "context": 1000000, "output": 128000 },
+          "modalities": { "input": ["text"], "output": ["text"] }
         }
       }
     }
   },
 
-  // ═══ System Instructions (injected into every session) ════════════
+  // ─── System Instructions (injected into every session) ──────────
   "instructions": ["AGENTS.md"],
 
-  // ═══ Custom Slash Commands ════════════════════════════════════════
+  // ─── Custom Slash Commands ──────────────────────────────────────
   "command": {
     "status": {
       "description": "Show orchestration health: active agent, model, token usage",
@@ -68,7 +89,7 @@
     }
   },
 
-  // ═══ Global Permissions Baseline ══════════════════════════════════
+  // ─── Global Permissions Baseline ────────────────────────────────
   "permission": {
     "external_directory": "ask",
     "doom_loop": "ask",
@@ -82,21 +103,26 @@
     }
   },
 
-  // ═══ Experimental ═════════════════════════════════════════════════
+  // ─── Experimental ───────────────────────────────────────────────
   "experimental": {
     "primary_tools": ["todowrite", "question"],
     "continue_loop_on_deny": true,
     "mcp_timeout": 30000
   },
 
-  // ═══ Agents ═══════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════════
+  //  AGENTS — edit model field di sini untuk ganti model per role
+  //  HEAVY: orchestrator     LIGHT: researcher, reviewer, executor,
+  //         compaction                title, summary
+  // ═══════════════════════════════════════════════════════════════════
+
   "agent": {
 
-    // ── orchestrator · default · primary ──────────────────────────────
+    // ── orchestrator · default · primary · HEAVY ─────────────────────
     "orchestrator": {
       "description": "Workflow orchestrator — decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
       "mode": "primary",
-      "model": "9router/ocg/deepseek-v4-pro",
+      "model": "9router/{env:ORCHESTRA_HEAVY_MODEL}",
       "color": "#7c3aed",
       "temperature": 0.2,
       "steps": 40,
@@ -115,11 +141,11 @@
       }
     },
 
-    // ── researcher · subagent · read-only ─────────────────────────────
+    // ── researcher · subagent · read-only · LIGHT ───────────────────
     "researcher": {
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
       "mode": "subagent",
-      "model": "9router/ocg/deepseek-v4-flash",
+      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
       "color": "#3b82f6",
       "temperature": 0.1,
       "steps": 30,
@@ -138,11 +164,11 @@
       }
     },
 
-    // ── reviewer · subagent · read-only ───────────────────────────────
+    // ── reviewer · subagent · read-only · LIGHT ─────────────────────
     "reviewer": {
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
       "mode": "subagent",
-      "model": "9router/ocg/deepseek-v4-flash",
+      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
       "color": "#f59e0b",
       "temperature": 0.1,
       "steps": 30,
@@ -161,11 +187,11 @@
       }
     },
 
-    // ── executor · subagent · write-only ──────────────────────────────
+    // ── executor · subagent · write-only · LIGHT ────────────────────
     "executor": {
       "description": "Single implementation worker for a focused, non-overlapping change set.",
       "mode": "subagent",
-      "model": "9router/ocg/deepseek-v4-flash",
+      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
       "color": "#10b981",
       "steps": 50,
       "prompt": "Implement only the scoped change provided by the orchestrator. First inspect relevant files and follow local conventions. Make focused edits, run the relevant verification commands, and report changed files plus results. Do not delegate work, broaden scope, or modify files outside the assigned change set.",
@@ -208,33 +234,33 @@
       "permission": { "task": "deny" }
     },
 
-    // ── Internal: title · flash (small/cheap) ─────────────────────────
+    // ── Internal: title · LIGHT ──────────────────────────────────────
     "title": {
-      "model": "9router/ocg/deepseek-v4-flash",
+      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
       "mode": "primary",
       "hidden": true
     },
 
-    // ── Internal: summary · flash (small/cheap) ───────────────────────
+    // ── Internal: summary · LIGHT ────────────────────────────────────
     "summary": {
-      "model": "9router/ocg/deepseek-v4-flash",
+      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
       "mode": "primary",
       "hidden": true
     },
 
-    // ── Internal: compaction · flash (efficient summarization) ─────────
+    // ── Internal: compaction · LIGHT ─────────────────────────────────
     "compaction": {
-      "model": "9router/ocg/deepseek-v4-flash",
+      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
       "mode": "primary",
       "hidden": true
     }
   },
 
-  // ═══ Runtime Settings ══════════════════════════════════════════════
+  // ─── Runtime Settings ───────────────────────────────────────────
   "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
   "compaction": { "auto": true, "prune": false, "tail_turns": 2 },
 
-  // ═══ File Watcher ══════════════════════════════════════════════════
+  // ─── File Watcher ───────────────────────────────────────────────
   "watcher": {
     "ignore": [
       ".git/**", "node_modules/**", "dist/**", "build/**",
@@ -242,7 +268,7 @@
     ]
   },
 
-  // ═══ Image Attachments ═════════════════════════════════════════════
+  // ─── Image Attachments ──────────────────────────────────────────
   "attachment": {
     "image": {
       "auto_resize": true,
@@ -252,7 +278,7 @@
     }
   },
 
-  // ═══ Features ══════════════════════════════════════════════════════
+  // ─── Features ───────────────────────────────────────────────────
   "lsp": true,
   "formatter": true
 }
