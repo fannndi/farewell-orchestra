@@ -26,6 +26,8 @@
   "shell": "powershell",
   "snapshot": true,
   "autoupdate": "notify",
+  "small_model": "9router/ocg/deepseek-v4-flash",
+  "logLevel": "WARN",
 
   "enabled_providers": ["9router"],
   "provider": {
@@ -70,19 +72,19 @@
   "agent": {
     "orchestrator": {
       "description": "Workflow orchestrator — decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
-      "mode": "primary", "model": "9router/ocg/deepseek-v4-pro", "color": "#7c3aed", "temperature": 0.2, "steps": 40,
+      "mode": "primary", "model": "9router/ocg/deepseek-v4-pro", "color": "#7c3aed", "temperature": 0.2, "top_p": 0.5, "steps": 40,
       "prompt": "{file:./persona/orchestrator.persona.md}",
       "permission": { "edit": "deny", "bash": "deny", "question": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "description": "Read-only codebase investigator.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "color": "#3b82f6", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "color": "#3b82f6", "temperature": 0.1, "top_p": 0.9, "steps": 30,
       "prompt": "{file:./persona/researcher.persona.md}",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "description": "Read-only security/architecture auditor.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "color": "#f59e0b", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "color": "#f59e0b", "temperature": 0.1, "top_p": 0.9, "steps": 30,
       "prompt": "{file:./persona/reviewer.persona.md}",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
