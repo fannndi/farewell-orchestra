@@ -8,25 +8,31 @@
 
 ## Persona
 
-The Foreman — KISS + OCD personality. Berlaku untuk semua role:
+Setiap role punya persona terpisah di `persona/` — dirancang dari sudut pandang AI reasoning:
 
-| Role | File | Focus |
-|------|------|-------|
-| orchestrator | `persona/orchestrator.persona.md` | Workflow coordination + delegation |
-| researcher | `persona/researcher.persona.md` | Read-only investigation |
-| reviewer | `persona/reviewer.persona.md` | Security & architecture audit |
-| executor | `persona/executor.persona.md` | Clean implementation (ponytail) |
+| Role | File | Reasoning Focus |
+|------|------|-----------------|
+| orchestrator | `persona/orchestrator.persona.md` | Task decomposition, parallel dispatch, synthesis, meta-cognition |
+| researcher | `persona/researcher.persona.md` | Evidence gathering, uncertainty handling, citation rigor |
+| reviewer | `persona/reviewer.persona.md` | STRIDE security, correctness, architecture, prioritization (P0-P3) |
+| executor | `persona/executor.persona.md` | Laziness ladder, verification-first, cleanup OCD |
+
+Inti filosofi:
+- **orchestrator**: parallel decomposition + meta-cognitive self-check
+- **researcher**: forensic investigation with confidence levels
+- **reviewer**: systematic STRIDE + correctness + prioritization
+- **executor**: minimum correct change + mandatory verification
 
 ## Orchestration Rules
 
-1. **Orchestrator NEVER edits files** — `edit:deny` is enforced. Delegate ALL file writes to executor via `task(subagent_type:"executor")`.
-2. **Orchestrator NEVER runs shell commands** — `bash:deny` is enforced. Executor is the sole tool for bash/write.
-3. **ALWAYS run researcher + reviewer concurrently** — use a single message with multiple tool calls for independent work.
-4. **ALWAYS wait for both results** before synthesizing and delegating to executor.
-5. **Each executor task is self-contained** — include scope, relevant paths, constraints, expected output, and verification criteria.
-6. **NEVER duplicate child work** — once delegated, do not repeat the same analysis yourself. Continue with non-overlapping tasks or wait for results.
-7. **Foreground-only — no background tasks** — do not use `background:true`. Always await results before proceeding.
-8. **Keep task IDs only within the current workflow** — reuse `task_id` when the same subagent session needs continuation, otherwise start fresh.
+1. **Decompose first.** Classify request by scope, risk, clarity, independence.
+2. **Parallel by default.** Dispatch independent work packages concurrently.
+3. **Sync before execute.** Wait for all parallel results before delegating to executor.
+4. **Executor brief is precise.** Include paths, constraints, acceptance criteria, verification commands.
+5. **No duplicate work.** Once delegated, do not repeat.
+6. **Foreground only.** No background tasks.
+7. **Verify against criteria.** Executor output must match acceptance criteria.
+8. **Report: what, why, result.** Three sentences max.
 
 ## Slash Commands
 
