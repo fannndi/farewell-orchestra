@@ -1,25 +1,40 @@
 # Profiles
 
-Switch profile dengan copy ke `.env` di root:
+Switch model hanya dengan **copy file teks** — tidak perlu edit opencode.jsonc.
 
 ```
-copy profiles\pro.env ..\.env       # Pro:  orchestrator=Pro,  workers=Flash
-copy profiles\flash.env ..\.env     # Flash: orchestrator=Flash, workers=Free
-copy profiles\free.env ..\.env      # Free:  all Free (max hemat)
-copy profiles\custom.env ..\.env    # Custom: edit dulu, bebas mix-match
+# Pro (default): orchestrator=Pro,  workers=Flash
+copy profiles\pro-heavy.txt profiles\current-heavy.txt
+copy profiles\pro-light.txt profiles\current-light.txt
+
+# Flash: orchestrator=Flash, workers=Free
+copy profiles\flash-heavy.txt profiles\current-heavy.txt
+copy profiles\flash-light.txt profiles\current-light.txt
+
+# Free: all Free (max hemat)
+copy profiles\free-heavy.txt profiles\current-heavy.txt
+copy profiles\free-light.txt profiles\current-light.txt
+
+# Custom: edit langsung current-heavy.txt + current-light.txt
 ```
 
-## Profile Matrix
+## File Matrix
 
-| Profile  | orchestrator (HEAVY)       | 7 workers (LIGHT)            |
-|----------|---------------------------|-----------------------------|
-| **pro**  | `ocg/deepseek-v4-pro`    | `ocg/deepseek-v4-flash`     |
-| **flash**| `ocg/deepseek-v4-flash`  | `oc/deepseek-v4-flash-free` |
-| **free** | `oc/deepseek-v4-flash-free` | `oc/deepseek-v4-flash-free` |
-| **custom** | bebas                   | bebas                        |
+| File               | Pro      | Flash    | Free     |
+|--------------------|----------|----------|----------|
+| `current-heavy.txt` | `ocg/deepseek-v4-pro` | `ocg/deepseek-v4-flash` | `oc/deepseek-v4-flash-free` |
+| `current-light.txt` | `ocg/deepseek-v4-flash` | `oc/deepseek-v4-flash-free` | `oc/deepseek-v4-flash-free` |
+
+## Role Mapping
+
+| Tier  | Roles                                              | Source         |
+|-------|----------------------------------------------------|----------------|
+| Heavy | orchestrator                                       | current-heavy.txt |
+| Light | researcher, reviewer, executor, title, summary, compaction | current-light.txt |
+| Free  | build, plan, general, explore                      | (model bebas)  |
 
 ## Tambah Model Baru
 
 1. Daftarkan di `provider.models` di `../opencode.jsonc`
-2. Tambah profile baru di sini (copy custom.env → rename)
-3. Atau edit `custom.env` untuk mix-match
+2. Edit `current-heavy.txt` atau `current-light.txt` langsung
+3. Atau buat preset baru: copy `pro-heavy.txt` → `custom-heavy.txt`, edit, lalu copy ke `current-heavy.txt`
