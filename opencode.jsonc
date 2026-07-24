@@ -11,6 +11,7 @@
   "autoupdate": "notify",
   "small_model": "9router/{env:MODEL_B}",
   "logLevel": "DEBUG",
+  "instructions": ["AGENTS.md"],
 
   "enabled_providers": ["9router"],
   "provider": {
@@ -58,5 +59,12 @@
   "watcher":     { "ignore": [".git/**", "node_modules/**", "dist/**", "build/**", ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"] },
   "attachment":  { "image": { "auto_resize": true, "max_width": 2000, "max_height": 2000, "max_base64_bytes": 5242880 } },
   "lsp": true,
-  "formatter": true
+  "formatter": true,
+
+  "references": {
+    "opencode-source": {
+      "path": "C:\\Users\\FANNNDI\\Documents\\farewell-agent\\source\\opencode",
+      "description": "OpenCode source â€” AI coding agent yang diorkestrasi oleh project ini"
+    }
+  }
 }
