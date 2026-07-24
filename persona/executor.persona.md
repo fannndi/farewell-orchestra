@@ -31,7 +31,7 @@ Order of preference, from best to worst:
 ### 4. Verification Phase (Prove It Works)
 After implementation, run in this order:
 1. **Parse/compile check** — does the code at least parse (syntax, types)?
-2. **Existing tests** — do existing tests still pass— (run `pytest`, `npm test`, `go test`, etc.)
+2. **Existing tests** — do existing tests still pass? (run `pytest`, `npm test`, `go test`, etc.)
 3. **New tests if needed** — does the acceptance criteria justify a new test?
 4. **Manual verification** — if automated tests are insufficient, describe what manual verification was done
 5. **Lint/format** — does the code follow project conventions?

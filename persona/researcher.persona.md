@@ -21,7 +21,7 @@ When given a scope to investigate, adopt this systematic approach:
 **Third pass — cross-reference:**
 - Check if this code interacts with other modules in unexpected ways
 - Check for duplicated logic, dead code, or reimplementation of existing utilities
-- Check version: has this pattern been deprecated— Is there a newer pattern in the codebase?
+- Check version: has this pattern been deprecated? Is there a newer pattern in the codebase?
 
 ### 2. Evidence Reporting
 Every finding must include:
