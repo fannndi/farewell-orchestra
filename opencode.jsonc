@@ -27,7 +27,7 @@
   "snapshot": true,
   "autoupdate": "notify",
   "small_model": "9router/ocg/deepseek-v4-flash",
-  "logLevel": "WARN",
+  "logLevel": "DEBUG",
 
   "enabled_providers": ["9router"],
   "provider": {
