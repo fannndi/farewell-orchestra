@@ -1,23 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // ═══════════════════════════════════════════════════════════════════
-  //  MODEL PROFILES (set via environment variables)
-  // ═══════════════════════════════════════════════════════════════════
-  //
-  //  Pro Profile (default):
-  //    set ORCHESTRA_HEAVY_MODEL=ocg/deepseek-v4-pro
-  //    set ORCHESTRA_LIGHT_MODEL=ocg/deepseek-v4-flash
-  //
-  //  Flash Profile (hemat token):
-  //    set ORCHESTRA_HEAVY_MODEL=ocg/deepseek-v4-flash
-  //    set ORCHESTRA_LIGHT_MODEL=oc/deepseek-v4-flash-free
-  //
-  //  Atau edit langsung field model di agent bagian bawah.
-  //  Default (jika env tidak diset): Pro Profile
-  // ═══════════════════════════════════════════════════════════════════
-
-  // ─── Top-Level Defaults ─────────────────────────────────────────
+  // ═══ Profiles: set ORCHESTRA_HEAVY_MODEL + ORCHESTRA_LIGHT_MODEL di .env ═══
+  // Pro (default): HEAVY=ocg/deepseek-v4-pro  LIGHT=ocg/deepseek-v4-flash
+  // Flash (hemat):  HEAVY=ocg/deepseek-v4-flash LIGHT=oc/deepseek-v4-flash-free
+  // Custom:         edit .env, bebas mix-and-match
   "model": "{env:ORCHESTRA_HEAVY_MODEL}",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
@@ -26,7 +13,6 @@
   "snapshot": true,
   "autoupdate": "notify",
 
-  // ─── Provider: 9Router via OpenAI-compatible ─────────────────────
   "enabled_providers": ["9router"],
   "provider": {
     "9router": {
@@ -40,245 +26,74 @@
         "chunkTimeout": 120000
       },
       "models": {
-        "ocg/deepseek-v4-pro": {
-          "tool_call": true,
-          "reasoning": true,
-          "limit": { "context": 1000000, "output": 128000 },
-          "modalities": { "input": ["text"], "output": ["text"] }
-        },
-        "ocg/deepseek-v4-flash": {
-          "tool_call": true,
-          "reasoning": true,
-          "limit": { "context": 1000000, "output": 128000 },
-          "modalities": { "input": ["text"], "output": ["text"] }
-        },
-        "oc/deepseek-v4-flash-free": {
-          "tool_call": true,
-          "reasoning": true,
-          "limit": { "context": 1000000, "output": 128000 },
-          "modalities": { "input": ["text"], "output": ["text"] }
-        }
+        "ocg/deepseek-v4-pro":   { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
+        "ocg/deepseek-v4-flash": { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } },
+        "oc/deepseek-v4-flash-free": { "tool_call": true, "reasoning": true, "limit": { "context": 1000000, "output": 128000 } }
       }
     }
   },
 
-  // ─── System Instructions (injected into every session) ──────────
   "instructions": ["AGENTS.md"],
 
-  // ─── Custom Slash Commands ──────────────────────────────────────
   "command": {
-    "status": {
-      "description": "Show orchestration health: active agent, model, token usage",
-      "template": "Report the current orchestration state: which agent is active, which model is selected, approximate session token usage, and any pending tasks."
-    },
-    "fanout": {
-      "description": "Run researcher + reviewer in parallel to analyze the current request",
-      "template": "Fan out the following request to researcher and reviewer concurrently. Wait for both results, synthesize findings, then delegate implementation to executor: $ARGUMENTS"
-    },
-    "review": {
-      "description": "Code review only — no edits, via reviewer subagent",
-      "agent": "reviewer",
-      "subtask": true,
-      "template": "Review the following for architecture, security, and correctness. Return prioritized findings with file paths and line numbers. Do not edit anything: $ARGUMENTS"
-    },
-    "execute": {
-      "description": "Delegate implementation directly to executor",
-      "agent": "executor",
-      "subtask": true,
-      "template": "Implement the following change: $ARGUMENTS"
-    }
+    "status":  { "description": "Orchestration health check",                              "template": "Report orchestration state: active agent, model, token usage, pending tasks." },
+    "fanout":  { "description": "Researcher + reviewer in parallel, then executor",        "template": "Fan out: $ARGUMENTS" },
+    "review":  { "description": "Code review via reviewer — no edits", "agent": "reviewer", "subtask": true, "template": "Review for architecture/security/correctness. No edits: $ARGUMENTS" },
+    "execute": { "description": "Delegate implementation to executor",    "agent": "executor", "subtask": true, "template": "Implement: $ARGUMENTS" }
   },
 
-  // ─── Global Permissions Baseline ────────────────────────────────
   "permission": {
     "external_directory": "ask",
     "doom_loop": "ask",
     "plan_enter": "deny",
     "plan_exit": "deny",
-    "read": {
-      "*": "allow",
-      "*.env": "ask",
-      "*.env.*": "ask",
-      "*.env.example": "allow"
-    }
+    "read": { "*": "allow", "*.env": "ask", "*.env.*": "ask", "*.env.example": "allow" }
   },
 
-  // ─── Experimental ───────────────────────────────────────────────
   "experimental": {
     "primary_tools": ["todowrite", "question"],
     "continue_loop_on_deny": true,
     "mcp_timeout": 30000
   },
 
-  // ═══════════════════════════════════════════════════════════════════
-  //  AGENTS — edit model field di sini untuk ganti model per role
-  //  HEAVY: orchestrator     LIGHT: researcher, reviewer, executor,
-  //         compaction                title, summary
-  // ═══════════════════════════════════════════════════════════════════
-
   "agent": {
-
-    // ── orchestrator · default · primary · HEAVY ─────────────────────
     "orchestrator": {
       "description": "Workflow orchestrator — decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
-      "mode": "primary",
-      "model": "9router/{env:ORCHESTRA_HEAVY_MODEL}",
-      "color": "#7c3aed",
-      "temperature": 0.2,
-      "steps": 40,
+      "mode": "primary", "model": "9router/{env:ORCHESTRA_HEAVY_MODEL}", "color": "#7c3aed", "temperature": 0.2, "steps": 40,
       "prompt": "You are the workflow orchestrator. Decompose substantial requests into independent, non-overlapping work packages. For independent analysis, call researcher and reviewer concurrently in one assistant turn using foreground task calls. Wait for and synthesize their results before deciding implementation. Give each child a self-contained prompt with scope, relevant paths, constraints, expected output, and verification criteria. Delegate every file modification and command execution that changes the workspace to executor only, as one focused task after analysis is complete. Do not use background tasks. Do not duplicate child work. Keep task IDs only for the current workflow when continuation is necessary.",
-      "permission": {
-        "edit": "deny",
-        "bash": "deny",
-        "question": "allow",
-        "todowrite": "allow",
-        "task": {
-          "*": "deny",
-          "researcher": "allow",
-          "reviewer": "allow",
-          "executor": "allow"
-        }
-      }
+      "permission": { "edit": "deny", "bash": "deny", "question": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
-
-    // ── researcher · subagent · read-only · LIGHT ───────────────────
     "researcher": {
-      "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent",
-      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
-      "color": "#3b82f6",
-      "temperature": 0.1,
-      "steps": 30,
+      "description": "Read-only codebase investigator — inspect code, config, tests, docs.",
+      "mode": "subagent", "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "color": "#3b82f6", "temperature": 0.1, "steps": 30,
       "prompt": "Perform read-only research. Inspect the requested code, configuration, tests, and documentation. Return concise evidence with file paths and line numbers, assumptions, risks, and concrete recommendations. Do not edit files, run shell commands, delegate work, or attempt implementation.",
-      "permission": {
-        "*": "deny",
-        "read": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "list": "allow",
-        "webfetch": "allow",
-        "websearch": "allow",
-        "lsp": "allow",
-        "skill": "allow",
-        "task": "deny"
-      }
+      "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
-
-    // ── reviewer · subagent · read-only · LIGHT ─────────────────────
     "reviewer": {
-      "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent",
-      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
-      "color": "#f59e0b",
-      "temperature": 0.1,
-      "steps": 30,
+      "description": "Read-only security/architecture auditor.",
+      "mode": "subagent", "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "color": "#f59e0b", "temperature": 0.1, "steps": 30,
       "prompt": "Review the supplied scope independently. Identify correctness, security, compatibility, concurrency, and maintainability risks. Return prioritized findings, acceptance criteria, and a verification plan with file paths and line numbers where applicable. Do not edit files, run shell commands, delegate work, or implement changes.",
-      "permission": {
-        "*": "deny",
-        "read": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "list": "allow",
-        "webfetch": "allow",
-        "websearch": "allow",
-        "lsp": "allow",
-        "skill": "allow",
-        "task": "deny"
-      }
+      "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
-
-    // ── executor · subagent · write-only · LIGHT ────────────────────
     "executor": {
-      "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent",
-      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
-      "color": "#10b981",
-      "steps": 50,
+      "description": "Sole implementation worker — writes files, runs shell.",
+      "mode": "subagent", "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "color": "#10b981", "steps": 50,
       "prompt": "Implement only the scoped change provided by the orchestrator. First inspect relevant files and follow local conventions. Make focused edits, run the relevant verification commands, and report changed files plus results. Do not delegate work, broaden scope, or modify files outside the assigned change set.",
-      "permission": {
-        "read": "allow",
-        "edit": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "list": "allow",
-        "bash": "allow",
-        "lsp": "allow",
-        "skill": "allow",
-        "task": "deny"
-      }
+      "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
-
-    // ── build · OpenCode built-in · model-bebas ───────────────────────
-    "build": {
-      "mode": "primary",
-      "color": "primary",
-      "permission": { "task": "deny" }
-    },
-
-    // ── plan · OpenCode built-in · model-bebas ────────────────────────
-    "plan": {
-      "mode": "primary",
-      "color": "secondary",
-      "permission": { "task": "deny" }
-    },
-
-    // ── general · OpenCode built-in subagent ──────────────────────────
-    "general": {
-      "mode": "subagent",
-      "permission": { "task": "deny" }
-    },
-
-    // ── explore · OpenCode built-in subagent · read-only ──────────────
-    "explore": {
-      "mode": "subagent",
-      "permission": { "task": "deny" }
-    },
-
-    // ── Internal: title · LIGHT ──────────────────────────────────────
-    "title": {
-      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
-      "mode": "primary",
-      "hidden": true
-    },
-
-    // ── Internal: summary · LIGHT ────────────────────────────────────
-    "summary": {
-      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
-      "mode": "primary",
-      "hidden": true
-    },
-
-    // ── Internal: compaction · LIGHT ─────────────────────────────────
-    "compaction": {
-      "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}",
-      "mode": "primary",
-      "hidden": true
-    }
+    "build":      { "mode": "primary",   "color": "primary",   "permission": { "task": "deny" } },
+    "plan":       { "mode": "primary",   "color": "secondary", "permission": { "task": "deny" } },
+    "general":    { "mode": "subagent",  "permission": { "task": "deny" } },
+    "explore":    { "mode": "subagent",  "permission": { "task": "deny" } },
+    "title":      { "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "mode": "primary", "hidden": true },
+    "summary":    { "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/{env:ORCHESTRA_LIGHT_MODEL}", "mode": "primary", "hidden": true }
   },
 
-  // ─── Runtime Settings ───────────────────────────────────────────
   "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
-  "compaction": { "auto": true, "prune": false, "tail_turns": 2 },
-
-  // ─── File Watcher ───────────────────────────────────────────────
-  "watcher": {
-    "ignore": [
-      ".git/**", "node_modules/**", "dist/**", "build/**",
-      ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"
-    ]
-  },
-
-  // ─── Image Attachments ──────────────────────────────────────────
-  "attachment": {
-    "image": {
-      "auto_resize": true,
-      "max_width": 2000,
-      "max_height": 2000,
-      "max_base64_bytes": 5242880
-    }
-  },
-
-  // ─── Features ───────────────────────────────────────────────────
+  "compaction":  { "auto": true, "prune": false, "tail_turns": 2 },
+  "watcher":     { "ignore": [".git/**", "node_modules/**", "dist/**", "build/**", ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"] },
+  "attachment":  { "image": { "auto_resize": true, "max_width": 2000, "max_height": 2000, "max_base64_bytes": 5242880 } },
   "lsp": true,
   "formatter": true
 }

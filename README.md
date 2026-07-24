@@ -341,17 +341,30 @@ opencode run "Hello"
 ```bash
 git clone https://github.com/fannndi/farewell-orchestra
 cd farewell-orchestra
-set NINEROUTER_API_KEY=sk_...
+
+# 1. Setup env
+copy .env.example .env
+# edit .env → isi NINEROUTER_API_KEY + pilih profile
+
+# 2. Load env (Windows CMD)
+for /f "tokens=*" %i in (.env) do set %i
+
+# 2. Load env (PowerShell)
+Get-Content .env | ForEach-Object { if ($_ -match '^([^#].+?)=(.+)') { [Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process') } }
+
+# 3. Run
 opencode run "Hello"
 ```
 
 ## Files
 
-| File              | Purpose                                       |
-|-------------------|-----------------------------------------------|
-| `opencode.jsonc`  | Full config: agents, permissions, commands     |
-| `AGENTS.md`       | 8 rules + session flow                         |
-| `README.md`       | Comprehensive reference (this file)            |
+| File              | Purpose                                              |
+|-------------------|------------------------------------------------------|
+| `opencode.jsonc`  | Agent config, permissions, commands                   |
+| `.env.example`    | Env var template — 2 profile preset + custom         |
+| `.env`            | Your env vars (gitignored)                            |
+| `AGENTS.md`       | 8 orchestration rules                                 |
+| `README.md`       | This file                                            |
 
 ## License
 
