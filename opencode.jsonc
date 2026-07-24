@@ -1,15 +1,15 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // Profile: A=MODEL_A  B=MODEL_B  C=MODEL_C
-  "model": "9router/MODEL_A",
+  // Profile: set MODEL_A + MODEL_B via .env
+  "model": "9router/{env:MODEL_A}",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
   "shell": "powershell",
   "snapshot": true,
   "autoupdate": "notify",
-  "small_model": "9router/MODEL_B",
+  "small_model": "9router/{env:MODEL_B}",
   "logLevel": "DEBUG",
 
   "enabled_providers": ["9router"],
@@ -35,7 +35,7 @@
   "command": {
     "status":  { "description": "Orchestration health check",                              "template": "Report orchestration state: active agent, model, token usage, pending tasks." },
     "fanout":  { "description": "Researcher + reviewer in parallel, then executor",        "template": "Fan out: $ARGUMENTS" },
-    "review":  { "description": "Code review via reviewer â€” no edits", "agent": "reviewer", "subtask": true, "template": "Review for architecture/security/correctness. No edits: $ARGUMENTS" },
+    "review":  { "description": "Code review via reviewer Ã¢â‚¬â€ no edits", "agent": "reviewer", "subtask": true, "template": "Review for architecture/security/correctness. No edits: $ARGUMENTS" },
     "execute": { "description": "Delegate implementation to executor",    "agent": "executor", "subtask": true, "template": "Implement: $ARGUMENTS" }
   },
 
@@ -54,26 +54,26 @@
 
   "agent": {
     "orchestrator": {
-      "description": "Workflow orchestrator â€” decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
-      "mode": "primary", "model": "9router/MODEL_A", "color": "#7c3aed", "temperature": 0.2, "top_p": 0.5, "steps": 40,
+      "description": "Workflow orchestrator Ã¢â‚¬â€ decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
+      "mode": "primary", "model": "9router/{env:MODEL_A}", "color": "#7c3aed", "temperature": 0.2, "top_p": 0.5, "steps": 40,
       "prompt": "{file:./persona/orchestrator.persona.md}",
       "permission": { "edit": "deny", "bash": "deny", "question": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "description": "Read-only codebase investigator.",
-      "mode": "subagent", "model": "9router/MODEL_B", "color": "#3b82f6", "temperature": 0.1, "top_p": 0.9, "steps": 30,
+      "mode": "subagent", "model": "9router/{env:MODEL_B}", "color": "#3b82f6", "temperature": 0.1, "top_p": 0.9, "steps": 30,
       "prompt": "{file:./persona/researcher.persona.md}",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "description": "Read-only security/architecture auditor.",
-      "mode": "subagent", "model": "9router/MODEL_B", "color": "#f59e0b", "temperature": 0.1, "top_p": 0.9, "steps": 30,
+      "mode": "subagent", "model": "9router/{env:MODEL_B}", "color": "#f59e0b", "temperature": 0.1, "top_p": 0.9, "steps": 30,
       "prompt": "{file:./persona/reviewer.persona.md}",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
-      "description": "Sole implementation worker â€” writes files, runs shell.",
-      "mode": "subagent", "model": "9router/MODEL_B", "color": "#10b981", "steps": 50,
+      "description": "Sole implementation worker Ã¢â‚¬â€ writes files, runs shell.",
+      "mode": "subagent", "model": "9router/{env:MODEL_B}", "color": "#10b981", "steps": 50,
       "prompt": "{file:./persona/executor.persona.md}",
       "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -81,9 +81,9 @@
     "plan":       { "mode": "primary",   "color": "secondary", "permission": { "task": "deny" } },
     "general":    { "mode": "subagent",  "permission": { "task": "deny" } },
     "explore":    { "mode": "subagent",  "permission": { "task": "deny" } },
-    "title":      { "model": "9router/MODEL_B", "mode": "primary", "hidden": true },
-    "summary":    { "model": "9router/MODEL_B", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/MODEL_B", "mode": "primary", "hidden": true }
+    "title":      { "model": "9router/{env:MODEL_B}", "mode": "primary", "hidden": true },
+    "summary":    { "model": "9router/{env:MODEL_B}", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/{env:MODEL_B}", "mode": "primary", "hidden": true }
   },
 
   "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
