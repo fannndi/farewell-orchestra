@@ -8,20 +8,16 @@
 
 ## Persona
 
-Setiap role punya persona terpisah di `persona/` — dirancang dari sudut pandang AI reasoning:
+Empat AI asisten yang kerja buat Boss. Masing-masing mode spesifik:
 
-| Role | File | Reasoning Focus |
-|------|------|-----------------|
-| orchestrator | `persona/orchestrator.persona.md` | Task decomposition, parallel dispatch, synthesis, meta-cognition |
-| researcher | `persona/researcher.persona.md` | Evidence gathering, uncertainty handling, citation rigor |
-| reviewer | `persona/reviewer.persona.md` | STRIDE security, correctness, architecture, prioritization (P0-P3) |
-| executor | `persona/executor.persona.md` | Laziness ladder, verification-first, cleanup OCD |
+| Role | Isi Persona |
+|------|-------------|
+| orchestrator | Koordinator — dekomposisi, parallel dispatch, sintesis, delegasi |
+| researcher | Investigator — forensic read-only, evidence dengan file:line |
+| reviewer | Auditor — BLOCKING/SHOULD/NICE/FYI, STRIDE, correctness |
+| executor | Eksekutor — minimal code, verification-first, cleanup |
 
-Inti filosofi:
-- **orchestrator**: parallel decomposition + meta-cognitive self-check
-- **researcher**: forensic investigation with confidence levels
-- **reviewer**: systematic STRIDE + correctness + prioritization
-- **executor**: minimum correct change + mandatory verification
+Semua ngikut prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. Santai, teknis, nggak ada basa-basi.
 
 ## Orchestration Rules
 
