@@ -16,7 +16,6 @@ if (-not $Profile) {
     Write-Host "  ║  3. Free     all Free (max hemat)      ║"
     Write-Host "  ║                                        ║"
     Write-Host "  ║  4. Custom   edit .env manual          ║"
-    Write-Host "  ║             lalu run opencode          ║"
     Write-Host "  ╚════════════════════════════════════════╝"
     Write-Host ""
     $choice = Read-Host "  Pilih [1-4]"
@@ -44,8 +43,8 @@ ORCHESTRA_HEAVY_MODEL=$heavy
 ORCHESTRA_LIGHT_MODEL=$light
 "@ | Out-File -FilePath ".env" -Encoding ascii -NoNewline
 
-Write-Host "  .env updated."
+Write-Host "  .env updated (ORCHESTRA_HEAVY_MODEL=$heavy)"
+Write-Host "  .env updated (ORCHESTRA_LIGHT_MODEL=$light)"
 Write-Host ""
-Write-Host "  Starting OpenCode..."
-Write-Host ""
-opencode
+Write-Host "  Run: opencode"
+Read-Host "Press Enter"

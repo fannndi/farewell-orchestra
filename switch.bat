@@ -16,7 +16,6 @@ if "%1"=="" (
     echo   ║  3. Free     all Free (max hemat)      ║
     echo   ║                                        ║
     echo   ║  4. Custom   edit .env manual          ║
-    echo   ║             lalu run opencode          ║
     echo   ╚════════════════════════════════════════╝
     echo.
     set /p choice="  Pilih [1-4]: "
@@ -65,9 +64,10 @@ if /i "!ARG!"=="pro" (
     echo ORCHESTRA_LIGHT_MODEL=!ORCHESTRA_LIGHT_MODEL!
 ) > .env
 
-echo  .env updated.
+echo  .env updated ^(ORCHESTRA_HEAVY_MODEL=!ORCHESTRA_HEAVY_MODEL!^)
+echo  .env updated ^(ORCHESTRA_LIGHT_MODEL=!ORCHESTRA_LIGHT_MODEL!^)
 echo.
-echo  Starting OpenCode...
+echo  Run: opencode
 echo.
-opencode
+pause
 endlocal
