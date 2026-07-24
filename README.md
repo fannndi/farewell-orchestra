@@ -2,123 +2,102 @@
 
 Workflow orchestration untuk OpenCode — foreground parallel research, review, dan controlled implementation via 9Router model gateway.
 
-## Arsitektur
+## Architecture
 
 ```
 User Request
     │
     ▼
-┌─────────────────────────────────────┐
-│          orchestrator (primary)      │
-│  read-only · edit:deny · bash:deny   │
-│  model: ocg/deepseek-v4-pro         │
-└──────┬──────────────────┬───────────┘
-       │                  │
-       ▼                  ▼
-┌──────────────┐  ┌──────────────┐
-│  researcher  │  │   reviewer   │
-│  (subagent)  │  │  (subagent)  │
-│  read-only   │  │  read-only   │
-│  flash       │  │  flash       │
-└──────────────┘  └──────────────┘
-       │                  │
-       └──────┬───────────┘
-              │ synthesize
-              ▼
-┌─────────────────────────────────────┐
-│           executor (subagent)        │
-│  write-only · bash:allow            │
-│  model: ocg/deepseek-v4-pro         │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│            orchestrator (primary · #7c3aed)      │
+│  read-only · edit:deny · bash:deny              │
+│  model: ocg/deepseek-v4-pro                     │
+└──────┬──────────────────────┬───────────────────┘
+       │                      │
+       ▼                      ▼
+┌──────────────────┐  ┌──────────────────┐
+│   researcher     │  │    reviewer      │
+│   (subagent)     │  │   (subagent)     │
+│   read-only      │  │   read-only      │
+│   #3b82f6 · flash│  │   #f59e0b · flash│
+└────────┬─────────┘  └────────┬─────────┘
+         │                     │
+         └─────────┬───────────┘
+                   │ synthesize
+                   ▼
+┌─────────────────────────────────────────────────┐
+│            executor (subagent · #10b981)         │
+│  write-only · bash:allow                        │
+│  model: ocg/deepseek-v4-pro                     │
+└─────────────────────────────────────────────────┘
 ```
 
-## Role
+## Roles
 
-### 1. orchestrator (primary · default)
-**Model:** `ocg/deepseek-v4-pro` (bisa diganti manual)
+### orchestrator (primary · default · `#7c3aed`)
+**Model:** `ocg/deepseek-v4-pro`
 
-Orchestrator adalah koordinator utama. Tugasnya:
-- Menerima permintaan user dan mendekomposisi menjadi work package independen
-- Memanggil **researcher** dan **reviewer** secara paralel (foreground) untuk analisis read-only
-- Menunggu dan mensintesis hasil keduanya sebelum memutuskan implementasi
-- Mendelegasikan SEMUA modifikasi file ke **executor** sebagai satu task terfokus
+Koordinator utama. Tidak bisa menulis atau menjalankan shell.
+- Mendelegasikan riset ke researcher + reviewer secara paralel
+- Mensintesis hasil keduanya
+- Mendelegasikan implementasi ke executor
+- `task:allow` hanya untuk researcher, reviewer, executor
 
-**Permission:**
-- `edit: deny`, `bash: deny` — tidak bisa menulis atau menjalankan command
-- `question: allow`, `todowrite: allow` — bisa tanya user dan bikin TODO
-- `task: allow` hanya untuk `researcher`, `reviewer`, `executor`
+### researcher (subagent · `#3b82f6`)
+**Model:** `ocg/deepseek-v4-flash`
 
-### 2. researcher (subagent)
-**Model:** `ocg/deepseek-v4-flash` (bisa diganti manual)
+Read-only. Inspeksi kode, config, test, dokumentasi. Return bukti + rekomendasi.
+- `*:deny` kecuali read, glob, grep, list, webfetch, websearch, lsp, skill
 
-Researcher adalah agen read-only untuk investigasi codebase. Tugasnya:
-- Inspeksi kode, konfigurasi, test, dan dokumentasi
-- Return bukti dengan path file dan nomor baris, asumsi, risiko, dan rekomendasi
-- **Tidak boleh** edit file, jalankan shell command, delegasi kerja, atau implementasi
+### reviewer (subagent · `#f59e0b`)
+**Model:** `ocg/deepseek-v4-flash`
 
-**Permission:** `*: deny` kecuali `read, glob, grep, list, webfetch, websearch, lsp, skill`
+Read-only. Audit arsitektur, keamanan, correctness. Return temuan prioritas + acceptance criteria.
+- `*:deny` kecuali read, glob, grep, list, webfetch, websearch, lsp, skill
 
-### 3. reviewer (subagent)
-**Model:** `ocg/deepseek-v4-flash` (bisa diganti manual)
+### executor (subagent · `#10b981`)
+**Model:** `ocg/deepseek-v4-pro`
 
-Reviewer adalah agen read-only untuk validasi arsitektur, keamanan, dan perencanaan verifikasi. Tugasnya:
-- Identifikasi risiko correctness, security, compatibility, concurrency, dan maintainability
-- Return temuan prioritas, acceptance criteria, dan rencana verifikasi
-- **Tidak boleh** edit file, jalankan shell command, delegasi kerja, atau implementasi
+Satu-satunya yang bisa menulis file dan menjalankan shell. Scope dibatasi orchestrator.
+- `task:deny` — tidak bisa delegasi
 
-**Permission:** `*: deny` kecuali `read, glob, grep, list, webfetch, websearch, lsp, skill`
+### Escape Hatches (built-in OpenCode)
+`build` dan `plan` tetap tersedia sebagai primary agents — model bebas diganti kapan saja. `general` dan `explore` tersedia sebagai subagents. Semua `task:deny`.
 
-### 4. executor (subagent)
-**Model:** `ocg/deepseek-v4-pro` (bisa diganti manual)
+## Slash Commands
 
-Executor adalah satu-satunya agen yang bisa menulis file. Tugasnya:
-- Implementasi hanya scope yang diberikan orchestrator
-- Inspeksi file terkait, ikuti konvensi lokal, lakukan edit terfokus
-- Jalankan perintah verifikasi, laporkan file yang berubah dan hasilnya
-- **Tidak boleh** delegasi kerja, memperluas scope, atau modifikasi file di luar change set
+| Command    | Description                                       |
+|-----------|---------------------------------------------------|
+| `/status` | Orchestration health check                        |
+| `/fanout` | Decompose → researcher + reviewer → executor      |
+| `/review` | Code-only review via reviewer subagent            |
 
-**Permission:** `read, edit, glob, grep, list, bash, lsp, skill` · `task: deny`
+## Model Allocation
 
-### 5. build / plan / general / explore (built-in OpenCode)
-Mode bawaan OpenCode tetap tersedia sebagai escape hatch — bisa diganti model secara bebas. `build` dan `plan` adalah primary agents; `general` dan `explore` adalah subagents.
+| Model                      | Roles                        |
+|---------------------------|------------------------------|
+| `ocg/deepseek-v4-pro`    | orchestrator, executor, compaction |
+| `ocg/deepseek-v4-flash`  | researcher, reviewer, title, summary |
 
-### Internal (hidden)
-`title`, `summary`, `compaction` — sistem agent OpenCode internal, tidak terlihat di UI.
+Ganti model: edit field `model` di agent terkait di `opencode.jsonc`.
 
-## Model
-
-Dua model via 9Router gateway (OpenAI-compatible di `http://127.0.0.1:20128/v1`):
-
-| Model | Alokasi |
-|---|---|
-| `ocg/deepseek-v4-pro` | orchestrator, executor, compaction |
-| `ocg/deepseek-v4-flash` | researcher, reviewer, title, summary |
-
-Untuk ganti model: edit field `model` di tiap agent di `opencode.jsonc`.
-
-## Foreground Parallel Flow
-
-1. User memberikan request kompleks
-2. Orchestrator dekomposisi menjadi work package independen
-3. Researcher dan reviewer dipanggil **bersamaan** dalam satu turn
-4. Orchestrator menunggu hasil keduanya, lalu mensintesis
-5. Executor dipanggil dengan scope terbatas untuk implementasi
-6. Hasil dilaporkan ke user
-
-Tidak ada background task. Semua foreground — orchestrator menunggu sebelum lanjut.
-
-## Konfigurasi
-
-Semua konfigurasi ada di `opencode.jsonc`. Tidak ada MCP server, skill, persona, atau Python package — murni orchestration via OpenCode config.
-
-## Environment
+## Quick Start
 
 ```bash
-export NINEROUTER_API_KEY="sk_..."
-# atau set di Windows:
+git clone https://github.com/fannndi/farewell-orchestra
+cd farewell-orchestra
 set NINEROUTER_API_KEY=sk_...
+opencode run "Hello"
 ```
 
-## Lisensi
+## Files
+
+| File             | Purpose                                      |
+|-----------------|----------------------------------------------|
+| `opencode.jsonc` | Full config: agents, permissions, commands   |
+| `AGENTS.md`      | Agent instructions + orchestration rules     |
+| `README.md`      | This file                                    |
+
+## License
 
 MIT
