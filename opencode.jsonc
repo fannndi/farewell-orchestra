@@ -1,15 +1,17 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // ─── Top-Level Defaults ─────────────────────────────────────────
+  // ═══ Top-Level Defaults ═══════════════════════════════════════════
   "model": "9router/ocg/deepseek-v4-pro",
   "small_model": "9router/ocg/deepseek-v4-flash",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
   "shell": "powershell",
+  "snapshot": true,
+  "autoupdate": "notify",
 
-  // ─── Provider: 9Router via OpenAI-compatible ─────────────────────
+  // ═══ Provider: 9Router via OpenAI-compatible ══════════════════════
   "enabled_providers": ["9router"],
   "provider": {
     "9router": {
@@ -23,16 +25,26 @@
         "chunkTimeout": 120000
       },
       "models": {
-        "ocg/deepseek-v4-pro":  { "tool_call": true },
-        "ocg/deepseek-v4-flash": { "tool_call": true }
+        "ocg/deepseek-v4-pro": {
+          "tool_call": true,
+          "reasoning": true,
+          "limit": { "context": 1000000, "output": 128000 },
+          "modalities": { "input": ["text"], "output": ["text"] }
+        },
+        "ocg/deepseek-v4-flash": {
+          "tool_call": true,
+          "reasoning": true,
+          "limit": { "context": 1000000, "output": 128000 },
+          "modalities": { "input": ["text"], "output": ["text"] }
+        }
       }
     }
   },
 
-  // ─── System Instructions (injected into every session) ──────────
+  // ═══ System Instructions (injected into every session) ════════════
   "instructions": ["AGENTS.md"],
 
-  // ─── Custom Slash Commands ──────────────────────────────────────
+  // ═══ Custom Slash Commands ════════════════════════════════════════
   "command": {
     "status": {
       "description": "Show orchestration health: active agent, model, token usage",
@@ -43,14 +55,20 @@
       "template": "Fan out the following request to researcher and reviewer concurrently. Wait for both results, synthesize findings, then delegate implementation to executor: $ARGUMENTS"
     },
     "review": {
-      "description": "Code review only — no edits",
+      "description": "Code review only — no edits, via reviewer subagent",
       "agent": "reviewer",
       "subtask": true,
       "template": "Review the following for architecture, security, and correctness. Return prioritized findings with file paths and line numbers. Do not edit anything: $ARGUMENTS"
+    },
+    "execute": {
+      "description": "Delegate implementation directly to executor",
+      "agent": "executor",
+      "subtask": true,
+      "template": "Implement the following change: $ARGUMENTS"
     }
   },
 
-  // ─── Global Permissions Baseline ────────────────────────────────
+  // ═══ Global Permissions Baseline ══════════════════════════════════
   "permission": {
     "external_directory": "ask",
     "doom_loop": "ask",
@@ -64,18 +82,25 @@
     }
   },
 
-  // ─── Agents ─────────────────────────────────────────────────────
+  // ═══ Experimental ═════════════════════════════════════════════════
+  "experimental": {
+    "primary_tools": ["todowrite", "question"],
+    "continue_loop_on_deny": true,
+    "mcp_timeout": 30000
+  },
+
+  // ═══ Agents ═══════════════════════════════════════════════════════
   "agent": {
 
-    // ═══ orchestrator · default · primary ═══════════════════════════
+    // ── orchestrator · default · primary ──────────────────────────────
     "orchestrator": {
-      "description": "Workflow orchestrator — decompose, fan-out researcher+reviewer, synhesize, delegate to executor.",
+      "description": "Workflow orchestrator — decompose, fan-out researcher+reviewer, synthesize, delegate to executor.",
       "mode": "primary",
       "model": "9router/ocg/deepseek-v4-pro",
       "color": "#7c3aed",
       "temperature": 0.2,
       "steps": 40,
-      "prompt": "You are the workflow orchestrator. Decompose substantial requests into independent, non-overlapping work packages. For independent analysis, call researcher and reviewer concurrently in one assistant turn using foreground task calls. Wait for and synthesize their results before deciding implementation. Give each child a self-contained prompt with scope, relevant paths, constraints, expected output, and verification criteria. Delegate every file modification and command execution that changes the workspace to executor only, as one focused task after analysis is complete. Do not use background tasks. Do not duplicate child work.",
+      "prompt": "You are the workflow orchestrator. Decompose substantial requests into independent, non-overlapping work packages. For independent analysis, call researcher and reviewer concurrently in one assistant turn using foreground task calls. Wait for and synthesize their results before deciding implementation. Give each child a self-contained prompt with scope, relevant paths, constraints, expected output, and verification criteria. Delegate every file modification and command execution that changes the workspace to executor only, as one focused task after analysis is complete. Do not use background tasks. Do not duplicate child work. Keep task IDs only for the current workflow when continuation is necessary.",
       "permission": {
         "edit": "deny",
         "bash": "deny",
@@ -90,7 +115,7 @@
       }
     },
 
-    // ═══ researcher · subagent · read-only ══════════════════════════
+    // ── researcher · subagent · read-only ─────────────────────────────
     "researcher": {
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
       "mode": "subagent",
@@ -113,7 +138,7 @@
       }
     },
 
-    // ═══ reviewer · subagent · read-only ════════════════════════════
+    // ── reviewer · subagent · read-only ───────────────────────────────
     "reviewer": {
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
       "mode": "subagent",
@@ -136,7 +161,7 @@
       }
     },
 
-    // ═══ executor · subagent · write-only ═══════════════════════════
+    // ── executor · subagent · write-only ──────────────────────────────
     "executor": {
       "description": "Single implementation worker for a focused, non-overlapping change set.",
       "mode": "subagent",
@@ -157,55 +182,47 @@
       }
     },
 
-    // ═══ build · OpenCode built-in · model-bebas ════════════════════
+    // ── build · OpenCode built-in · model-bebas ───────────────────────
     "build": {
       "mode": "primary",
       "color": "primary",
-      "permission": {
-        "task": "deny"
-      }
+      "permission": { "task": "deny" }
     },
 
-    // ═══ plan · OpenCode built-in · model-bebas ═════════════════════
+    // ── plan · OpenCode built-in · model-bebas ────────────────────────
     "plan": {
       "mode": "primary",
       "color": "secondary",
-      "permission": {
-        "task": "deny"
-      }
+      "permission": { "task": "deny" }
     },
 
-    // ═══ general · OpenCode built-in subagent ═══════════════════════
+    // ── general · OpenCode built-in subagent ──────────────────────────
     "general": {
       "mode": "subagent",
-      "permission": {
-        "task": "deny"
-      }
+      "permission": { "task": "deny" }
     },
 
-    // ═══ explore · OpenCode built-in subagent · read-only ══════════
+    // ── explore · OpenCode built-in subagent · read-only ──────────────
     "explore": {
       "mode": "subagent",
-      "permission": {
-        "task": "deny"
-      }
+      "permission": { "task": "deny" }
     },
 
-    // ═══ Internal: title · small/fast model ═════════════════════════
+    // ── Internal: title · flash (small/cheap) ─────────────────────────
     "title": {
       "model": "9router/ocg/deepseek-v4-flash",
       "mode": "primary",
       "hidden": true
     },
 
-    // ═══ Internal: summary · small/fast model ═══════════════════════
+    // ── Internal: summary · flash (small/cheap) ───────────────────────
     "summary": {
       "model": "9router/ocg/deepseek-v4-flash",
       "mode": "primary",
       "hidden": true
     },
 
-    // ═══ Internal: compaction · capable model ═══════════════════════
+    // ── Internal: compaction · pro (strong, preserves context) ────────
     "compaction": {
       "model": "9router/ocg/deepseek-v4-pro",
       "mode": "primary",
@@ -213,16 +230,11 @@
     }
   },
 
-  // ─── Experimental ───────────────────────────────────────────────
-  "experimental": {
-    "primary_tools": ["todowrite", "question"]
-  },
-
-  // ─── Runtime Settings ───────────────────────────────────────────
+  // ═══ Runtime Settings ══════════════════════════════════════════════
   "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
   "compaction": { "auto": true, "prune": false, "tail_turns": 2 },
 
-  // ─── File Watcher ───────────────────────────────────────────────
+  // ═══ File Watcher ══════════════════════════════════════════════════
   "watcher": {
     "ignore": [
       ".git/**", "node_modules/**", "dist/**", "build/**",
@@ -230,7 +242,7 @@
     ]
   },
 
-  // ─── Image Attachments ──────────────────────────────────────────
+  // ═══ Image Attachments ═════════════════════════════════════════════
   "attachment": {
     "image": {
       "auto_resize": true,
@@ -240,7 +252,7 @@
     }
   },
 
-  // ─── Features ───────────────────────────────────────────────────
+  // ═══ Features ══════════════════════════════════════════════════════
   "lsp": true,
   "formatter": true
 }
