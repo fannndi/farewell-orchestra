@@ -1,18 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  // ╔══════════════════════════════════════════════════════════════════╗
-  // ║  MODEL CONFIG → edit .env, bukan di sini                        ║
-  // ║                                                                  ║
-  // ║  Pro:    HEAVY=ocg/deepseek-v4-pro        LIGHT=ocg/deepseek-v4-flash
-  // ║  Flash:  HEAVY=ocg/deepseek-v4-flash      LIGHT=oc/deepseek-v4-flash-free
-  // ║  Free:   HEAVY=oc/deepseek-v4-flash-free   LIGHT=oc/deepseek-v4-flash-free
-  // ║  Custom: HEAVY=...                        LIGHT=...
-  // ║                                                                  ║
-  // ║  Role mapping:                                                   ║
-  // ║    HEAVY → orchestrator                                          ║
-  // ║    LIGHT → researcher, reviewer, executor, title, summary, compaction
-  // ╚══════════════════════════════════════════════════════════════════╝
+  // ═══ MODEL: switch via switch.bat pro|flash|free atau edit .env ═══
+  // HEAVY → orchestrator   LIGHT → researcher,reviewer,executor,title,summary,compaction
   "model": "9router/{env:ORCHESTRA_HEAVY_MODEL}",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
