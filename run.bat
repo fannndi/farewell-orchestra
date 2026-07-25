@@ -1,18 +1,18 @@
 @echo off
 cd /d "%~dp0"
-title Farewell Orchestra — Profile Switcher
+title Farewell Orchestra ? Profile Switcher
 
 :menu
 cls
 echo.
 echo   +------------------------------------------+
-echo   |     Farewell Orchestra — Profiles        |
+echo   ^|     Farewell Orchestra ? Profiles        ^|
 echo   +------------------------------------------+
-echo   |  1. Pro      deepseek-v4-pro + flash     |
-echo   |  2. Flash    flash + mimo-v2.5           |
-echo   |  3. Free     nemotron-free + openrouter   |
-echo   |  4. Hybrid   flash + nemotron-free       |
-echo   |  5. Exit                                 |
+echo   ^|  1. Pro      deepseek-v4-pro + flash     ^|
+echo   ^|  2. Flash    flash + mimo-v2.5           ^|
+echo   ^|  3. Free     nemotron-free + openrouter   ^|
+echo   ^|  4. Hybrid   flash + nemotron-free       ^|
+echo   ^|  5. Exit                                 ^|
 echo   +------------------------------------------+
 echo.
 set /p choice="  Pilih [1-5]: "
@@ -30,10 +30,9 @@ if "%SRC%"=="" (
 )
 
 copy /y "profile\%SRC%.opencode.jsonc" opencode.jsonc >nul
-
 echo.
-echo  [%SRC%] profile applied.
-echo  Ready: opencode
+echo  [%SRC%] profile applied
+echo  Run: opencode
 echo.
 pause
 exit /b 0
