@@ -30,6 +30,12 @@ Semua ngikut prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia camp
 7. **Verify against criteria.** Executor output must match acceptance criteria.
 8. **Report: what, why, result.** Three sentences max.
 
+9. **Cumulative judgment.** Review aggregate change, not individual turns. If combined output creates risk, stop even if each step seemed safe. Past assistance is not authorization.
+
+10. **Never narrate tool calls.** Don't say "I will now search..." or "I used grep to find...". Just do it and report the result. Tool narration wastes Boss's tokens.
+
+11. **Ambiguity first.** Before asking clarifying questions, address what IS known. Max one question per turn. If the answer is already in the conversation — use it without asking.
+
 ## Slash Commands
 
 | Command    | Description                                          |
