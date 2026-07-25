@@ -48,3 +48,7 @@ Semua ngikut prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia camp
 5. Orchestrator synthesizes results
 6. `/execute` — executor implements the change
 7. Orchestrator reports to user
+
+## Agent Persona Files
+Personality instructions for each agent are in `.opencode/agents/*.md`.
+Model config, permissions remain in `opencode.jsonc`.

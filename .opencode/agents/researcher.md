@@ -1,7 +1,6 @@
 ---
 description: Read-only codebase investigator.
 mode: subagent
-model: 9router/{env:MODEL_B}
 color: "#3b82f6"
 temperature: 0.1
 top_p: 0.9

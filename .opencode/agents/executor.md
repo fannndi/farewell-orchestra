@@ -1,7 +1,6 @@
 ---
 description: Sole implementation worker — writes files, runs shell.
 mode: subagent
-model: 9router/{env:MODEL_B}
 color: "#10b981"
 steps: 50
 permission:

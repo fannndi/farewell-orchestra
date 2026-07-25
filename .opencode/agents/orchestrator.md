@@ -1,7 +1,6 @@
 ---
 description: Workflow orchestrator — decompose, fan-out researcher+reviewer, synthesize, delegate to executor.
 mode: primary
-model: 9router/{env:MODEL_A}
 color: "#7c3aed"
 temperature: 0.2
 top_p: 0.5

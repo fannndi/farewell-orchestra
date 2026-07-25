@@ -42,29 +42,25 @@ cd farewell-orchestra
 echo NINEROUTER_API_KEY=sk_... > .env
 
 # Pilih profile + start
-switch.bat pro       # Pro (default)
-switch.bat flash     # Flash (hemat token)
-switch.bat free      # Free (max hemat)
-switch.bat custom    # edit .env manual lalu run opencode
+run.bat       # interactive menu — pilih profile (pro, flash, free, hybrid)
 ```
-
-PowerShell: `.\switch.ps1 pro`
 
 ## Model Profiles
 
-Switch via `switch.bat <profile>` — if/else logic, auto-tulis `.env`, auto-start opencode.
+Run `run.bat` dan pilih profile — auto-tulis `.env`, auto-start opencode.
 
-| Profile  | orchestrator (HEAVY)      | 7 workers (LIGHT)          |
-|----------|--------------------------|---------------------------|
-| **pro**  | `ocg/deepseek-v4-pro`   | `ocg/deepseek-v4-flash`   |
-| **flash**| `ocg/deepseek-v4-flash` | `oc/deepseek-v4-flash-free` |
-| **free** | `oc/deepseek-v4-flash-free` | `oc/deepseek-v4-flash-free` |
-| **custom** | edit `.env` bebas      | edit `.env` bebas          |
+| Profile  | orchestrator (HEAVY)          | researcher/reviewer (LIGHT)  | executor (LIGHT)            |
+|----------|-------------------------------|------------------------------|-----------------------------|
+| **pro**  | `ocg/deepseek-v4-pro`        | `ocg/deepseek-v4-flash`      | `ocg/deepseek-v4-pro`      |
+| **flash**| `ocg/deepseek-v4-flash`      | `ocg/mimo-v2.5`              | `ocg/deepseek-v4-flash`    |
+| **free** | `oc/nemotron-3-ultra-free`   | `oc/nemotron-3-ultra-free`   | `oc/nemotron-3-ultra-free` |
+| **hybrid**| `ocg/deepseek-v4-flash`     | `oc/nemotron-3-ultra-free`   | `ocg/deepseek-v4-flash`    |
 
 **Role mapping:**
 - **HEAVY** → orchestrator
-- **LIGHT** → researcher, reviewer, executor, title, summary, compaction
-- **BEBAS** → build, plan, general, explore (model pilih sendiri)
+- **LIGHT** → researcher, reviewer
+- **Executor** → uses HEAVY on pro, LIGHT on others
+- **Internal** → title, summary, compaction (model per profile)
 
 ## Orchestration Rules
 
@@ -85,7 +81,7 @@ Switch via `switch.bat <profile>` — if/else logic, auto-tulis `.env`, auto-sta
 |-------------|-------|
 | **Mode**    | `primary` (selectable via Tab) |
 | **Default** | Yes — `default_agent` |
-| **Model**   | HEAVY (`{env:ORCHESTRA_HEAVY_MODEL}`) |
+| **Model**   | per profile — see table above |
 | **Color**   | `#7c3aed` (purple) |
 | **Temperature** | `0.2` |
 | **Max Steps** | `40` |
@@ -97,7 +93,7 @@ Koordinator utama. Read-only — tidak bisa edit/bash. Hanya delegasi ke researc
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` |
-| **Model**   | LIGHT (`{env:ORCHESTRA_LIGHT_MODEL}`) |
+| **Model**   | per profile — see table above |
 | **Color**   | `#3b82f6` (blue) |
 | **Temperature** | `0.1` |
 | **Max Steps** | `30` |
@@ -109,7 +105,7 @@ Read-only. Inspeksi kode, config, test, dokumentasi. `*:deny` kecuali read, glob
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` |
-| **Model**   | LIGHT (`{env:ORCHESTRA_LIGHT_MODEL}`) |
+| **Model**   | per profile — see table above |
 | **Color**   | `#f59e0b` (amber) |
 | **Temperature** | `0.1` |
 | **Max Steps** | `30` |
@@ -121,7 +117,7 @@ Read-only. Audit correctness, security, compatibility, concurrency, maintainabil
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` |
-| **Model**   | LIGHT (`{env:ORCHESTRA_LIGHT_MODEL}`) |
+| **Model**   | per profile — see table above |
 | **Color**   | `#10b981` (green) |
 | **Max Steps** | `50` |
 
@@ -167,6 +163,19 @@ Escape hatches — model bebas dipilih user.
 7. Report to user
 ```
 
+## Agent Personas
+
+Agent personality instructions dipisah ke file terpisah di `.opencode/agents/`:
+
+| File | Agent |
+|------|-------|
+| `.opencode/agents/orchestrator.md` | orchestrator |
+| `.opencode/agents/researcher.md` | researcher |
+| `.opencode/agents/reviewer.md` | reviewer |
+| `.opencode/agents/executor.md` | executor |
+
+File-file ini hanya berisi persona — model, permission, dan konfigurasi teknis tetap di `opencode.jsonc`.
+
 ## Permission Matrix
 
 | Agent          | edit  | bash  | task                | webfetch | question |
@@ -202,8 +211,7 @@ Escape hatches — model bebas dipilih user.
 |-------------------|-----------------------------------------------|
 | `opencode.jsonc`  | Agent config, permissions, commands            |
 | `.env.example`    | Env var template                               |
-| `switch.bat`      | If/else profile switch + auto-start opencode   |
-| `switch.ps1`      | PowerShell version                             |
+| `run.bat`         | Profile selector + auto-start opencode         |
 | `AGENTS.md`       | 8 orchestration rules                          |
 | `README.md`       | This file                                      |
 

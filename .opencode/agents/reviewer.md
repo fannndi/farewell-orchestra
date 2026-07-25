@@ -1,7 +1,6 @@
 ---
 description: Read-only security/architecture auditor.
 mode: subagent
-model: 9router/{env:MODEL_B}
 color: "#f59e0b"
 temperature: 0.1
 top_p: 0.9
