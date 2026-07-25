@@ -1,6 +1,6 @@
-# Farewell Orchestra — Multi-Profile OpenCode Orchestration | 15/15 Score
+# Farewell Orchestra — Profile-Validated Configuration
 
-**Workflow orchestration system for OpenCode** — parallel researcher+reviewer fan-out, controlled executor implementation, 4 tiered config profiles (Paid, Hybrid, Free, Free Backup). All profiles score **15/15** on configuration integrity, permission security, and model failover tests.
+**Workflow orchestration system for OpenCode** — parallel researcher+reviewer fan-out, controlled executor implementation, 4 tiered config profiles (Paid, Hybrid, Free, Free Backup). All profiles are structurally validated (JSON, model refs, permission coverage). Runtime enforcement depends on OpenCode engine. Self-assessed via LLM checklist, not CI-automated.
 
 ## Overview
 

@@ -22,13 +22,13 @@
           "name": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
           "reasoning": true,
           "tool_call": true,
-          "limit": { "context": 1000000, "output": 128000 }
+          "limit": { "context": 1000000, "output": 65536 }
         },
         "openrouter/cohere/north-mini-code:free": {
           "name": "openrouter/cohere/north-mini-code:free",
           "reasoning": true,
           "tool_call": true,
-          "limit": { "context": 1000000, "output": 128000 }
+          "limit": { "context": 1000000, "output": 65536 }
         }
       }
     }
