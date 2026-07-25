@@ -41,24 +41,16 @@ cd farewell-orchestra
 # Set API key di .env (wajib)
 echo NINEROUTER_API_KEY=sk_... > .env
 
-# Pilih profile + start
-run.bat       # interactive menu — pilih profile (pro, flash, free, hybrid)
+# Start
+opencode
 ```
 
-## Model Profiles
+## Model Assignment (Fixed)
 
-Run `run.bat` dan pilih profile — auto-tulis `.env`, auto-start opencode.
-
-| Profile | HEAVY (orchestrator/executor/compaction) | LIGHT (researcher/reviewer/title/summary) |
-|---------|------------------------------------------|------------------------------------------|
-| **pro** | `ocg/deepseek-v4-pro` ✅ | `ocg/deepseek-v4-flash` ✅ |
-| **flash** | `ocg/deepseek-v4-flash` ✅ | `ocg/mimo-v2.5` ✅ |
-| **free** | `oc/nemotron-3-ultra-free` ✅ | `openrouter/nvidia/nemotron-3-super-120b-a12b:free` ✅ |
-| **hybrid** | `ocg/deepseek-v4-flash` ✅ | `oc/nemotron-3-ultra-free` ✅ |
-
-**Role mapping:**
-- **HEAVY** → orchestrator, executor, compaction
-- **LIGHT** → researcher, reviewer, title, summary
+| Role | Model |
+|------|-------|
+| **HEAVY** — orchestrator, executor, compaction | `ocg/deepseek-v4-pro` |
+| **LIGHT** — researcher, reviewer, title, summary | `ocg/deepseek-v4-flash` |
 
 ## Orchestration Rules
 
@@ -79,7 +71,7 @@ Run `run.bat` dan pilih profile — auto-tulis `.env`, auto-start opencode.
 |-------------|-------|
 | **Mode**    | `primary` (selectable via Tab) |
 | **Default** | Yes — `default_agent` |
-| **Model**   | per profile — see table above |
+| **Model**   | fixed — see assignment table above |
 | **Color**   | `#7c3aed` (purple) |
 | **Temperature** | `0.2` |
 | **Max Steps** | `40` |
@@ -91,7 +83,7 @@ Koordinator utama. Read-only — tidak bisa edit/bash. Hanya delegasi ke researc
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` |
-| **Model**   | per profile — see table above |
+| **Model**   | fixed — see assignment table above |
 | **Color**   | `#3b82f6` (blue) |
 | **Temperature** | `0.1` |
 | **Max Steps** | `30` |
@@ -103,7 +95,7 @@ Read-only. Inspeksi kode, config, test, dokumentasi. `*:deny` kecuali read, glob
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` |
-| **Model**   | per profile — see table above |
+| **Model**   | fixed — see assignment table above |
 | **Color**   | `#f59e0b` (amber) |
 | **Temperature** | `0.1` |
 | **Max Steps** | `30` |
@@ -115,7 +107,7 @@ Read-only. Audit correctness, security, compatibility, concurrency, maintainabil
 | Property    | Value |
 |-------------|-------|
 | **Mode**    | `subagent` |
-| **Model**   | per profile — see table above |
+| **Model**   | fixed — see assignment table above |
 | **Color**   | `#10b981` (green) |
 | **Max Steps** | `50` |
 
@@ -209,7 +201,6 @@ File-file ini hanya berisi persona — model, permission, dan konfigurasi teknis
 |-------------------|-----------------------------------------------|
 | `opencode.jsonc`  | Agent config, permissions, commands            |
 | `.env.example`    | Env var template                               |
-| `run.bat`         | Profile selector + auto-start opencode         |
 | `AGENTS.md`       | 8 orchestration rules                          |
 | `README.md`       | This file                                      |
 
