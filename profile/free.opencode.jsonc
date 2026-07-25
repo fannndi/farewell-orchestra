@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "9router/oc/nemotron-3-ultra-free",
+  "model": "9router/Free",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
@@ -18,6 +18,7 @@
         "chunkTimeout": 120000
       },
       "models": {
+        "Free": { "name": "oc/nemotron-3-ultra-free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
         "oc/nemotron-3-ultra-free": { "name": "oc/nemotron-3-ultra-free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
         "openrouter/nvidia/nemotron-3-super-120b-a12b:free": { "name": "openrouter/nvidia/nemotron-3-super-120b-a12b:free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } }
       }
@@ -26,33 +27,33 @@
   "agent": {
     "orchestrator": {
       "description": "Workflow orchestrator — parallel research/review via foreground task calls, lalu eksekusi oleh executor.",
-      "mode": "primary", "model": "9router/oc/nemotron-3-ultra-free", "temperature": 0.2, "steps": 40,
+      "mode": "primary", "model": "9router/Free", "temperature": 0.2, "steps": 40,
 
       "permission": { "edit": "deny", "bash": "deny", "question": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/Free", "temperature": 0.1, "steps": 30,
 
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/Free", "temperature": 0.1, "steps": 30,
 
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "steps": 50,
+      "mode": "subagent", "model": "9router/Free", "steps": 50,
 
       "permission": { "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "general": { "mode": "subagent", "permission": { "task": "deny" } },
     "explore": { "mode": "subagent", "permission": { "task": "deny" } },
-    "title": { "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "mode": "primary", "hidden": true },
-    "summary": { "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/oc/nemotron-3-ultra-free", "mode": "primary", "hidden": true }
+    "title": { "model": "9router/Free", "mode": "primary", "hidden": true },
+    "summary": { "model": "9router/Free", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/Free", "mode": "primary", "hidden": true }
   },
   "experimental": {
     "primary_tools": ["todowrite", "question"]
