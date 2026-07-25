@@ -1,18 +1,26 @@
 ---
 name: switch-profile
-description: Use when Boss wants to switch between profiles. Orchestrator handles the switching — Boss just says "pakai profile free" or "ganti ke hybrid".
+description: Use when Boss wants to switch between profiles. Orchestrator CANNOT restart opencode (bash: deny), so it presents profile info and tells Boss the exact command to run manually or via switch.bat.
 ---
 
 ## Purpose
 
-Switch the active opencode profile. Presents the 4 available profiles with their model assignments and cost tier. Restarts opencode with the selected config.
+Informational skill. Orchestrator CANNOT restart opencode itself (bash: deny). When Boss asks to switch profiles, the orchestrator tells Boss the exact command to run or points to `switch.bat` (Windows) / manual command (Linux/macOS).
+
+The actual profile switch is a manual step outside opencode:
+- **Windows**: double-click `switch.bat` or run it from terminal
+- **Manual**: copy the desired profile to `opencode.jsonc`:
+  ```bash
+  cp profiles/opencode.{name}.jsonc opencode.jsonc && opencode
+  ```
+Then restart opencode.
 
 ## Process
 
 1. Display the 4 profiles with their model assignments
 2. Let Boss pick 1-4
-3. Run `opencode -c profiles/opencode.{choice}.jsonc`
-4. Confirm active profile
+3. Tell Boss the exact command to copy the profile or point to `switch.bat`
+4. Remind Boss to restart opencode after switching
 
 ## Profiles Reference
 

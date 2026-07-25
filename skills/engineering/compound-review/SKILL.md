@@ -1,6 +1,6 @@
 ---
 name: compound-review
-description: Use when reviewing a significant change (>50 lines, >3 files). Dispatches parallel axis reviewers — security, architecture, performance — then synthesizes.
+description: Use when reviewing a significant change (>50 lines, >3 files). ORCHESTRATOR dispatches parallel axis reviewers, then synthesizes. NOT triggered by reviewer — orchestrator drives it.
 ---
 
 ## Purpose
@@ -26,7 +26,7 @@ Multi-axis parallel code review for significant changes. Instead of one reviewer
 
 1. Determine change scope — which files, how many lines, what domain
 2. Select relevant axes (not all 4 for every change — proportionate)
-3. Dispatch one `audit-security` per axis with axis-specific briefs. ALL IN PARALLEL.
+3. Orchestrator dispatches one audit-security per axis with axis-specific briefs. ALL IN PARALLEL. Reviewer agents do NOT task — orchestrator owns the fan-out.
 4. Synthesize: combine findings, deduplicate, prioritize by severity
 5. Report: "X BLOCKING, Y SHOULD, Z NICE across {n} axes"
 
@@ -37,6 +37,7 @@ Multi-axis parallel code review for significant changes. Instead of one reviewer
 - Never run axes sequentially. They're independent — PARALLEL.
 - Synthesis must deduplicate. Same finding from 2 axes = 1 report entry.
 - Report format: `[SEVERITY] axis: file:line — finding`
+- This skill is driven by the orchestrator, which has task permission. Reviewer agents called by this skill do their own single-axis review and report back — they do not spawn sub-sub-agents.
 
 ## Failure Modes
 

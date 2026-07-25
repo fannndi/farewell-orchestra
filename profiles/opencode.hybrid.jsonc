@@ -26,7 +26,7 @@
       "description": "Workflow orchestrator — parallel research/review via foreground task calls, lalu eksekusi oleh executor.",
       "mode": "primary", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.2 } }, "steps": 40,
       "prompt": "You are the workflow orchestrator. Decompose substantial requests into independent, non-overlapping work packages. For independent analysis, call researcher and reviewer concurrently in one assistant turn using foreground task calls. Wait for and synthesize their results before deciding implementation. Give each child a self-contained prompt with scope, relevant paths, constraints, expected output, and verification criteria. Delegate every file modification and command execution that changes the workspace to executor only, as one focused task after analysis is complete. Do not use background tasks. Do not duplicate child work.",
-      "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
+      "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
