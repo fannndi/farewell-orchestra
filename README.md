@@ -49,18 +49,16 @@ run.bat       # interactive menu — pilih profile (pro, flash, free, hybrid)
 
 Run `run.bat` dan pilih profile — auto-tulis `.env`, auto-start opencode.
 
-| Profile  | orchestrator (HEAVY)          | researcher/reviewer (LIGHT)  | executor (LIGHT)            |
-|----------|-------------------------------|------------------------------|-----------------------------|
-| **pro**  | `ocg/deepseek-v4-pro`        | `ocg/deepseek-v4-flash`      | `ocg/deepseek-v4-pro`      |
-| **flash**| `ocg/deepseek-v4-flash`      | `ocg/mimo-v2.5`              | `ocg/deepseek-v4-flash`    |
-| **free** | `oc/nemotron-3-ultra-free`   | `oc/nemotron-3-ultra-free`   | `oc/nemotron-3-ultra-free` |
-| **hybrid**| `ocg/deepseek-v4-flash`     | `oc/nemotron-3-ultra-free`   | `ocg/deepseek-v4-flash`    |
+| Profile | HEAVY (orchestrator/executor/compaction) | LIGHT (researcher/reviewer/title/summary) |
+|---------|------------------------------------------|------------------------------------------|
+| **pro** | `ocg/deepseek-v4-pro` ✅ | `ocg/deepseek-v4-flash` ✅ |
+| **flash** | `ocg/deepseek-v4-flash` ✅ | `ocg/mimo-v2.5` ✅ |
+| **free** | `oc/nemotron-3-ultra-free` ✅ | `openrouter/nvidia/nemotron-3-super-120b-a12b:free` ✅ |
+| **hybrid** | `ocg/deepseek-v4-flash` ✅ | `oc/nemotron-3-ultra-free` ✅ |
 
 **Role mapping:**
-- **HEAVY** → orchestrator
-- **LIGHT** → researcher, reviewer
-- **Executor** → uses HEAVY on pro, LIGHT on others
-- **Internal** → title, summary, compaction (model per profile)
+- **HEAVY** → orchestrator, executor, compaction
+- **LIGHT** → researcher, reviewer, title, summary
 
 ## Orchestration Rules
 
