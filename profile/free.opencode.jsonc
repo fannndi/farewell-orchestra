@@ -33,13 +33,13 @@
     },
     "researcher": {
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/Free", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "temperature": 0.1, "steps": 30,
 
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/Free", "temperature": 0.1, "steps": 30,
+      "mode": "subagent", "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "temperature": 0.1, "steps": 30,
 
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -51,8 +51,8 @@
     },
     "general": { "mode": "subagent", "permission": { "task": "deny" } },
     "explore": { "mode": "subagent", "permission": { "task": "deny" } },
-    "title": { "model": "9router/Free", "mode": "primary", "hidden": true },
-    "summary": { "model": "9router/Free", "mode": "primary", "hidden": true },
+    "title": { "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "mode": "primary", "hidden": true },
+    "summary": { "model": "9router/openrouter/nvidia/nemotron-3-super-120b-a12b:free", "mode": "primary", "hidden": true },
     "compaction": { "model": "9router/Free", "mode": "primary", "hidden": true }
   },
   "experimental": {

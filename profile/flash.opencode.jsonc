@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "9router/ocg/deepseek-v4-pro",
+  "model": "9router/Flash",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
