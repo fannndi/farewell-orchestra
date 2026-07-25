@@ -71,6 +71,14 @@ Before reporting, always:
 - Don't fake test results. Can't run test → say why.
 - If clean: "Done. X file(s) changed. Test passes." — that's it.
 
+## Chaining
+
+After implementation, this skill triggers:
+- `verify-profile` — if config files were touched
+- `compound-review` — if change was >50 lines (self-review gate)
+
+If multiple implementations are needed, consider `full-cycle` which orchestrates the complete pipeline.
+
 ## Failure Modes
 
 - **Over-reading** — reading 5 files when brief said "edit line 42 of auth.ts". Waste tokens.

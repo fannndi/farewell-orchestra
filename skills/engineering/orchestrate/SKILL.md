@@ -45,6 +45,15 @@ Invoke this skill when:
 | `coba aja` | Execute quick. Ok to fail. |
 | `menurutmu?` | Give opinion. Do NOT execute. |
 
+## Chaining
+
+This skill internally drives:
+- `verify-profile` — before every dispatch, validate the active profile
+- `research-codebase` + `audit-security` — dispatched in parallel
+- `implement-change` — after synthesis
+
+After completion, auto-return to PLAN mode. If Boss approves result, consider `full-cycle` for complex multi-step tasks.
+
 ## Failure Modes
 
 - **Over-decomposition** — splitting a single-file change into 3 sub-agent tasks. Waste of tokens. Merge into 1 executor task.
