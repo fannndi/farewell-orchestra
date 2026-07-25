@@ -43,10 +43,10 @@ User Request
 
 | Profile | Tier | Orchestrator | Researcher | Reviewer | Executor | Compaction | Models |
 |---------|------|-------------|------------|----------|----------|------------|--------|
-| `opencode.paid.jsonc` | Paid | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | deepseek-v4-flash | 2 paid |
-| `opencode.hybrid.jsonc` | Mixed | deepseek-v4-flash | north-mini-code-free | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-flash | 1 paid + 1 free |
-| `opencode.free.jsonc` | Free | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 2 free |
-| `opencode.free-backup.jsonc` | Free (OpenRouter) | nemotron-3-ultra-550b-free | north-mini-code-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | 2 free |
+| `profiles/opencode.paid.jsonc` | Paid | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | deepseek-v4-flash | 2 paid |
+| `profiles/opencode.hybrid.jsonc` | Mixed | deepseek-v4-flash | north-mini-code-free | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-flash | 1 paid + 1 free |
+| `profiles/opencode.free.jsonc` | Free | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 2 free |
+| `profiles/opencode.free-backup.jsonc` | Free (OpenRouter) | nemotron-3-ultra-550b-free | north-mini-code-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | 2 free |
 
 - **Paid** — 2 DeepSeek models via OCG provider. Max quality, max speed. Heavy-thinking orchestrator + executor, fast researcher/reviewer.
 - **Hybrid** — 1 paid (DeepSeek Flash) + 1 free (North Mini Code). DeepSeek Flash handles orchestrator, reviewer, executor; North Mini handles researcher. Best cost/quality balance.
@@ -60,9 +60,9 @@ git clone https://github.com/fannndi/farewell-orchestra
 cd farewell-orchestra
 echo NINEROUTER_API_KEY=sk_... > .env
 opencode                                    # default (paid)
-opencode -c opencode.hybrid.jsonc           # hybrid
-opencode -c opencode.free.jsonc             # free
-opencode -c opencode.free-backup.jsonc      # free backup (OpenRouter)
+opencode -c profiles/opencode.hybrid.jsonc  # hybrid
+opencode -c profiles/opencode.free.jsonc    # free
+opencode -c profiles/opencode.free-backup.jsonc  # free backup
 ```
 
 > **Prerequisite:** 9Router must be running on `127.0.0.1:20128`. Configure your API key in `.env`.
@@ -149,22 +149,12 @@ Three dimensions, five profiles, all passing:
 | File | Purpose |
 |------|---------|
 | `opencode.jsonc` | Default config (same as paid profile) |
-| `opencode.paid.jsonc` | Paid profile — 2 DeepSeek models |
-| `opencode.hybrid.jsonc` | Hybrid profile — 1 paid + 1 free |
-| `opencode.free.jsonc` | Free profile — 2 free OCG models |
-| `opencode.free-backup.jsonc` | Free backup — 2 free OpenRouter models |
-| `AGENTS.md` | Agent instruction context (loaded by OpenCode on start) |
-| `tui.json` | Terminal UI theme (Catppuccin Mocha) + keybinds |
+| `profiles/*.jsonc` | 4 tiered config profiles |
+| `switch.bat` | Windows profile selector menu |
 | `.env.example` | Environment variable template |
-| `check_json.js` | Config JSON validator script |
-| `.opencode/agents/orchestrator.md` | Orchestrator persona |
-| `.opencode/agents/researcher.md` | Researcher persona |
-| `.opencode/agents/reviewer.md` | Reviewer persona |
-| `.opencode/agents/executor.md` | Executor persona |
-| `persona/orchestrator.persona.md` | Orchestrator personality reference |
-| `persona/researcher.persona.md` | Researcher personality reference |
-| `persona/reviewer.persona.md` | Reviewer personality reference |
-| `persona/executor.persona.md` | Executor personality reference |
+| `AGENTS.md` | Agent instruction context (loaded by OpenCode on start) |
+| `.opencode/agents/` | Budget-aware agent personas |
+| `README.md` | This file |
 
 ## License
 
