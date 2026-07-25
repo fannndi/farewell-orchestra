@@ -18,7 +18,7 @@
         "chunkTimeout": 120000
       },
       "models": {
-        "FREE": { "name": "Free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
+        "Free": { "name": "Free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
       }
     }
   },
