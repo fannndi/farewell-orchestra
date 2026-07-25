@@ -1,10 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
-title Farewell Orchestra -- Profile Selector
-set "PROFILE=None"
-color 0B
+title Farewell Orchestra - Profile Switcher
 
+:: Check opencode exists
 where opencode >nul 2>&1 || (
   echo.
   echo   [X] 'opencode' not found. Install it first.
@@ -14,83 +13,55 @@ where opencode >nul 2>&1 || (
   exit /b 1
 )
 
+color 0B
+
 :menu
 cls
 echo.
-echo   +==================================+
-echo   ^|    FAREWELL ORCHESTRA            ^|
-echo   ^|    Profile Selector              ^|
-echo   +==================================+
+echo   +==========================================+
+echo   ^|     Farewell Orchestra - Profiles        ^|
+echo   +==========================================+
+echo   ^|  1. Paid     deepseek-v4-pro + flash     ^|
+echo   ^|  2. Hybrid   flash + north-mini-free     ^|
+echo   ^|  3. Free     nemotron-3-ultra-free       ^|
+echo   ^|  4. Backup   OpenRouter via 9router      ^|
+echo   ^|  5. Exit                                 ^|
+echo   +==========================================+
 echo.
-echo     Profile: %PROFILE%
-echo     -----------------------------
-echo     [1] Paid   - deepseek-v4-pro + flash
-echo     [2] Hybrid - paid flash + free
-echo     [3] Free   - nemotron-3-ultra + north-mini
-echo     [4] Backup - OpenRouter via 9router
-echo     [5] Exit
-echo     -----------------------------
-echo.
-set "CHOICE="
-set /p "CHOICE=    Choice [1-5]: "
-if "%CHOICE%"=="1" goto :paid
-if "%CHOICE%"=="2" goto :hybrid
-if "%CHOICE%"=="3" goto :free
-if "%CHOICE%"=="4" goto :backup
-if "%CHOICE%"=="5" goto :exit
-echo.
-echo     [X] Invalid choice
-echo.
-pause >nul
-goto :menu
+set /p "choice=  Pilih [1-5]: "
 
-:paid
-set "PROFILE=Paid [deepseek-v4-pro + flash]"
-opencode -c profiles\opencode.paid.jsonc
-if errorlevel 1 (
-  echo.
-  echo   [X] opencode exited with error %errorlevel%
-  echo   Check: API key? 9Router running at 127.0.0.1:20128?
-  pause >nul
+if "%choice%"=="1" set "SRC=paid"   & set "NAME=Paid"
+if "%choice%"=="2" set "SRC=hybrid" & set "NAME=Hybrid"
+if "%choice%"=="3" set "SRC=free"   & set "NAME=Free"
+if "%choice%"=="4" set "SRC=free-backup" & set "NAME=Free Backup"
+if "%choice%"=="5" exit /b 0
+
+if "%SRC%"=="" (
+  echo   [X] Invalid choice
+  timeout /t 1 /nobreak >nul
+  goto menu
 )
-goto :menu
 
-:hybrid
-set "PROFILE=Hybrid [paid flash + free]"
-opencode -c profiles\opencode.hybrid.jsonc
+:: Copy profile to root config
+copy /y "profiles\opencode.%SRC%.jsonc" opencode.jsonc >nul 2>&1
 if errorlevel 1 (
-  echo.
-  echo   [X] opencode exited with error %errorlevel%
-  echo   Check: API key? 9Router running at 127.0.0.1:20128?
-  pause >nul
+  echo   [X] Failed to copy profiles\opencode.%SRC%.jsonc
+  pause
+  goto menu
 )
-goto :menu
 
-:free
-set "PROFILE=Free [nemotron-3-ultra + north-mini]"
-opencode -c profiles\opencode.free.jsonc
-if errorlevel 1 (
-  echo.
-  echo   [X] opencode exited with error %errorlevel%
-  echo   Check: API key? 9Router running at 127.0.0.1:20128?
-  pause >nul
-)
-goto :menu
-
-:backup
-set "PROFILE=Backup [OpenRouter via 9router]"
-opencode -c profiles\opencode.free-backup.jsonc
-if errorlevel 1 (
-  echo.
-  echo   [X] opencode exited with error %errorlevel%
-  echo   Check: API key? 9Router running at 127.0.0.1:20128?
-  pause >nul
-)
-goto :menu
-
-:exit
-cls
 echo.
-echo   Goodbye.
+echo   [OK] %NAME% profile applied.
+echo   Launching opencode...
 timeout /t 1 /nobreak >nul
-exit /b 0
+
+:: Launch opencode with the new config
+opencode
+if errorlevel 1 (
+  echo.
+  echo   [X] opencode exited with error %errorlevel%
+  echo   Check: API key in .env? 9Router at 127.0.0.1:20128?
+  pause >nul
+)
+
+goto menu
