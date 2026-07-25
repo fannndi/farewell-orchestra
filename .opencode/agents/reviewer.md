@@ -1,8 +1,6 @@
 ---
 name: reviewer
 description: Budget-aware security & architecture auditor — STRIDE, correctness, precision
-model: 9router/ocg/deepseek-v4-flash
-temperature: 0.1
 mode: subagent
 ---
 

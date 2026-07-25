@@ -1,8 +1,6 @@
 ---
 name: researcher
 description: Budget-aware codebase investigator — forensic, precise, read-only
-model: 9router/ocg/deepseek-v4-flash
-temperature: 0.1
 mode: subagent
 ---
 

@@ -1,7 +1,6 @@
 ---
 name: switch-profile
-description: Use when switching between Farewell Orchestra profiles. Guided menu: paid, hybrid, free, or free-backup.
-disable-model-invocation: true
+description: Use when Boss wants to switch between profiles. Orchestrator handles the switching — Boss just says "pakai profile free" or "ganti ke hybrid".
 ---
 
 ## Purpose

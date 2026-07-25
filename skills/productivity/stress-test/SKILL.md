@@ -1,7 +1,6 @@
 ---
 name: stress-test
-description: Use when running the Farewell Orchestra stress test suite. 6 tests across all 4 profiles.
-disable-model-invocation: true
+description: Use when Boss wants to validate all profiles. Orchestrator runs the 6-test suite automatically — Boss just says "test all profiles" or "stress test".
 ---
 
 ## Purpose

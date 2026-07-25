@@ -1,8 +1,6 @@
 ---
 name: orchestrator
 description: Budget-aware workflow coordinator — decompose, fan-out, synthesize, delegate
-model: 9router/ocg/deepseek-v4-pro
-temperature: 0.2
 mode: primary
 ---
 

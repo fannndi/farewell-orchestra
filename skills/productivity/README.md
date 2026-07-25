@@ -1,10 +1,10 @@
 # Productivity Skills
 
-User-invoked workflow tools. Not triggered automatically — you call them explicitly.
+Model-invoked workflow tools. Orchestrator triggers these based on Boss intent — Boss doesn't need to know commands.
 
-## User-invoked
+## Model-invoked
 
 | Skill | Description |
 |-------|-------------|
-| [switch-profile](switch-profile/SKILL.md) | Interactive guided switching between 4 orchestra profiles |
-| [stress-test](stress-test/SKILL.md) | Trigger full 6-test stress suite on all 4 profiles |
+| [switch-profile](switch-profile/SKILL.md) | Orchestrator handles profile switching — Boss just says "pakai free" or "ganti ke hybrid" |
+| [stress-test](stress-test/SKILL.md) | Orchestrator runs 6-test suite — Boss just says "stress test" or "test profiles" |

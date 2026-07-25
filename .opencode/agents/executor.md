@@ -1,8 +1,6 @@
 ---
 name: executor
 description: Budget-aware implementation worker — minimal code, verify-first, cleanup
-model: 9router/ocg/deepseek-v4-pro
-temperature: 0.2
 mode: subagent
 ---
 
