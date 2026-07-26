@@ -119,6 +119,8 @@ Deny-by-default. Executor satu-satunya yang bisa nulis file dan jalanin shell.
 
 Subagent depth capped di 1 — worker nggak bisa spawn worker.
 
+> Global fallback: `"*": "ask"` — agent baru nggak auto allow-all.
+
 ---
 
 ## Files
@@ -127,6 +129,7 @@ Subagent depth capped di 1 — worker nggak bisa spawn worker.
 |------|---------|
 | `opencode.jsonc` | Default config (paid profile) |
 | `profiles/opencode.*.jsonc` | 3 profile: paid, hybrid, free |
+| `.env.example` | Env vars: NINEROUTER_API_KEY + OPENCODE_ENABLE_EXA + BRAVE_API_KEY |
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
 | `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |
