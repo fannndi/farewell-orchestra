@@ -40,6 +40,15 @@ Boss: "perbaikin bug di login"
 
 Orchestra bisa dipakai dari project lain. Boss input: `"kerjain project ini <path>"` — orchestrator auto-detect path dan kerja di sana. Setup sekali: `permission.external_directory` di global config. Lihat `project-guide.md`.
 
+## Quick Start
+
+```bash
+cp .env.example .env                  # create env file
+echo OPENCODE_ENABLE_EXA=1 >> .env    # enable web search
+# edit .env — isi NINEROUTER_API_KEY dari 9Router
+opencode
+```
+
 ---
 
 ## Anti-GIGO: The Gate

@@ -32,6 +32,17 @@ Kalau ragu → **search**. Salah nyari lebih murah daripada salah jawab.
 
 **JANGAN pakai HTTP fetch/call manual.** OpenCode sudah handle routing search engine via 9Router di belakang layar. Lo tinggal panggil `websearch` dan `webfetch`.
 
+### Search→Extract Two-Step
+
+JANGAN fetch langsung. Selalu dua langkah:
+
+1. **Search** — `websearch("query")` → dapet list URL + snippet + relevance score
+2. **Filter** — buang URL dg score <0.7, buang duplikat (strip query params, trailing slash)
+3. **Extract** — `webfetch(url)` hanya ke URL yg lolos filter, max 5 URL per batch
+4. **Merge** — gabung konten unik, pisahkan dg `---`, sort by score descending
+
+**Kenapa:** fetch-semua = 5000+ token wasted. Search→filter→extract = hemat 50%.
+
 ### 9Router API (untuk script eksternal / custom tool — BUKAN dari dalam agent)
 
 Kalau BUTUH akses programmatic dari luar OpenCode (script, CI, custom tool):
@@ -43,11 +54,24 @@ Pakai `search-combo` / `fetch-combo` buat auto-fallback. Lihat 9Router docs buat
 
 ## 4. Query Protocol
 
-1. **Broad → narrow.** Query pertama `websearch("topik umum")`, berikutnya makin spesifik.
-2. **Setiap query harus beda arah** — jangan re-run query sama.
-3. **Item majemuk → pisah.** "Bandingin X vs Y" → `websearch("X features")` lalu `websearch("Y features")`.
-4. **Snippet ambigu?** → `webfetch(url)` halaman aslinya. Jangan nebak dari judul.
-5. **Scale effort:** 1 fakta = 1 search. Perbandingan = 3-8 search. Riset mendalam = 8-20.
+### 4a. Sub-Query Batching
+
+Query kompleks → pecah jadi 3-5 sub-query paralel:
+
+| Query asli | Sub-queries |
+|------------|-------------|
+| "Bandingin X vs Y untuk Z" | `websearch("X features Z")`, `websearch("Y features Z")`, `websearch("X vs Y comparison")` |
+| "Apa implikasi X terhadap Y dan Z" | `websearch("X impact on Y")`, `websearch("X impact on Z")`, `websearch("X latest developments")` |
+
+**Jangan gabung** dalam satu query panjang — hasil cenderung dangkal untuk semua topik.
+
+### 4b. Query Rules
+
+1. **Pendek & spesifik.** 2-6 kata. Bukan kalimat lengkap.
+2. **Broad → narrow.** Query pertama umum, berikutnya makin spesifik.
+3. **Jangan re-run query sama.** Setiap query harus beda arah.
+4. **Snippet ambigu?** → `webfetch(url)` halaman aslinya.
+5. **Scale effort:** 1 fakta = 1 search. Perbandingan = 3-8. Riset = 8-20.
 
 ## 5. Source Quality
 

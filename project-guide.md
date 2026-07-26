@@ -8,6 +8,8 @@ Repo ini bukan cuma config buat dirinya sendiri — ini **otak orkestrasi Boss**
 Jalanin `opencode` di dalam folder farewell-orchestra seperti biasa, terus input: `"bantu aku kerjain project ini <path>"`. Orchestrator treat path itu sebagai target root (lihat AGENTS.md Session Flow step 0).
 
 Wajib disetup dulu — OpenCode scoped ke cwd tempat dia di-start; akses ke path lain trigger `permission.external_directory` (default "ask" = prompt tiap kali). Biar nggak prompt terus, tambah SEKALI di `~/.config/opencode/opencode.json` (global, bukan di tiap profile):
+
+> **`OPENCODE_ENABLE_EXA=1` wajib** di `.env` buat researcher web search. Tanpa ini, researcher nggak bisa akses internet via Exa.
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
