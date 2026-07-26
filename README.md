@@ -73,8 +73,10 @@ Input <10 kata, ambigu, atau kontradiktif → **ditolak**. Mending ditolak sekar
 
 ```bash
 opencode                                    # paid (default)
-opencode -c profiles/opencode.hybrid.jsonc  # hybrid
-opencode -c profiles/opencode.free.jsonc    # free
+# Atau copy profile manual / pakai switch script:
+cp profiles/opencode.hybrid.jsonc opencode.jsonc && opencode   # hybrid
+cp profiles/opencode.free.jsonc opencode.jsonc && opencode     # free
+# Windows: switch.bat | Mac/Linux: bash switch.sh
 ```
 
 ---
@@ -113,7 +115,7 @@ Subagent depth capped di 1 — worker nggak bisa spawn worker.
 | `opencode.jsonc` | Default config (paid profile) |
 | `profiles/opencode.*.jsonc` | 3 profile: paid, hybrid, free |
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
-| `skills/` | Spesialisasi — metodologi kerja tiap agent |
+| `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
 | `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |
 | `TEST.md` | Smoke test — simulasi interaksi 4 agent |
 | `LESSONS.md` | Log pembelajaran — tiap kali Boss koreksi |

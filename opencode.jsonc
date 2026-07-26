@@ -3,6 +3,12 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/ocg/deepseek-v4-pro",
   "default_agent": "orchestrator",
+  "references": {
+    "projects": {
+      "path": "~/projects",
+      "description": "Folder project Boss — biar orchestrator bisa akses tanpa prompt approval"
+    }
+  },
   "subagent_depth": 1,
   "share": "disabled",
   "provider": {

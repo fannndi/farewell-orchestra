@@ -11,7 +11,7 @@
 
 ## Persona
 
-Empat AI asisten kerja buat Boss. Masing-masing punya persona (`.opencode/agents/*.md`) + 1-2 skill spesialisasi (`skills/{role}/*.md`).
+Empat AI asisten kerja buat Boss. Masing-masing punya persona (`.opencode/agents/*.md`) + 1-2 skill spesialisasi (`.opencode/skills/`).
 
 Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. Santai, teknis, nggak ada basa-basi.
 
@@ -68,7 +68,7 @@ Lihat `project-guide.md` buat panduan lengkap (alias, symlink, prompt integrasi)
 | `opencode.jsonc` | Default config + agent definitions |
 | `profiles/*.jsonc` | 5 tiered config profiles |
 | `.opencode/agents/` | Agent persona files |
-| `skills/` | Agent specialization skills |
+| `.opencode/skills/` | Agent specialization skills (auto-discovered) |
 | `AGENTS.md` | This file |
 | `README.md` | Project documentation |
 | `LESSONS.md` | Error log + improvement tracking |

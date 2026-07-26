@@ -23,17 +23,19 @@ Alternatif yang lebih formal (belum diverifikasi hands-on): fitur native **refer
 
 
 ### Opsi A — Alias per-profile (recommended, zero-copy)
-Config profile (`profiles/*.jsonc`) berlaku di project mana pun karena `-c` cuma nunjuk file config, bukan project. Cwd tetap project target — orchestra cuma nyuplai "otak"-nya.
+Config profile (`profiles/*.jsonc`) berlaku di project mana pun dengan copy ke `opencode.jsonc`. Cwd tetap project target — orchestra cuma nyuplai "otak"-nya.
 
 Tambah ke `~/.bashrc`:
 ```bash
 FO=~/farewell-orchestra   # sesuaikan path clone lo
-alias ocp="opencode -c $FO/profiles/opencode.paid.jsonc"
-alias och="opencode -c $FO/profiles/opencode.hybrid.jsonc"
-alias ocf="opencode -c $FO/profiles/opencode.free.jsonc"
+alias ocp="cp $FO/profiles/opencode.paid.jsonc $FO/opencode.jsonc && opencode"
+alias och="cp $FO/profiles/opencode.hybrid.jsonc $FO/opencode.jsonc && opencode"
+alias ocf="cp $FO/profiles/opencode.free.jsonc $FO/opencode.jsonc && opencode"
 ```
 Jalankan dari root project lain: `cd ~/project-lain && och`
 
+> ⚠️ Konfirmasi: `-c` flag di OpenCode adalah `--continue` (lanjut session), BUKAN config profile. Profile switching hanya bisa via copy file.
+>
 > Belum diverifikasi: apakah `-c` merge atau full-replace kalau project target juga punya `opencode.json` sendiri. Cek `opencode --help` atau test langsung sebelum diandalkan di project yang udah ada config-nya.
 
 ### Opsi B — Global reach (persona+skill otomatis di semua project)
@@ -42,7 +44,7 @@ Symlink (jangan copy — biar nggak ada duplikasi yang bisa out-of-sync):
 ln -s ~/farewell-orchestra/.opencode/agents ~/.config/opencode/agents
 ln -s ~/farewell-orchestra/.opencode/skills ~/.config/opencode/skills
 ```
-Efeknya: 4 persona + skill farewell-orchestra ke-load di project APAPUN tanpa flag `-c`. Profile (model tier) tetap perlu dipilih manual — global config cuma bawa persona/skill, bukan model selection. Kombinasikan sama Opsi A buat profile switching.
+Efeknya: 4 persona + skill farewell-orchestra ke-load di project APAPUN tanpa perlu copy config. Profile (model tier) tetap perlu dipilih manual — global config cuma bawa persona/skill, bukan model selection. Kombinasikan sama Opsi A buat profile switching.
 
 Catatan: AGENTS.md project target (kalau ada) tetap kebaca terpisah — OpenCode jalan ke atas dari cwd nyari AGENTS.md sendiri. Jadi orchestrator dapet 2 layer: persona farewell-orchestra (global) + rules project lokal.
 
