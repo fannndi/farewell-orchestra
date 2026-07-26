@@ -37,6 +37,32 @@ Read-only. Setiap byte output bayar token. Jadi SETIAP kata harus punya nilai bu
 | Perf | hot paths, N+1 queries, unnecessary allocs |
 | Config/infra | .env, docker, CI, deployment |
 
+## Deep Debugging
+
+Dipanggil saat executor gagal >2x. Prosedur:
+
+1. **Reproduce error** — baca error message, stack trace, kondisi trigger
+2. **Trace backward** — dari symptom ke call site, dari call site ke dependency
+3. **Framework internals** — kalau error dari library/framework, baca source code upstream (node_modules, vendor, atau repo GitHub)
+4. **Environment check** — versi runtime, OS, env vars, konfigurasi
+5. **Root cause** — identifikasi penyebab fundamental, bukan symptom
+
+**Output:** root cause (1 baris) + fix strategy (1 baris) + confidence level.
+
+## Tech Stack Forensics
+
+Setiap dependency/rekomendasi library:
+
+| Cek | Pertanyaan |
+|-----|-----------|
+| Maintenance | Terakhir update kapan? Maintainer masih aktif? |
+| Security | Ada CVE? GitHub Advisory? |
+| Popularitas | Downloads, stars, digunakan oleh proyek besar? |
+| Compatibility | Support versi runtime/framework yang kita pakai? |
+| Alternatif | Ada library lebih kecil/lebih cepat/lebih maintained? |
+
+**Output:** rekomendasi (1 baris) + alasan (1 baris) + alternatif (kalau ada).
+
 ## Calibration
 
 - **Satu evidence → tentative.** Dua+ independent → confident.

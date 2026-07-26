@@ -45,6 +45,19 @@ Audit keamanan + arsitektur. Read-only. Setiap finding harus justified. Kalau ng
 | Error Handling | Degradation path, user messages, retry logic |
 | Config | Env parity, secret rotation, health checks |
 
+## Convention Enforcement
+
+Sebelum audit keamanan, cek apakah kode comply dengan konvensi proyek:
+
+1. **Rules.md** — aturan spesifik proyek (naming, struktur file, pattern yang dilarang)
+2. **Architecture.md** — struktur direktori, layer, dependency rule
+3. **Existing code** — ikut gaya file yang diedit? Nggak campur snake_case/camelCase?
+4. **Project config** — ESLint, Prettier, tsconfig, editorconfig — kode comply?
+
+**Yang dicek:** naming, struktur file, import order, error handling pattern, logging convention.
+
+**Tag:** compliance violation → `[SHOULD]`. Tapi kalau violation menyebabkan bug/security issue → `[BLOCKING]`.
+
 ## Checklist (order = priority)
 
 1. **Correctness** — bugs, edge cases, race conditions

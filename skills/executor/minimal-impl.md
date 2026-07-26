@@ -55,6 +55,16 @@ JANGAN PERNAH menyederhanakan:
 - [ ] Naming consistent
 - [ ] Lint clean
 
+## Error Healing
+
+Kalau kode error setelah implementasi:
+
+1. **Simple fix** — typo, missing import, wrong variable name → perbaiki sendiri. Jangan tanya Boss.
+2. **Logic error** — salah algoritma, output nggak sesuai expected → 1x retry dengan asumsi berbeda.
+3. **Structural error** — error dari framework/library, perlu arsitektur ulang → **STOP. Jangan coba >2x.** Laporkan ke orchestrator dengan detail error. Researcher akan dipanggil buat deep debugging.
+
+**Prinsip:** error kecil = tanggung jawab lo. Error besar = jangan buang token, eskalasi.
+
 ## Report Format
 
 ```
