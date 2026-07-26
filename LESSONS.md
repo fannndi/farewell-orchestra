@@ -20,5 +20,4 @@
 
 ---
 
-> Auto-maintained by `lessons-learned` skill. Jangan edit manual.
-> Log format: 1 baris per entry. Singkat. Gunakan root cause category dari skill.
+> Log manual. Tambah entry tiap ada koreksi dari Boss.
