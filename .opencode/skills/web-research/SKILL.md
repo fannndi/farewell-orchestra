@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: Use when investigating outside the codebase — current facts, library/API status, docs, pricing, news. Evidence-first, source-quality aware. Uses 9Router /v1/search and /v1/web/fetch for execution.
+description: Use when investigating outside the codebase — current facts, library/API status, docs, pricing, news. Evidence-first, source-quality aware.
 ---
 
 # Web Research
@@ -19,30 +19,40 @@ Read-only. Domain-nya internet, bukan filesystem. Prinsip: setiap klaim butuh bu
 - Fakta stabil (definisi, konsep, sejarah settled)
 - Jawaban yang nggak berubah seiring waktu
 
-Kalau ragu → **search**. Salah nyari (boros 1 call) lebih murah daripada salah jawab.
+Kalau ragu → **search**. Salah nyari lebih murah daripada salah jawab.
 
-## 3. Query Protocol
+## 3. Tools
 
-1. **Pendek & spesifik.** 2-6 kata. Bukan kalimat lengkap.
-2. **Broad → narrow.** Query pertama umum, berikutnya makin spesifik.
-3. **Setiap query harus beda arah** — jangan re-run query sama dengan kata ganti.
-4. **Item majemuk → pisah.** "Bandingin X dan Y" → 1 query X, 1 query Y.
-5. **Snippet nggak cukup?** → `web_fetch` halaman aslinya.
+### OpenCode Built-in (pakai ini dari dalam agent)
 
-## 4. Scale Effort
+| Tool | Fungsi | Cara pakai |
+|------|--------|------------|
+| `websearch` | Search Google/Brave/etc | `websearch("query spesifik 2-6 kata")` — hasil: list URL + snippet |
+| `webfetch` | Baca isi halaman penuh | `webfetch("https://url", "markdown")` — hasil: konten full page |
 
-| Task | Jumlah search |
-|------|:---:|
-| 1 fakta sederhana | 1 |
-| Perbandingan/multi-part | 3-8 |
-| Riset mendalam | 8-20 |
+**JANGAN pakai HTTP fetch/call manual.** OpenCode sudah handle routing search engine via 9Router di belakang layar. Lo tinggal panggil `websearch` dan `webfetch`.
 
-Berhenti kalau semua bagian request ke-cover buktinya.
+### 9Router API (untuk script eksternal / custom tool — BUKAN dari dalam agent)
+
+Kalau BUTUH akses programmatic dari luar OpenCode (script, CI, custom tool):
+
+`POST http://127.0.0.1:20128/v1/search` — providers: tavily, exa, brave, serper, google-pse, search-combo
+`POST http://127.0.0.1:20128/v1/web/fetch` — providers: firecrawl, jina-reader, tavily, exa, fetch-combo
+
+Pakai `search-combo` / `fetch-combo` buat auto-fallback. Lihat 9Router docs buat detail.
+
+## 4. Query Protocol
+
+1. **Broad → narrow.** Query pertama `websearch("topik umum")`, berikutnya makin spesifik.
+2. **Setiap query harus beda arah** — jangan re-run query sama.
+3. **Item majemuk → pisah.** "Bandingin X vs Y" → `websearch("X features")` lalu `websearch("Y features")`.
+4. **Snippet ambigu?** → `webfetch(url)` halaman aslinya. Jangan nebak dari judul.
+5. **Scale effort:** 1 fakta = 1 search. Perbandingan = 3-8 search. Riset mendalam = 8-20.
 
 ## 5. Source Quality
 
 - **Prioritaskan sumber primer:** docs resmi, blog perusahaan, paper, rilis resmi > aggregator/blog SEO
-- **Skip forum/low-quality** kecuali opini komunitas memang yang dicari
+- **Skip forum/low-quality** kecuali opini komunitas yang dicari
 - **Konflik antar sumber?** → cari 1-2 sumber tambahan buat tie-break
 - **Topik rawan misinformasi** → lebih skeptis, verifikasi ekstra
 
@@ -53,49 +63,12 @@ Berhenti kalau semua bagian request ke-cover buktinya.
 - **Jangan quote panjang.** Parafrase. Kutip <15 kata, max 1 per sumber.
 - **Nggak ketemu?** → `"Dicari X,Y,Z — nggak ketemu."` 1 baris.
 
-## 7. 9Router API
-
-### Web Search
-
-`POST http://127.0.0.1:20128/v1/search`
-
-| Field | Required | Notes |
-|-------|:---:|-------|
-| `model` (or `provider`) | ✅ | dari `/v1/models/web` (tavily, brave, exa, search-combo) |
-| `query` | ✅ | search query |
-| `max_results` | — | default 5 |
-| `search_type` | — | `web` / `news` |
-
-Provider: tavily, exa, brave-search, serper, perplexity, linkup, google-pse, searchapi, youcom, searxng.
-
-Pakai `search-combo` buat auto-fallback antar provider.
-
-Response: `{ results: [{ title, url, snippet, score }], usage: { search_cost_usd } }`
-
-### Web Fetch (baca halaman penuh)
-
-`POST http://127.0.0.1:20128/v1/web/fetch`
-
-| Field | Required | Notes |
-|-------|:---:|-------|
-| `url` | ✅ | URL halaman |
-| `format` | — | `markdown` (default) / `text` / `html` |
-| `max_characters` | — | truncate (0 = full) |
-| `model` | ✅ | firecrawl, jina-reader, tavily, exa, fetch-combo |
-
-Pakai `fetch-combo` buat auto-fallback.
-
-Response: `{ data: { title, content: { text, length } } }`
-
-### Kapan Fetch vs Search?
-- **Search** = nemuin sumber (URL, snippet, metadata)
-- **Fetch** = baca isi penuh halaman (pas snippet nggak cukup, atau butuh detail teknis)
-
-## 8. Attitude
+## 7. Attitude
 
 - Jangan asumsi hasil pertama final — verifikasi kalau ada nama/versi mirip.
 - Jangan campur pengetahuan lama (basi) dengan hasil search tanpa label.
-- Baca halaman penuh kalau snippet ambigu — jangan tebak dari judul.
+- Baca halaman penuh (`webfetch`) kalau snippet ambigu — jangan tebak.
+- Kalau `webfetch` gagal (timeout, blocked), coba `websearch` alternatif atau cari mirror.
 
 ## Output
 
