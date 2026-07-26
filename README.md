@@ -128,19 +128,19 @@ Deny-by-default enforced via `"*": "deny"` catch-all on every agent. Only explic
 - **Share disabled** — no session sharing to external services.
 - **Foreground-only** — no `background: true` tasks. Every dispatch is awaited before proceeding.
 
-## Health Score — 15/15
+## Skills
 
-Three dimensions, five profiles, all passing:
+Setiap agent punya 1-2 skill spesialisasi di `skills/{role}/`:
 
-| Dimension | Weight | `opencode.jsonc` | paid | paid-limit | hybrid | free | free-backup |
-|-----------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Config Integrity** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Valid JSON, all agent refs resolve, model IDs match provider declarations, steps/temp within bounds, no orphan keys. | | | | | | | |
-| **Permission Security** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Deny-by-default on all agents, `task:deny` on workers, no write on orchestrator/researcher/reviewer, compaction fully locked, general/explore read-only. | | | | | | | |
-| **Model Failover** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Each profile declares 2 models from its tier; agent assignments use declared models only; free-backup uses independent OpenRouter gateway for redundancy. | | | | | | | |
-| **Total** | **15** | **15** | **15** | **15** | **15** | **15** | **15** |
+| Agent | Skill | Fungsi |
+|-------|-------|--------|
+| orchestrator | `anti-gigo` | Validasi input — cegah sampah ke downstream |
+| orchestrator | `orchestrate` | Dekomposisi, fan-out parallel, sintesis, delegasi |
+| researcher | `forensic` | Cross-file tracing, evidence file:line, confidence calibration |
+| reviewer | `stride-audit` | STRIDE threat model, priority tags, cumulative judgment |
+| executor | `minimal-impl` | YAGNI ladder, verify-first, delete-over-add |
+
+**Prinsip GIGO:** AI model termahal pun hasilkan sampah kalau inputnya sampah. `anti-gigo` adalah gerbang kualitas — Brief Framework (Goal/Scope/Acceptance/Risk) wajib terisi sebelum dispatch.
 
 ## Slash Commands
 
@@ -182,6 +182,7 @@ Profile di-tune berdasarkan audit 9Router v0.5.40 untuk efisiensi context:
 - **Agent prompts**: dipangkas 40-50% (`orchestrator.md` 143→70 baris, `executor.md` 69→45, dll)
 - **Compaction**: `keep.tokens` 12.000→8.000
 - **Steps**: orchestrator 35→30, researcher/reviewer 25→20, executor 40→30
+- **Skills restructure**: 23 file → 5 skill (anti-gigo, orchestrate, forensic, stride-audit, minimal-impl)
 
 Estimasi hemat token: ~40% per session.
 
