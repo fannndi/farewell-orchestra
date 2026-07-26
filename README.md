@@ -1,10 +1,10 @@
 # Farewell Orchestra — Profile-Validated Configuration
 
-**Workflow orchestration system for OpenCode** — parallel researcher+reviewer fan-out, controlled executor implementation, 4 tiered config profiles (Paid, Hybrid, Free, Free Backup). All profiles are structurally validated (JSON, model refs, permission coverage). Runtime enforcement depends on OpenCode engine. Self-assessed via LLM checklist, not CI-automated.
+**Workflow orchestration system for OpenCode** — parallel researcher+reviewer fan-out, controlled executor implementation, 5 tiered config profiles (Paid, Paid-Limit, Hybrid, Free, Free Backup). All profiles are structurally validated (JSON, model refs, permission coverage). Runtime enforcement depends on OpenCode engine. Self-assessed via LLM checklist, not CI-automated.
 
 ## Overview
 
-Farewell Orchestra is a foreground-only, deny-by-default workflow orchestration setup built on [OpenCode](https://opencode.ai) via [9Router](http://127.0.0.1:20128). The orchestrator decomposes user requests, fans out to **researcher** + **reviewer** in parallel, synthesizes their findings, then delegates a single scoped task to **executor** — the only agent with write/bash permissions. Four profiles let you switch between all-paid, hybrid (1 paid + 1 free), all-free, and all-free-via-OpenRouter with zero config changes beyond `-c <profile>`.
+Farewell Orchestra is a foreground-only, deny-by-default workflow orchestration setup built on [OpenCode](https://opencode.ai) via [9Router](http://127.0.0.1:20128). The orchestrator decomposes user requests, fans out to **researcher** + **reviewer** in parallel, synthesizes their findings, then delegates a single scoped task to **executor** — the only agent with write/bash permissions. Five profiles let you switch between all-paid, hybrid (1 paid + 1 free), all-free, and all-free-via-OpenRouter with zero config changes beyond `-c <profile>`.
 
 ## Architecture
 
@@ -39,19 +39,36 @@ User Request
 └─────────────────────────────────────────┘
 ```
 
-## 4 Profiles
+## 5 Profiles
 
 | Profile | Tier | Orchestrator | Researcher | Reviewer | Executor | Compaction | Models |
 |---------|------|-------------|------------|----------|----------|------------|--------|
-| `profiles/opencode.paid.jsonc` | Paid | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | deepseek-v4-flash | 2 paid |
-| `profiles/opencode.hybrid.jsonc` | Mixed | deepseek-v4-flash | north-mini-code-free | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-flash | 1 paid + 1 free |
-| `profiles/opencode.free.jsonc` | Free | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 2 free |
-| `profiles/opencode.free-backup.jsonc` | Free (OpenRouter) | nemotron-3-ultra-550b-free | north-mini-code-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | 2 free |
+| `paid` | Paid | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | deepseek-v4-flash | 2 paid |
+| `paid-limit` | Paid (Alt) | minimax-m3 | nemotron-3-ultra-550b | nemotron-3-ultra-550b | minimax-m3 | minimax-m3 | 1 paid + 1 paid |
+| `hybrid` | Mixed | deepseek-v4-flash | north-mini-code-free | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-flash | 1 paid + 1 free |
+| `free` | Free | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 2 free |
+| `free-backup` | Free (OR) | nemotron-3-ultra-550b-free | north-mini-code-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | nemotron-3-ultra-550b-free | 2 free |
 
 - **Paid** — 2 DeepSeek models via OCG provider. Max quality, max speed. Heavy-thinking orchestrator + executor, fast researcher/reviewer.
+- **Paid-Limit** — Minimax M3 (primary) + Nemotron 3 Ultra 550B (sub) via NVIDIA. Large 512K context on primary, 128K on sub. Good for large-context tasks on a budget.
 - **Hybrid** — 1 paid (DeepSeek Flash) + 1 free (North Mini Code). DeepSeek Flash handles orchestrator, reviewer, executor; North Mini handles researcher. Best cost/quality balance.
 - **Free** — 2 free models via OCG provider (Nemotron Ultra + North Mini Code). Zero API cost, decent quality for mid-complexity tasks.
 - **Free Backup** — 2 free models via OpenRouter provider. Identical role assignment, different gateway redundancy. Fallback when OCG is unavailable.
+
+### Actual Context Limits (from 9Router source + direct API test)
+
+| Model | Context Window | Max Output | Source |
+|-------|---------------|------------|--------|
+| `ocg/deepseek-v4-pro` | **1,000,000** | 65,536 | 9Router capabilities.js |
+| `ocg/deepseek-v4-flash` | **1,000,000** | 65,536 | 9Router capabilities.js |
+| `ollama/minimax-m3` | **512,000** | 131,072 | 9Router capabilities.js |
+| `nvidia/nvidia/nemotron-3-ultra-550b-a55b` | **128,000** | — | 9Router capabilities.js |
+| `oc/nemotron-3-ultra-free` | **128,000** | — | 9Router capabilities.js |
+| `oc/north-mini-code-free` | **256,000** | — | Provider docs (AINorth) |
+| `openrouter/nvidia/nemotron-3-ultra-550b-a55b:free` | **128,000** | — | 9Router capabilities.js |
+| `openrouter/cohere/north-mini-code:free` | **256,000** | — | OpenRouter spec |
+
+> **Note:** Context limits are enforced by 9Router gateway, not by OpenCode config. Values above are from `open-sse/providers/capabilities.js` in the 9Router source. The `limit.context` in profile files should match these numbers.
 
 ## Quick Start
 
@@ -60,6 +77,7 @@ git clone https://github.com/fannndi/farewell-orchestra
 cd farewell-orchestra
 echo NINEROUTER_API_KEY=sk_... > .env
 opencode                                    # default (paid)
+opencode -c profiles/opencode.paid-limit.jsonc  # paid-limit
 opencode -c profiles/opencode.hybrid.jsonc  # hybrid
 opencode -c profiles/opencode.free.jsonc    # free
 opencode -c profiles/opencode.free-backup.jsonc  # free backup
@@ -103,7 +121,7 @@ Deny-by-default enforced via `"*": "deny"` catch-all on every agent. Only explic
 
 - **`"*": "deny"` catch-all** on orchestrator, researcher, reviewer, executor, general, explore — nothing slips through an unlisted permission.
 - **Explicit deny-by-default on general + explore** — previously had relaxed permissions with bash/edit; now locked to read-only with `task: deny`.
-- **Compaction limited to `steps: 10`** — prevents runaway context-compaction loops. Model tiered per profile (paid→flash, hybrid→flash, free→nemotron, free-backup→nemotron-550b).
+- **Compaction limited to `steps: 10`** — prevents runaway context-compaction loops. Model tiered per profile.
 - **Executor temperature 0.2** — deterministic, predictable implementation; no creative drift from the spec.
 - **Researcher + reviewer temperature 0.1** — factual, evidence-based output with minimal hallucination.
 - **Subagent depth capped at 1** — workers can't spawn workers. No recursive delegation.
@@ -114,15 +132,15 @@ Deny-by-default enforced via `"*": "deny"` catch-all on every agent. Only explic
 
 Three dimensions, five profiles, all passing:
 
-| Dimension | Weight | `opencode.jsonc` | paid | hybrid | free | free-backup |
-|-----------|--------|:---:|:---:|:---:|:---:|:---:|
-| **Config Integrity** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Valid JSON, all agent refs resolve, model IDs match provider declarations, steps/temp within bounds, no orphan keys. | | | | | | |
-| **Permission Security** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Deny-by-default on all agents, `task:deny` on workers, no write on orchestrator/researcher/reviewer, compaction fully locked, general/explore read-only. | | | | | | |
-| **Model Failover** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Each profile declares 2 models from its tier; agent assignments use declared models only; free-backup uses independent OpenRouter gateway for redundancy. | | | | | | |
-| **Total** | **15** | **15** | **15** | **15** | **15** | **15** |
+| Dimension | Weight | `opencode.jsonc` | paid | paid-limit | hybrid | free | free-backup |
+|-----------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Config Integrity** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Valid JSON, all agent refs resolve, model IDs match provider declarations, steps/temp within bounds, no orphan keys. | | | | | | | |
+| **Permission Security** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Deny-by-default on all agents, `task:deny` on workers, no write on orchestrator/researcher/reviewer, compaction fully locked, general/explore read-only. | | | | | | | |
+| **Model Failover** | 5 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Each profile declares 2 models from its tier; agent assignments use declared models only; free-backup uses independent OpenRouter gateway for redundancy. | | | | | | | |
+| **Total** | **15** | **15** | **15** | **15** | **15** | **15** | **15** |
 
 ## Slash Commands
 
@@ -149,12 +167,23 @@ Three dimensions, five profiles, all passing:
 | File | Purpose |
 |------|---------|
 | `opencode.jsonc` | Default config (same as paid profile) |
-| `profiles/*.jsonc` | 4 tiered config profiles |
+| `profiles/*.jsonc` | 5 tiered config profiles |
 | `switch.bat` | Windows profile selector menu |
 | `.env.example` | Environment variable template |
 | `AGENTS.md` | Agent instruction context (loaded by OpenCode on start) |
 | `.opencode/agents/` | Budget-aware agent personas |
 | `README.md` | This file |
+
+## Context Tuning (2026-07-26)
+
+Profile di-tune berdasarkan audit 9Router v0.5.40 untuk efisiensi context:
+
+- **RTK Token Saver**: aktif via 9Router web UI — kompresi tool_result, headroom, caveman, ponytail
+- **Agent prompts**: dipangkas 40-50% (`orchestrator.md` 143→70 baris, `executor.md` 69→45, dll)
+- **Compaction**: `keep.tokens` 12.000→8.000
+- **Steps**: orchestrator 35→30, researcher/reviewer 25→20, executor 40→30
+
+Estimasi hemat token: ~40% per session.
 
 ## License
 

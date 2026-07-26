@@ -21,15 +21,16 @@ Expected: ≥12 skills (engineering: ask-orchestrator, orchestrate, research-cod
 Report: "X/Y skills found. Missing: ..." (if any)
 
 ## 3. Profile Configs
-Validate all 4 profile files are valid JSON:
+Validate all 5 profile files are valid JSON:
 - `profiles/opencode.paid.jsonc`
+- `profiles/opencode.paid-limit.jsonc`
 - `profiles/opencode.hybrid.jsonc`
 - `profiles/opencode.free.jsonc`
 - `profiles/opencode.free-backup.jsonc`
 
 For each: check JSON parseable, has `agent.orchestrator`, `agent.executor`, provider.models populated. Then read the first line (comment header) to identify the profile name and models it uses.
 
-Report: "4/4 profiles valid" or "X profiles FAIL: ..."
+Report: "5/5 profiles valid" or "X profiles FAIL: ..."
 Then list each profile's name and models from the header comment.
 
 ## 4. Environment

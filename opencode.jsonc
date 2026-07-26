@@ -1,6 +1,8 @@
+// Profile: Paid | Models: ocg/deepseek-v4-pro (primary), ocg/deepseek-v4-flash (subagent)
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "9router/ocg/deepseek-v4-flash",
+  "allowedPaths": ["C:/Users/FANNNDI/Documents/farewell-orchestra", "C:/Users/FANNNDI/Documents/9router"],
+  "model": "9router/ocg/deepseek-v4-pro",
   "default_agent": "orchestrator",
   "subagent_depth": 1,
   "share": "disabled",
@@ -16,49 +18,49 @@
         "timeout": 300000, "headerTimeout": 90000, "chunkTimeout": 120000
       },
       "models": {
-        "ocg/deepseek-v4-flash": { "name": "ocg/deepseek-v4-flash", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
-        "oc/north-mini-code-free": { "name": "oc/north-mini-code-free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } }
+        "ocg/deepseek-v4-pro": { "name": "ocg/deepseek-v4-pro", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
+        "ocg/deepseek-v4-flash": { "name": "ocg/deepseek-v4-flash", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } }
       }
     }
   },
   "agent": {
     "orchestrator": {
       "description": "Workflow orchestrator — parallel research/review via foreground task calls, lalu eksekusi oleh executor.",
-      "mode": "primary", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.2 } }, "steps": 40,
-      "prompt": "You are the workflow orchestrator. Decompose substantial requests into independent, non-overlapping work packages. For independent analysis, call researcher and reviewer concurrently in one assistant turn using foreground task calls. Wait for and synthesize their results before deciding implementation. Give each child a self-contained prompt with scope, relevant paths, constraints, expected output, and verification criteria. Delegate every file modification and command execution that changes the workspace to executor only, as one focused task after analysis is complete. Do not use background tasks. Do not duplicate child work.",
+      "mode": "primary", "model": "9router/ocg/deepseek-v4-pro", "request": { "body": { "temperature": 0.2 } }, "steps": 30,
+      "prompt": "Decompose requests into independent work packages. Dispatch researcher+reviewer concurrently. Synthesize, then delegate implementation to executor. No background tasks. No duplicated work.",
       "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 30,
-      "prompt": "Perform read-only research. Inspect the requested code, configuration, tests, and documentation. Return concise evidence with file paths and line numbers, assumptions, risks, and concrete recommendations. Do not edit files, run shell commands, delegate work, or attempt implementation.",
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 20,
+      "prompt": "Read-only. Return evidence with file:line. Concise. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 30,
-      "prompt": "Review the supplied scope independently. Identify correctness, security, compatibility, concurrency, and maintainability risks. Return prioritized findings, acceptance criteria, and a verification plan with file paths and line numbers where applicable. Do not edit files, run shell commands, delegate work, or implement changes.",
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 20,
+      "prompt": "Read-only. Return prioritized findings: [BLOCKING]/[SHOULD]/[NICE]/[FYI]. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.2 } }, "steps": 50,
-      "prompt": "Implement only the scoped change provided by the orchestrator. First inspect relevant files and follow local conventions. Make focused edits, run the relevant verification commands, and report changed files plus results. Do not delegate work, broaden scope, or modify files outside the assigned change set.",
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-pro", "request": { "body": { "temperature": 0.2 } }, "steps": 30,
+      "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
       "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "build": { "mode": "primary", "color": "primary" },
     "plan": { "mode": "primary", "color": "secondary" },
     "general": { "mode": "subagent", "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
     "explore": { "mode": "subagent", "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
-    "title": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
-    "summary": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
+    "title": { "model": "9router/ocg/deepseek-v4-flash", "mode": "primary", "hidden": true },
+    "summary": { "model": "9router/ocg/deepseek-v4-flash", "mode": "primary", "hidden": true },
     "compaction": { "model": "9router/ocg/deepseek-v4-flash", "mode": "primary", "hidden": true, "steps": 10 }
   },
   "experimental": {
     "primary_tools": ["todowrite", "question"]
   },
-  "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
-  "compaction": { "auto": true, "keep": { "tokens": 10000 }, "buffer": 25000 },
+  "tool_output": { "max_lines": 3000, "max_bytes": 76800 },
+  "compaction": { "auto": true, "keep": { "tokens": 8000 }, "buffer": 30000 },
   "watcher": { "ignore": [".git/**", "node_modules/**", "dist/**", "build/**", ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"] },
   "attachment": { "image": { "auto_resize": true, "max_width": 2000, "max_height": 2000, "max_base64_bytes": 5242880 } },
   "lsp": true,
