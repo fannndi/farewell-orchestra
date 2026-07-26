@@ -1,3 +1,4 @@
+// Profile: Hybrid | Models: ocg/deepseek-v4-flash (primary), oc/north-mini-code-free (subagent)
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/ocg/deepseek-v4-flash",

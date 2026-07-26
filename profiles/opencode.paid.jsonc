@@ -1,3 +1,4 @@
+// Profile: Paid | Models: ocg/deepseek-v4-pro (primary), ocg/deepseek-v4-flash (subagent)
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/ocg/deepseek-v4-pro",

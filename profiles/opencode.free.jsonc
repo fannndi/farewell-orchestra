@@ -1,3 +1,4 @@
+// Profile: Free | Models: oc/nemotron-3-ultra-free (primary), oc/north-mini-code-free (subagent)
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/oc/nemotron-3-ultra-free",
