@@ -1,7 +1,6 @@
 // Profile: Paid | Models: ocg/deepseek-v4-pro (primary), ocg/deepseek-v4-flash (subagent)
 {
   "$schema": "https://opencode.ai/config.json",
-  "allowedPaths": ["C:/Users/FANNNDI/Documents/farewell-orchestra"],
   "model": "9router/ocg/deepseek-v4-pro",
   "default_agent": "orchestrator",
   "subagent_depth": 1,

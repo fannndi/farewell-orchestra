@@ -36,6 +36,10 @@ Boss: "perbaikin bug di login"
 👷‍♂️ Executor gagal 2x ──→ 🧙‍♂️ Orchestrator ──→ 🕵️‍♂️ Researcher (deep debug)
 ```
 
+### Cross-Project
+
+Orchestra bisa dipakai dari project lain. Boss input: `"kerjain project ini <path>"` — orchestrator auto-detect path dan kerja di sana. Setup sekali: `permission.external_directory` di global config. Lihat `project-guide.md`.
+
 ---
 
 ## Anti-GIGO: The Gate
@@ -113,6 +117,8 @@ Subagent depth capped di 1 — worker nggak bisa spawn worker.
 | `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |
 | `TEST.md` | Smoke test — simulasi interaksi 4 agent |
 | `LESSONS.md` | Log pembelajaran — tiap kali Boss koreksi |
+| `project-guide.md` | Cross-project access — cara pakai orchestra dari repo lain |
+| `templates/sub-project.md` | Template anchor untuk sub-project |
 
 ---
 

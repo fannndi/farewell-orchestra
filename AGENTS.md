@@ -36,6 +36,7 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 | `/fanout` | Decompose → researcher + reviewer → executor |
 | `/review` | Code review only, no edits |
 | `/execute` | Delegate implementation langsung ke executor |
+| `/new-project` | Scaffold 10 dokumentasi standar untuk sub-project baru |
 
 ## Session Flow
 
@@ -45,6 +46,20 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 4. Sintesis hasil → executor brief
 5. Executor invoke `minimal-impl` — implementasi
 6. Report ke Boss
+
+## Cross-Project Usage
+
+Repo ini reusable lintas-project. Boss bisa pakai orchestra dari repo lain:
+
+**Cara pakai:** Jalanin `opencode` di folder farewell-orchestra, input: `"bantu aku kerjain project ini <path>"`. Orchestrator akan treat path itu sebagai target root.
+
+**Syarat:** Setup `permission.external_directory` sekali di `~/.config/opencode/opencode.json`:
+```jsonc
+{ "permission": { "external_directory": { "~/projects/**": "allow" } } }
+```
+Ganti `~/projects/**` ke folder tempat Boss biasa clone repo.
+
+Lihat `project-guide.md` buat panduan lengkap (alias, symlink, prompt integrasi).
 
 ## Files
 
@@ -57,3 +72,7 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 | `AGENTS.md` | This file |
 | `README.md` | Project documentation |
 | `LESSONS.md` | Error log + improvement tracking |
+| `project-guide.md` | Cara pakai orchestra dari project lain (cross-project access) |
+| `templates/sub-project.md` | Template anchor file per sub-project |
+| `.opencode/skills/` | Native-discoverable skills (`bootstrap-project`) |
+| `.opencode/command/` | Slash commands (`/check`, `/new-project`) |
