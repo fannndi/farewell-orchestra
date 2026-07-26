@@ -81,15 +81,19 @@ cp profiles/opencode.free.jsonc opencode.jsonc && opencode     # free
 
 ---
 
-## Skills
+## Skills (8 agent + 1 project = 9)
 
 | Agent | Skill | Fungsi |
 |-------|-------|--------|
 | 🧙‍♂️ Orchestrator | `anti-gigo` | Validasi input — Goal/Scope/Acceptance/Risk wajib |
 | 🧙‍♂️ Orchestrator | `orchestrate` | Dekomposisi → fan-out parallel → sintesis → delegasi |
 | 👷‍♂️ Executor | `minimal-impl` | YAGNI ladder + verify-first + error healing |
+| 👷‍♂️ Executor | `verification-ground-truth` | Verify claims via tool output — jangan asumsi "should work" |
 | 🕵️‍♂️ Researcher | `forensic` | Cross-file tracing + deep debugging + tech stack forensics |
+| 🕵️‍♂️ Researcher | `web-research` | Internet research — current facts, docs, library status via 9Router |
 | 💂‍♂️ Reviewer | `stride-audit` | STRIDE threat model + convention enforcement |
+| 💂‍♂️ Reviewer | `consistency-drift-audit` | Cross-file drift detection — config vs docs vs kode |
+| — | `bootstrap-project` | Generate 10 docs + sub-project.md (via /new-project) |
 
 ---
 

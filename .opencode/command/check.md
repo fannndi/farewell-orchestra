@@ -11,14 +11,16 @@ Run on every new session. Validasi struktur workspace.
 - [ ] .opencode/agents/reviewer.md — ada
 - [ ] .opencode/agents/executor.md — ada
 
-## 2. Skills (7 file di .opencode/skills/)
+## 2. Skills (9 file di .opencode/skills/)
 
 - [ ] .opencode/skills/anti-gigo/SKILL.md — ada
 - [ ] .opencode/skills/orchestrate/SKILL.md — ada
 - [ ] .opencode/skills/forensic/SKILL.md — ada
 - [ ] .opencode/skills/web-research/SKILL.md — ada
 - [ ] .opencode/skills/stride-audit/SKILL.md — ada
+- [ ] .opencode/skills/consistency-drift-audit/SKILL.md — ada
 - [ ] .opencode/skills/minimal-impl/SKILL.md — ada
+- [ ] .opencode/skills/verification-ground-truth/SKILL.md — ada
 - [ ] .opencode/skills/bootstrap-project/SKILL.md — ada
 
 ## 3. Profiles (3 file)
