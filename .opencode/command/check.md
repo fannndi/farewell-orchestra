@@ -27,9 +27,10 @@ Validate all 4 profile files are valid JSON:
 - `profiles/opencode.free.jsonc`
 - `profiles/opencode.free-backup.jsonc`
 
-For each: check JSON parseable, has `agent.orchestrator`, `agent.executor`, provider.models populated.
+For each: check JSON parseable, has `agent.orchestrator`, `agent.executor`, provider.models populated. Then read the first line (comment header) to identify the profile name and models it uses.
 
 Report: "4/4 profiles valid" or "X profiles FAIL: ..."
+Then list each profile's name and models from the header comment.
 
 ## 4. Environment
 Check `.env` exists and contains `NINEROUTER_API_KEY` (don't print the key!).
@@ -55,5 +56,7 @@ Config:     [PASS/FAIL]
 Status: [READY / X issues found]
 ```
 
-If READY: say "Orchestra siap. Profile aktif: {curret profile name}. Skill: {count} loaded."
+Determine active profile: read the `model` key from root `opencode.jsonc`, then check which profile file uses that model as its default. If none match, report "default (root opencode.jsonc)".
+
+If READY: say "Orchestra siap. Profile aktif: {current profile name}. Models: {models from header}. Skill: {count} loaded."
 If issues: list each issue in 1 line. Offer to fix automatically.
