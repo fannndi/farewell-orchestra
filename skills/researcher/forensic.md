@@ -1,6 +1,6 @@
 ---
 name: forensic
-description: Cross-file codebase investigation — evidence-first, file:line mandatory, confidence-calibrated
+description: Use when investigating codebase, debugging deep errors, or auditing dependencies — evidence-first, file:line mandatory
 ---
 
 # Forensic Investigation

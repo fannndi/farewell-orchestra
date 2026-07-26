@@ -4,7 +4,7 @@
 
 ## Overview
 
-Farewell Orchestra is a foreground-only, deny-by-default workflow orchestration setup built on [OpenCode](https://opencode.ai) via [9Router](http://127.0.0.1:20128). The orchestrator decomposes user requests, fans out to **researcher** + **reviewer** in parallel, synthesizes their findings, then delegates a single scoped task to **executor** — the only agent with write/bash permissions. Three profiles let you switch between all-paid, hybrid (1 paid + 1 free), and all-free with zero config changes beyond `-c <profile>`.
+Farewell Orchestra is a foreground-only, deny-by-default workflow orchestration setup built on [OpenCode](https://opencode.ai) via [9Router](http://127.0.0.1:20128). The orchestrator decomposes user requests, fans out to **researcher** + **reviewer** in parallel, synthesizes their findings, then delegates a single scoped task to **executor** — the only agent with write/bash permissions. Three profiles let you switch between all-paid, hybrid (2 paid + 2 free), and all-free with zero config changes beyond `-c <profile>`.
 
 ## Architecture
 
@@ -44,11 +44,11 @@ User Request
 | Profile | Tier | Orchestrator | Researcher | Reviewer | Executor | Keep Tokens |
 |---------|------|-------------|------------|----------|----------|-------------|
 | `paid` | Paid | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | 8.000 |
-| `hybrid` | Mixed | deepseek-v4-flash | north-mini-code-free | deepseek-v4-flash | deepseek-v4-flash | 7.000 |
+| `hybrid` | Mixed | deepseek-v4-flash | north-mini-code-free | nemotron-3-ultra-free | deepseek-v4-flash | 7.000 |
 | `free` | Free | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 5.000 |
 
 - **Paid** — 2 DeepSeek models via OCG. Max quality. Steps: 30/20/20/30.
-- **Hybrid** — 1 paid (DeepSeek Flash) + 1 free (North Mini Code). Cost/quality balance. Steps: 25/18/18/25.
+- **Hybrid** — 2 paid (DeepSeek Flash untuk orchestrator + executor) + 2 free (Nemotron Ultra untuk reviewer, North Mini Code untuk researcher). Reviewer read-only aman di free. Steps: 25/18/18/25.
 - **Free** — 2 free models via OCG (Nemotron Ultra + North Mini Code). Zero API cost. Steps: 20/15/15/20.
 
 ## Quick Start

@@ -1,6 +1,6 @@
 ---
 name: anti-gigo
-description: Validate request quality before dispatch — GIGO prevention, brief framework enforcement, trash detection
+description: Use when receiving user request — validate input quality, enforce brief framework, detect trash before dispatch
 ---
 
 # Anti-GIGO: Garbage In → Garbage Out

@@ -1,6 +1,6 @@
 ---
 name: stride-audit
-description: Security & architecture audit — STRIDE threat model, cumulative judgment, priority-tagged findings
+description: Use when reviewing code changes — STRIDE threat model, cumulative judgment, convention enforcement
 ---
 
 # STRIDE Audit

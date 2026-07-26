@@ -1,63 +1,43 @@
----
-description: Validate workspace readiness — personas, skills, profiles, connectivity. Run every new session.
-agent: orchestrator
----
+# Farewell Orchestra — Health Check
 
-Validate the Farewell Orchestra workspace. Run these checks in order. Report PASS/FAIL for each.
+Run on every new session. Validasi struktur workspace.
 
-## 1. Persona Files
-Read and verify these files exist with valid YAML frontmatter:
-- `.opencode/agents/orchestrator.md` — must have `name: orchestrator`, `mode: primary`
-- `.opencode/agents/researcher.md` — must have `name: researcher`, `mode: subagent`
-- `.opencode/agents/reviewer.md` — must have `name: reviewer`, `mode: subagent`
-- `.opencode/agents/executor.md` — must have `name: executor`, `mode: subagent`
+## 1. Core files
 
-Report: "4/4 personas valid" or "X personas missing/invalid: ..."
+- [ ] opencode.jsonc — valid JSON, ada `agent.orchestrator`
+- [ ] AGENTS.md — ada, tidak kosong
+- [ ] .opencode/agents/orchestrator.md — ada
+- [ ] .opencode/agents/researcher.md — ada
+- [ ] .opencode/agents/reviewer.md — ada
+- [ ] .opencode/agents/executor.md — ada
 
-## 2. Skills Directory
-Count SKILL.md files in `skills/engineering/` and `skills/productivity/`.
-Expected: ≥12 skills (engineering: ask-orchestrator, orchestrate, research-codebase, audit-security, implement-change, verify-profile, full-cycle, compound-review, grill-boss, setup-orchestra, writing-orchestra-skills; productivity: switch-profile, stress-test, handoff-session)
+## 2. Skills (5 file)
 
-Report: "X/Y skills found. Missing: ..." (if any)
+- [ ] skills/orchestrator/anti-gigo.md — ada
+- [ ] skills/orchestrator/orchestrate.md — ada
+- [ ] skills/researcher/forensic.md — ada
+- [ ] skills/reviewer/stride-audit.md — ada
+- [ ] skills/executor/minimal-impl.md — ada
 
-## 3. Profile Configs
-Validate all 5 profile files are valid JSON:
-- `profiles/opencode.paid.jsonc`
-- `profiles/opencode.paid-limit.jsonc`
-- `profiles/opencode.hybrid.jsonc`
-- `profiles/opencode.free.jsonc`
-- `profiles/opencode.free-backup.jsonc`
+## 3. Profiles (3 file)
 
-For each: check JSON parseable, has `agent.orchestrator`, `agent.executor`, provider.models populated. Then read the first line (comment header) to identify the profile name and models it uses.
+- [ ] profiles/opencode.paid.jsonc — valid JSON, 4 agents
+- [ ] profiles/opencode.hybrid.jsonc — valid JSON, 4 agents
+- [ ] profiles/opencode.free.jsonc — valid JSON, 4 agents
 
-Report: "5/5 profiles valid" or "X profiles FAIL: ..."
-Then list each profile's name and models from the header comment.
+## 4. Persona skills frontmatter
 
-## 4. Environment
-Check `.env` exists and contains `NINEROUTER_API_KEY` (don't print the key!).
+- [ ] .opencode/agents/orchestrator.md — punya `skills:` key
+- [ ] .opencode/agents/researcher.md — punya `skills:` key
+- [ ] .opencode/agents/reviewer.md — punya `skills:` key
+- [ ] .opencode/agents/executor.md — punya `skills:` key
 
-Report: ".env OK" or ".env missing NINEROUTER_API_KEY"
+## 5. Consistency
 
-## 5. Default Config
-Verify root `opencode.jsonc` exists and is valid JSON.
+- [ ] opencode.jsonc steps match profiles/opencode.paid.jsonc steps
+- [ ] README 3 profiles section match actual profile count
+- [ ] Tidak ada file ketinggalan dari arsitektur lama (paid-limit, free-backup)
 
-Report: "opencode.jsonc OK" or "opencode.jsonc FAIL"
+## Result
 
-## 6. Summary
-Format:
-```
-FAREWELL ORCHESTRA — Workspace Check
-═══════════════════════════════════════
-Personas:   [PASS/FAIL]
-Skills:     [PASS/FAIL]
-Profiles:   [PASS/FAIL]
-Environment:[PASS/FAIL]
-Config:     [PASS/FAIL]
-═══════════════════════════════════════
-Status: [READY / X issues found]
-```
-
-Determine active profile: read the `model` key from root `opencode.jsonc`, then check which profile file uses that model as its default. If none match, report "default (root opencode.jsonc)".
-
-If READY: say "Orchestra siap. Profile aktif: {current profile name}. Models: {models from header}. Skill: {count} loaded."
-If issues: list each issue in 1 line. Offer to fix automatically.
+Semua checkboxes di atas harus ✅. Kalau ada yang ❌ → workspace stale, perlu sync.

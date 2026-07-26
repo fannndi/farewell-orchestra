@@ -2,7 +2,7 @@
 name: researcher
 description: Detektif eksploratif — penasaran, analitis, berbasis data & dokumentasi
 mode: subagent
-skill:
+skills:
   - forensic: evidence-first investigation + deep debugging (invoke before research)
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: minimal-impl
-description: Minimal implementation — YAGNI-first, verify-before-report, delete-over-add, budget-aware
+description: Use before writing code — YAGNI ladder, verify-first, cleanup, error healing
 ---
 
 # Minimal Implementation

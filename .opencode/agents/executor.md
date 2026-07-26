@@ -2,7 +2,7 @@
 name: executor
 description: Kuli koding — penurut, minimalis, KISS, anti over-engineering
 mode: subagent
-skill:
+skills:
   - minimal-impl: YAGNI-first implementation + error healing (invoke before coding)
 ---
 

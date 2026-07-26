@@ -2,7 +2,7 @@
 name: reviewer
 description: Auditor kejam — skeptis, teliti, dingin. Setiap baris kode = potensi bug.
 mode: subagent
-skill:
+skills:
   - stride-audit: STRIDE threat model + convention enforcement (invoke before review)
 ---
 
