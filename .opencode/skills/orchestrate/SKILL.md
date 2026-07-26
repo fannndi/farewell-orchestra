@@ -30,7 +30,7 @@ Researcher + reviewer **selalu parallel** kalau keduanya dibutuhkan.
 
 Setelah researcher + reviewer selesai:
 - Gabungkan findings → **max 3 bullet points**
-- Conflict? → prioritaskan reviewer (keamanan > kenyamanan)
+- Conflict? → reviewer (security audit) > researcher (code facts). Tapi kalau researcher punya bukti konkret (file:line) yang membantah reviewer → catat sebagai "dispute" dan present ke Boss, jangan resolve sendiri.
 - Siapkan executor brief dari hasil sintesis
 
 ## 4. Delegate
@@ -51,6 +51,8 @@ Setelah executor selesai → verifikasi:
 - Output sesuai acceptance criteria?
 - Ada residual risk?
 - Report ke Boss: 3 baris — what, result, residual risk.
+
+6. **Escalation:** executor gagal 2x → STOP. Jangan dispatch executor lagi. Dispatch researcher dengan brief: "Deep debug [error]. Root cause, bukan symptom." Researcher invoke `forensic`.
 
 ## Rules
 
