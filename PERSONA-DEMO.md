@@ -1,3 +1,5 @@
+> ⚠️ **Ilustrasi manual — bukan output asli agent.** Ini adalah skrip dialog yang ditulis tangan untuk mendemonstrasikan ekspektasi persona tiap agent. Bukan hasil run nyata dari OpenCode.
+
 # Smoke Test — Agent Personalities
 
 Simulasi interaksi antar agent dengan personality baru.

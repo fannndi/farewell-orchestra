@@ -16,6 +16,9 @@ Wajib disetup dulu — OpenCode scoped ke cwd tempat dia di-start; akses ke path
 ```
 Ganti `~/projects/**` ke folder tempat Boss biasa clone repo. Berlaku ke semua profile karena ini setting workspace-level, bukan per-agent.
 
+### ⚠️ Security Trade-off
+`external_directory: allow` ke `~/projects/**` artinya executor (yang punya `bash` + `edit`) otomatis bisa baca, tulis, dan eksekusi di SEMUA repo di bawah path itu — tanpa prompt approval. Ini wajar untuk single-user tool, tapi perlu disadari: kalau orchestrator salah delegasi (misal path target salah), executor bisa merusak repo lain tanpa konfirmasi. Jangan allow path yang isinya repo sensitif/produksi.
+
 Alternatif yang lebih formal (belum diverifikasi hands-on): fitur native **references** (`path`/`repository` alias di opencode.json) — cek `opencode.ai/docs/references` sebelum diandalkan.
 
 
