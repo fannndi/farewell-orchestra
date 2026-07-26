@@ -129,7 +129,7 @@ Subagent depth capped di 1 — worker nggak bisa spawn worker.
 |------|---------|
 | `opencode.jsonc` | Default config (paid profile) |
 | `profiles/opencode.*.jsonc` | 3 profile: paid, hybrid, free |
-| `.env.example` | Env vars: NINEROUTER_API_KEY + OPENCODE_ENABLE_EXA + BRAVE_API_KEY |
+| `.env.example` | Env vars: NINEROUTER_API_KEY + OPENCODE_ENABLE_EXA |
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
 | `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |
