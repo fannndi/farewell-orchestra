@@ -123,6 +123,28 @@ Subagent depth capped di 1 — worker nggak bisa spawn worker.
 
 ---
 
+## Built-in Agents (OpenCode Default)
+
+OpenCode punya 8 agent bawaan. Kita override 4 + disable sisanya:
+
+| Agent | Mode | Status | Fungsi Default |
+|-------|------|:---:|----------------|
+| **orchestrator** | primary | ✅ **Active** | Override — Tech Lead, anti-GIGO, fan-out |
+| **researcher** | subagent | ✅ **Active** | Override — Detektif, forensic + web-research |
+| **reviewer** | subagent | ✅ **Active** | Override — Auditor, STRIDE + drift audit |
+| **executor** | subagent | ✅ **Active** | Override — Kuli koding, YAGNI + ground-truth |
+| **build** | primary | ❌ Disabled | Agent default — full edit/bash (terlalu berbahaya) |
+| **plan** | primary | ❌ Disabled | Planning only — read-only (redundan dg orchestrator) |
+| **general** | subagent | ❌ Disabled | Multi-task parallel — full tool (tidak terkontrol) |
+| **explore** | subagent | ❌ Disabled | Quick read-only search — (redundan dg researcher) |
+| **compaction** | primary | 🔒 Hidden | Auto-compress context — internal |
+| **title** | primary | 🔒 Hidden | Auto-generate session title — internal |
+| **summary** | primary | 🔒 Hidden | Auto-generate session summary — internal |
+
+**Kenapa 4 disabled:** build/plan/general/explore adalah agent "escape hatch" — kalau aktif, bisa bypass orchestrator dan langsung edit/bash tanpa koordinasi.
+
+---
+
 ## Files
 
 | File | Purpose |
@@ -137,6 +159,32 @@ Subagent depth capped di 1 — worker nggak bisa spawn worker.
 | `LESSONS.md` | Log pembelajaran — tiap kali Boss koreksi |
 | `project-guide.md` | Cross-project access — cara pakai orchestra dari repo lain |
 | `templates/sub-project.md` | Template anchor untuk sub-project |
+
+---
+
+## Config Coverage vs OpenCode Spec
+
+Dari ~27 top-level config key OpenCode, status kita:
+
+| Field | Status | Note |
+|-------|:---:|------|
+| `$schema`, `model`, `default_agent`, `subagent_depth` | ✅ | Core |
+| `instructions`, `permission`, `provider`, `agent` | ✅ | Agent system |
+| `share`, `compaction`, `watcher`, `experimental`, `lsp`, `formatter` | ✅ | Utility |
+| `color` (per-agent), `steps`, `disable`, `hidden`, `temperature` | ✅ | Agent-level |
+| `references`, `tool_output`, `experimental.primary_tools` | ⚠️ | Custom/non-standard |
+| `small_model` | ❌ | Model ringan buat title/summary |
+| `server` | ❌ | Cuma buat `opencode serve` |
+| `shell` | ❌ | Force shell — auto-detect cukup |
+| `command` | ❌ | File-based sudah ada di `.opencode/command/` |
+| `mcp` | ❌ | Drop — fokus 0-cost |
+| `snapshot` | ❌ | Default true — nggak perlu diubah |
+| `autoupdate` | ❌ | Bisa tambah `"notify"` biar nggak kaget update |
+| `disabled_providers` | ❌ | Nggak perlu — cuma 9Router |
+| `plugin` | ❌ | Belum ada plugin relevan |
+| `top_p` | ❌ | Alternative randomness — temperature cukup |
+
+**Prioritas rendah tapi worth:** `autoupdate: "notify"` (1 baris).
 
 ---
 
