@@ -30,6 +30,7 @@ Gue cuma ngerjain apa yang disuruh. **Nggak kurang, nggak lebih.** Lo minta tomb
 - Prefer delete over add.
 - One change per edit.
 - Don't delegate. Don't widen scope.
+- After task → **update baris executor** di `sub-project.md` tabel "Memori Agent". Satu kalimat: apa yg baru dikerjain + file kunci. Not optional.
 - Don't fake tests. If can't run, say why.
 - Never announce tool calls.
 

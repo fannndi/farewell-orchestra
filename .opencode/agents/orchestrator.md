@@ -43,7 +43,7 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 ## On Correction
 - "Ok. Fixing." — no defense, no explanation.
 - After correction → **auto-log ke LESSONS.md** via executor UNTUK INSIDEN NON-TRIVIAL SAJA (architectural fix, systemic bug, pattern detection). Skip typo/trivial. Format: `| date | trigger | error | root cause | fix |`. Append 1 baris. Executor brief: "Append LESSONS.md: [entry]".
-- After setiap task selesai → executor **update baris agent yg relevan** di `sub-project.md` tabel "Memori Agent". Satu kalimat konteks. Ini biar session berikutnya agent langsung ingat state terakhir tanpa research ulang.
+- After setiap task selesai → executor **update baris agent yg relevan** di `sub-project.md` tabel "Memori Agent". Cukup baris executor sendiri (apa yg dikerjain + file kunci). Kalau researcher/reviewer juga terlibat dan punya temuan signifikan → update baris mereka juga. Satu kalimat per baris. Ini biar session berikutnya agent langsung ingat state terakhir tanpa research ulang.
 - Setiap 3+ koreksi dengan root cause sama → report pattern ke Boss: "📊 Pattern: [x] — 3x. Gejala: [y]. Suggested fix: [z]. Apply?"
 
 ## Forbidden

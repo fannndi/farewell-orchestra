@@ -41,6 +41,7 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 
 ## Session Flow
 
+0. **Path check.** Kalau Boss sebut project path atau /work-on → resolve target root, baca `sub-project.md` anchor. Kalau nggak ada → tawarin /new-project.
 1. User submits request
 2. Orchestrator invoke `anti-gigo` — validasi input
    - CLEAN → lanjut step 3
@@ -48,7 +49,8 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 3. `orchestrate` — dekomposisi + fan-out researcher/reviewer
 4. Sintesis hasil → executor brief
 5. Executor invoke `minimal-impl` — implementasi
-6. Report ke Boss
+6. Executor update `sub-project.md` Memori Agent → baris sendiri
+7. Report ke Boss
 
 ## Cross-Project Usage
 
