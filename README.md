@@ -23,7 +23,7 @@ Cross-project: `"kerjain project ini <path>"` — orchestra auto-detect dan kerj
 
 | Agent | Persona | Skills | Role |
 |-------|---------|--------|------|
-| 🧙‍♂️ **Orchestrator** | Tech Lead galak | `anti-gigo` `orchestrate` | Validasi input, dekomposisi, fan-out, delegasi |
+| 🧙‍♂️ **Orchestrator** | Tech Lead galak | `anti-gigo` `grill` `orchestrate` | Validasi input, dekomposisi, fan-out, delegasi |
 | 👷‍♂️ **Executor** | Developer minimalis | `minimal-impl` `verification-ground-truth` | Satu-satunya writer — YAGNI-first, verify-first |
 | 🕵️‍♂️ **Researcher** | Detektif eksploratif | `forensic` `web-research` | Cross-file tracing, deep debugging, web research |
 | 💂‍♂️ **Reviewer** | Auditor kejam | `stride-audit` | STRIDE threat model, convention enforcement |
@@ -36,9 +36,9 @@ Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (pa
 
 | Profile | Tier | Orchestrator | Researcher | Reviewer | Executor | Steps |
 |---------|------|-------------|------------|----------|----------|:-----:|
-| **paid** | Berbayar | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | 30/20/20/30 |
-| **hybrid** | Campuran | deepseek-v4-flash | north-mini-code-free | nemotron-3-ultra-free | deepseek-v4-flash | 25/18/18/25 |
-| **free** | Gratis | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 20/15/15/20 |
+| **paid** | Berbayar | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | 30/25/24/30 |
+| **hybrid** | Campuran | deepseek-v4-flash | deepseek-v4-flash | north-mini-code-free | north-mini-code-free | 25/25/18/24 |
+| **free** | Gratis | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 25/22/20/25 |
 
 - **Paid** — Kualitas maksimum. 2 DeepSeek model via OCG. Konteks 1M token.
 - **Hybrid** — 2 paid (orchestrator + executor) + 2 free (researcher + reviewer).
@@ -54,7 +54,7 @@ cp profiles/opencode.free.jsonc opencode.jsonc && opencode     # free
 
 ## Skills
 
-7 agent skills + 1 project scaffolding: `anti-gigo`, `orchestrate`, `minimal-impl`, `verification-ground-truth`, `forensic`, `web-research`, `stride-audit`, `bootstrap-project`.
+8 agent skills + 1 project scaffolding: `anti-gigo`, `grill`, `orchestrate`, `minimal-impl`, `verification-ground-truth`, `forensic`, `web-research`, `stride-audit`, `bootstrap-project`.
 
 ---
 
@@ -68,7 +68,6 @@ cp profiles/opencode.free.jsonc opencode.jsonc && opencode     # free
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
 | `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |
-| `TEST.md` | Smoke test — simulasi interaksi 4 agent |
 | `LESSONS.md` | Log pembelajaran — tiap kali Boss koreksi |
 | `project-guide.md` | Cross-project access — cara pakai orchestra dari repo lain |
 | `templates/sub-project.md` | Template anchor untuk sub-project |

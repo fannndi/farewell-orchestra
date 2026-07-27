@@ -35,10 +35,9 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 | Command | Description |
 |---------|-------------|
 | `/status` | Orchestration health: agent, model, tokens |
-| `/fanout` | Decompose → researcher + reviewer → executor |
-| `/review` | Code review only, no edits |
-| `/execute` | Delegate implementation langsung ke executor |
 | `/new-project` | Scaffold 10 dokumentasi standar untuk sub-project baru |
+| `/work-on` | Switch context ke sub-project target — resolve path, baca anchor |
+| `/check` | Health check struktur workspace — validasi semua file core |
 
 ## Session Flow
 

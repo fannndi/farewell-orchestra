@@ -7,6 +7,22 @@
   "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
   "subagent_depth": 1,
   "share": "disabled",
+  "permission": { "*": "ask" },
+  "references": {
+    "projects": {
+      "path": "~/projects",
+      "description": "Folder project Boss — biar orchestrator bisa akses tanpa prompt approval"
+    },
+    "opencode-sdk": {
+      "repository": "anomalyco/opencode-sdk-js",
+      "description": "OpenCode SDK — reference for custom tools"
+    },
+    "opencode-config": {
+      "path": "~/.config/opencode",
+      "description": "OpenCode global config directory",
+      "hidden": true
+    }
+  },
   "autoupdate": "notify",
   "provider": {
     "9router": {
@@ -36,14 +52,14 @@
     "researcher": {
       "color": "#3b82f6",
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 20,
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 25,
       "prompt": "Read-only. Return evidence with file:line. Concise. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "color": "#f59e0b",
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 20,
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 24,
       "prompt": "Read-only. Return prioritized findings: [BLOCKING]/[SHOULD]/[NICE]/[FYI]. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },

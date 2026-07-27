@@ -1,4 +1,4 @@
-// Profile: Hybrid | Models: ocg/deepseek-v4-flash (orchestrator, executor), oc/north-mini-code-free (researcher), oc/nemotron-3-ultra-free (reviewer, compaction)
+// Profile: Hybrid | Models: ocg/deepseek-v4-flash (orchestrator, researcher), oc/north-mini-code-free (reviewer, executor, title, summary, compaction)
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/ocg/deepseek-v4-flash",
@@ -7,6 +7,22 @@
   "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
   "subagent_depth": 1,
   "share": "disabled",
+  "permission": { "*": "ask" },
+  "references": {
+    "projects": {
+      "path": "~/projects",
+      "description": "Folder project Boss — biar orchestrator bisa akses tanpa prompt approval"
+    },
+    "opencode-sdk": {
+      "repository": "anomalyco/opencode-sdk-js",
+      "description": "OpenCode SDK — reference for custom tools"
+    },
+    "opencode-config": {
+      "path": "~/.config/opencode",
+      "description": "OpenCode global config directory",
+      "hidden": true
+    }
+  },
   "autoupdate": "notify",
   "provider": {
     "9router": {
@@ -37,7 +53,7 @@
     "researcher": {
       "color": "#3b82f6",
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 18,
+      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 25,
       "prompt": "Read-only. Return evidence with file:line. Concise. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -51,7 +67,7 @@
     "executor": {
       "color": "#10b981",
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
+      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.2 } }, "steps": 24,
       "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
       "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
