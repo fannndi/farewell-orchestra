@@ -29,28 +29,28 @@
     "orchestrator": {
       "color": "#7c3aed",
       "description": "Workflow orchestrator — parallel research/review via foreground task calls, lalu eksekusi oleh executor.",
-      "mode": "primary", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 20,
+      "mode": "primary", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
       "prompt": "Decompose requests into independent work packages. Dispatch researcher+reviewer concurrently. Synthesize, then delegate implementation to executor. No background tasks. No duplicated work.",
       "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
     "researcher": {
       "color": "#3b82f6",
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 15,
+      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 18,
       "prompt": "Read-only. Return evidence with file:line. Concise. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "color": "#f59e0b",
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.1 } }, "steps": 15,
+      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 18,
       "prompt": "Read-only. Return prioritized findings: [BLOCKING]/[SHOULD]/[NICE]/[FYI]. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
       "color": "#10b981",
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 20,
+      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
       "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
       "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -60,7 +60,7 @@
     "explore": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
     "title": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
     "summary": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/oc/nemotron-3-ultra-free", "mode": "primary", "hidden": true, "steps": 10 }
+    "compaction": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true, "steps": 10 }
   },
   "experimental": {
     "primary_tools": ["todowrite", "question"]
