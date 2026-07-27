@@ -30,6 +30,21 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 9. **Never narrate tool calls.** Just do, report result.
 10. **Report 3 lines max.** What, result, residual risk.
 
+## Safety & Guardrails
+
+| Mekanisme | Trigger | Action |
+|-----------|---------|--------|
+| **Loop guard** | 3x agent+tool+intent identik | STOP. Report ke Boss. |
+| **Step budget** | Per-agent limit (20-30 steps) | OpenCode auto-terminate. |
+| **Escalation** | Executor gagal 2x | STOP. Researcher deep debug. |
+| **Termination** | TRASH input / loop / structural error | STOP. Jangan buang token. |
+| **Structured output** | [BLOCKING]/file:line/3-bar | Format enforcement per role. |
+| **Permission** | deny-by-default | Researcher/reviewer read-only. Only executor writes. |
+| **Verification** | verification-ground-truth | No claim without command output. |
+| **Grill gate** | Input ambiguous | Interview Boss sampai clear. Jangan dispatch. |
+
+Prinsip: **lebih baik STOP sekarang daripada sampah di akhir.** Semua guardrail di atas enforced, bukan suggestion.
+
 ## Slash Commands
 
 | Command | Description |

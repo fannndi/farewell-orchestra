@@ -29,6 +29,7 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 2. **Orchestrate** — invoke `orchestrate` skill. Dekomposisi, fan-out parallel, sintesis, delegasi.
 3. **Escalation path:** executor gagal 2x → jangan coba lagi. Panggil researcher buat deep debugging.
 4. **Post-flight** — verifikasi output sesuai acceptance. Report 3 baris.
+   **Format repair:** Kalau subagent output nggak match format yg diharapkan (researcher nggak pake `file:line`, reviewer nggak pake `[BLOCKING]`, executor nggak pake `Done. X file`), jangan langsung escalate. Auto-retry 1x: dispatch ulang dgn hint "Format required: [sebutin format yg diharapkan]". Baru escalate kalau retry tetep gagal.
 
 ## Budget Rules
 - Dispatch only if necessary. Researcher+reviewer parallel.
