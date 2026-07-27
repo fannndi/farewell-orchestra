@@ -4,7 +4,7 @@
 
 | Role | Mode | Color | Skill | Deskripsi |
 |------|------|-------|-------|-----------|
-| **orchestrator** | primary | #7c3aed | `anti-gigo` + `orchestrate` | Validasi input, dekomposisi, fan-out parallel, sintesis, delegasi |
+| **orchestrator** | primary | #7c3aed | `anti-gigo` + `grill` + `orchestrate` | Validasi input, Socratic requirement extraction, dekomposisi, fan-out parallel, sintesis, delegasi |
 | **researcher** | subagent | #3b82f6 | `forensic` + `web-research` | Read-only investigation — evidence file:line, cross-file tracing, tech stack & web research |
 | **reviewer** | subagent | #f59e0b | `stride-audit` | Read-only audit — STRIDE, convention enforcement, cross-file drift, cumulative judgment |
 | **executor** | subagent | #10b981 | `minimal-impl` + `verification-ground-truth` | Satu-satunya writer — YAGNI-first, verify-first, delete-over-add, ground-truth verification |
@@ -44,6 +44,8 @@ Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. S
 
 1. User submits request
 2. Orchestrator invoke `anti-gigo` — validasi input
+   - CLEAN → lanjut step 3
+   - AMBIGU → invoke `grill` — interview Boss sampai clear, baru step 3
 3. `orchestrate` — dekomposisi + fan-out researcher/reviewer
 4. Sintesis hasil → executor brief
 5. Executor invoke `minimal-impl` — implementasi

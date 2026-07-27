@@ -60,4 +60,6 @@ Kalau ragu → naikkan 1 kelas.
 
 Kalau input CLEAN → `PASS. [TRIVIAL|MEDIUM|COMPLEX]. Lanjut orchestrate.`
 
-Kalau input TRASH → `HOLD. [alasan]. Tanya: [pertanyaan 1 kalimat].`
+Kalau input INCOMPLETE (ada goal tapi scope/acceptance/risk kurang, bukan full trash) → `PARTIAL. Recommend grill.`
+
+Kalau input TRASH (no goal, no scope, <10 kata) → `HOLD. [alasan]. Tanya: [pertanyaan 1 kalimat].`
