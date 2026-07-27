@@ -6,7 +6,7 @@
 |------|------|-------|-------|-----------|
 | **orchestrator** | primary | #7c3aed | `anti-gigo` + `orchestrate` | Validasi input, dekomposisi, fan-out parallel, sintesis, delegasi |
 | **researcher** | subagent | #3b82f6 | `forensic` + `web-research` | Read-only investigation — evidence file:line, cross-file tracing, tech stack & web research |
-| **reviewer** | subagent | #f59e0b | `stride-audit` + `consistency-drift-audit` | Read-only audit — STRIDE, convention enforcement, cross-file drift, cumulative judgment |
+| **reviewer** | subagent | #f59e0b | `stride-audit` | Read-only audit — STRIDE, convention enforcement, cross-file drift, cumulative judgment |
 | **executor** | subagent | #10b981 | `minimal-impl` + `verification-ground-truth` | Satu-satunya writer — YAGNI-first, verify-first, delete-over-add, ground-truth verification |
 
 ## Persona
@@ -68,7 +68,7 @@ Lihat `project-guide.md` buat panduan lengkap (alias, symlink, prompt integrasi)
 | File | Purpose |
 |------|---------|
 | `opencode.jsonc` | Default config + agent definitions |
-| `profiles/*.jsonc` | 5 tiered config profiles |
+| `profiles/*.jsonc` | 3 tiered config profiles (paid, hybrid, free) |
 | `.opencode/agents/` | Agent persona files |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered) |
 | `AGENTS.md` | This file |

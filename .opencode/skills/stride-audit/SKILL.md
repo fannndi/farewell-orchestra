@@ -58,6 +58,30 @@ Sebelum audit keamanan, cek apakah kode comply dengan konvensi proyek:
 
 **Tag:** compliance violation → `[SHOULD]`. Tapi kalau violation menyebabkan bug/security issue → `[BLOCKING]`.
 
+## Cross-File Consistency & Drift Detection
+
+Audit bukan cuma per-file — tapi celah ANTAR file yang seharusnya sinkron.
+
+### Drift Types
+
+| Jenis | Cek |
+|-------|-----|
+| **Numeric drift** | Angka di 2+ file beda (steps, limit, versi) |
+| **Structural drift** | Field ada di file A, hilang di file B |
+| **Stale reference** | File A nunjuk ke file B yang udah nggak ada |
+| **Silent divergence** | 2 file harusnya identik tapi udah beda |
+| **Claim vs reality** | Docs bilang X, kenyataannya Y |
+
+### Prosedur
+
+1. Identifikasi grup file yang mengaku saling konsisten (config utama vs turunan, docs vs kode)
+2. Cross-check klaim di docs ke sumber aslinya (config/kode), jangan percaya dokumentasi
+3. Catat tiap drift walau "minor" — drift kecil hari ini = bug besar nanti
+
+### Format temuan drift
+
+`[TAG] fileA:baris ↔ fileB:baris — apa yang harusnya sama tapi beda`
+
 ## Checklist (order = priority)
 
 1. **Correctness** — bugs, edge cases, race conditions

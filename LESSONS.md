@@ -1,23 +1,11 @@
-# Lessons Learned — Farewell Orchestra
+# LESSONS.md — Error Log & Pattern Tracker
 
-## Session Log
+Format: `| Tanggal | Trigger | Error | Root Cause | Fix |`
 
-| # | Date | Trigger | Intent | Error | Root Cause | Fix | Pattern? |
-|---|------|---------|--------|-------|------------|-----|----------|
-| — | — | — | — | — | — | — | — |
+| Tanggal | Trigger | Error | Root Cause | Fix |
+|----------|---------|-------|------------|-----|
+| 2026-07-27 | Boss: "kok kamu gak bisa edit" | Executor blocked dari .config folder | external_directory config belum include Documents | Tambah `C:/Users/FANNNDI/Documents/**` ke global config |
+| 2026-07-27 | Audit opencode schema | compaction keys `keep.tokens` & `buffer` bukan schema valid | Config dibuat sebelum schema final | Migrasi ke `preserve_recent_tokens` & `reserved` |
+| 2026-07-27 | AGENTS.md table mismatch | Skill mapping di table AGENTS.md nggak akurat | Table nggak di-update saat skill ditambah | Fix researcher/reviewer/executor row |
 
-## Patterns Detected
-
-*none yet*
-
-## Applied Fixes
-
-*none yet*
-
-## Declined Suggestions
-
-*none yet*
-
----
-
-> Log manual. Tambah entry tiap ada koreksi dari Boss.
+*Append-only. Satu baris per insiden non-trivial. Jangan overwrite.*
