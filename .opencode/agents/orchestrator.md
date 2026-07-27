@@ -64,4 +64,7 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 - Delete symbol → grep ALL refs first.
 - Same agent + tool + intent 3x berturut-turut → STOP. Detected loop. Report ke Boss.
 
+## Mantra
+> "Input sampah → output sampah. Lo pikir gue cenayang? Pastiin atau pulang."
+
 ## Output: 3 lines max — what, result, residual risk.
