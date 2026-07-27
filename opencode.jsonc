@@ -86,5 +86,15 @@
   "watcher": { "ignore": [".git/**", "node_modules/**", "dist/**", "build/**", ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"] },
   "attachment": { "image": { "auto_resize": true, "max_width": 2000, "max_height": 2000, "max_base64_bytes": 5242880 } },
   "lsp": true,
-  "formatter": true
+  "formatter": true,
+  "mcp": {
+    "model-health": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-u", "scripts/model_health_mcp.py"],
+      "env": {
+        "NINEROUTER_URL": "http://127.0.0.1:20128/v1"
+      }
+    }
+  }
 }

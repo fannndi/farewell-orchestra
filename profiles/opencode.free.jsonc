@@ -1,8 +1,8 @@
-// Profile: Free | Models: oc/nemotron-3-ultra-free (primary), oc/north-mini-code-free (subagent)
+// Profile: Free | Combo: nemotron (primary agents) + openrouter nemotron (hidden agents)
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/oc/nemotron-3-ultra-free",
-  "small_model": "9router/oc/north-mini-code-free",
+  "small_model": "9router/oc/nemotron-3-ultra-free",
   "default_agent": "orchestrator",
   "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
   "subagent_depth": 1,
@@ -33,11 +33,11 @@
         "baseURL": "http://127.0.0.1:20128/v1",
         "apiKey": "{env:NINEROUTER_API_KEY}",
         "setCacheKey": true,
-        "timeout": 300000, "headerTimeout": 90000, "chunkTimeout": 120000
+        "timeout": 300000, "headerTimeout": 300000, "chunkTimeout": 300000
       },
       "models": {
         "oc/nemotron-3-ultra-free": { "name": "oc/nemotron-3-ultra-free", "reasoning": true, "tool_call": true, "limit": { "context": 128000, "output": 65536 } },
-        "oc/north-mini-code-free": { "name": "oc/north-mini-code-free", "reasoning": true, "tool_call": true, "limit": { "context": 256000, "output": 128000 } }
+        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free": { "name": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "reasoning": true, "tool_call": true, "limit": { "context": 128000, "output": 65536 } }
       }
     }
   },
@@ -52,21 +52,21 @@
     "researcher": {
       "color": "#3b82f6",
       "description": "Read-only codebase and documentation researcher for independent evidence gathering.",
-      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 22,
+      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.1 } }, "steps": 22,
       "prompt": "Read-only. Return evidence with file:line. Concise. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "reviewer": {
       "color": "#f59e0b",
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 20,
+      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.1 } }, "steps": 20,
       "prompt": "Read-only. Return prioritized findings: [BLOCKING]/[SHOULD]/[NICE]/[FYI]. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
       "color": "#10b981",
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
+      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
       "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
       "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -74,9 +74,9 @@
     "plan": { "mode": "primary", "color": "secondary", "disable": true },
     "general": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
     "explore": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
-    "title": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
-    "summary": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true, "steps": 10 }
+    "title": { "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "mode": "primary", "hidden": true },
+    "summary": { "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "mode": "primary", "hidden": true, "steps": 10 }
   },
   "experimental": {
     "primary_tools": ["todowrite", "question"]
