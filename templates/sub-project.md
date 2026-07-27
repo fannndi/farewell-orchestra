@@ -6,9 +6,11 @@
 ## Ringkasan
 - **Nama:** {{PROJECT_NAME}}
 - **Satu kalimat:** {{ONE_LINER}}
-- **Repo:** {{REPO_PATH}}
-- **Profile aktif:** paid | hybrid | free
+- **Path absolut:** {{PROJECT_PATH}}
+- **Repo:** {{REPO_URL}}
+- **Profile:** {{PROFILE}} (paid | hybrid | free)
 - **Fase:** {{CURRENT_PHASE}} — detail di `docs/Tasks.md`
+- **Task aktif:** {{ACTIVE_TASK}}
 
 ## Dokumen (`docs/`)
 
@@ -31,5 +33,7 @@
 ## Task Aktif
 {{task yang lagi dikerjakan sekarang, sinkron sama checklist di Tasks.md}}
 
-## Catatan Sesi Terakhir
-{{ringkasan 3 baris: apa yang dikerjain, hasil, residual risk — format sama kayak report orchestrator}}
+## Sesi Terakhir
+| Tanggal | Apa yg dikerjain | Hasil | Residual risk |
+|----------|-------------------|-------|---------------|
+| {{DATE}} | {{WHAT}} | {{RESULT}} | {{RISK}} |
