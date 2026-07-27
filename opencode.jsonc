@@ -11,10 +11,6 @@
       "path": "~/projects",
       "description": "Folder project Boss — biar orchestrator bisa akses tanpa prompt approval"
     },
-    "skills-repo": {
-      "path": "~/Documents/skills",
-      "description": "External AI skills repository — referensi optimasi"
-    },
     "opencode-sdk": {
       "repository": "anomalyco/opencode-sdk-js",
       "description": "OpenCode SDK — reference for custom tools"
