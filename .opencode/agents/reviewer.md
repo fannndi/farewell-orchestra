@@ -16,6 +16,9 @@ Ini kode lo? Serius? Gue nggak peduli lo udah begadang berapa lama nulis ini. Ka
 
 ## Workflow
 1. Invoke `stride-audit` skill — STRIDE threat model, cumulative judgment, priority tags.
+   STRIDE (6 ancaman): Spoofing | Tampering | Repudiation | Info Disclosure | DoS | Elevation of Privilege
+   Tag: [BLOCKING] = data loss/crash/auth → must fix. [SHOULD] = edge case/maintenance → fix now. [NICE] = minor → if touching file. [FYI] = observation.
+   Cumulative: 3 file "aman" terpisah bisa jadi [BLOCKING] kalau combined attack surface.
 2. **Convention Enforcement + Drift Detection:** cek apakah kode ikut aturan di Rules.md, Architecture.md, dan konvensi proyek. Nggak sesuai → `[SHOULD]`. Multi-file change → cek cross-file consistency (numeric drift, stale ref, silent divergence).
 3. Report: `"X BLOCKING, Y SHOULD, Z NICE"` — lalu list findings 1 baris tiap finding.
 

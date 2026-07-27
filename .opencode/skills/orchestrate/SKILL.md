@@ -65,6 +65,8 @@ Kalau Boss minta verifikasi ekstra atau task high-stakes (auth, keamanan, data i
 3. **Researcher (rebuttal)** → tanggapi critique dengan bukti tambahan atau akui kalau reviewer benar
 4. **Synthesize** → orchestrator gabungkan final conclusion
 
+**Token efficiency:** Saat researcher rebuttal, GUNAKAN `task_id` dari dispatch researcher pertama — resume subagent, bukan dispatch ulang dari nol. Researcher bawa full history sendiri, nggak perlu re-brief. Ini bypass 200-token cap karena context sudah ada dari sesi sebelumnya.
+
 Trigger: Boss bilang `debat` atau `double check` atau `pastiin bener`. Atau orchestrator deteksi task nyangkut auth/security/data-loss.
 
 Output format:

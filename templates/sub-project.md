@@ -33,7 +33,13 @@
 ## Task Aktif
 {{task yang lagi dikerjakan sekarang, sinkron sama checklist di Tasks.md}}
 
-## Sesi Terakhir
-| Tanggal | Apa yg dikerjain | Hasil | Residual risk |
-|----------|-------------------|-------|---------------|
-| {{DATE}} | {{WHAT}} | {{RESULT}} | {{RISK}} |
+## Memori Agent
+
+| Agent | Konteks | File kunci |
+|-------|---------|------------|
+| orchestrator | {{ORCH_CTX}} | — |
+| researcher | {{RESEARCH_CTX}} | {{RESEARCH_FILES}} |
+| reviewer | {{REVIEW_CTX}} | {{REVIEW_FILES}} |
+| executor | {{EXEC_CTX}} | {{EXEC_FILES}} |
+
+*Diupdate executor tiap selesai task. Bukan log lengkap — cukup 1 kalimat konteks terakhir + file yg sering disentuh.*
