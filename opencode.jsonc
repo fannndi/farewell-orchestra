@@ -1,8 +1,8 @@
-// Profile: Paid | Models: ocg/deepseek-v4-pro (primary), ocg/deepseek-v4-flash (subagent)
+// Profile: Hybrid | Models: ocg/deepseek-v4-flash (orchestrator, researcher), oc/north-mini-code-free (reviewer, executor, title, summary, compaction)
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "9router/ocg/deepseek-v4-pro",
-  "small_model": "9router/ocg/deepseek-v4-flash",
+  "model": "9router/ocg/deepseek-v4-flash",
+  "small_model": "9router/oc/north-mini-code-free",
   "default_agent": "orchestrator",
   "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
   "subagent_depth": 1,
@@ -36,8 +36,9 @@
         "timeout": 300000, "headerTimeout": 90000, "chunkTimeout": 120000
       },
       "models": {
-        "ocg/deepseek-v4-pro": { "name": "ocg/deepseek-v4-pro", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 256000 } },
-        "ocg/deepseek-v4-flash": { "name": "ocg/deepseek-v4-flash", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 200000 } }
+        "ocg/deepseek-v4-flash": { "name": "ocg/deepseek-v4-flash", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 200000 } },
+        "oc/north-mini-code-free": { "name": "oc/north-mini-code-free", "reasoning": true, "tool_call": true, "limit": { "context": 256000, "output": 128000 } },
+        "oc/nemotron-3-ultra-free": { "name": "oc/nemotron-3-ultra-free", "reasoning": true, "tool_call": true, "limit": { "context": 128000, "output": 65536 } }
       }
     }
   },
@@ -45,7 +46,7 @@
     "orchestrator": {
       "color": "#7c3aed",
       "description": "Workflow orchestrator — parallel research/review via foreground task calls, lalu eksekusi oleh executor.",
-      "mode": "primary", "model": "9router/ocg/deepseek-v4-pro", "request": { "body": { "temperature": 0.2 } }, "steps": 30,
+      "mode": "primary", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
       "prompt": "Decompose requests into independent work packages. Dispatch researcher+reviewer concurrently. Synthesize, then delegate implementation to executor. No background tasks. No duplicated work.",
       "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
@@ -59,14 +60,14 @@
     "reviewer": {
       "color": "#f59e0b",
       "description": "Read-only reviewer for architecture, correctness, security, and verification planning.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-flash", "request": { "body": { "temperature": 0.1 } }, "steps": 24,
+      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 18,
       "prompt": "Read-only. Return prioritized findings: [BLOCKING]/[SHOULD]/[NICE]/[FYI]. No edits, no bash, no delegation.",
       "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
     "executor": {
       "color": "#10b981",
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/ocg/deepseek-v4-pro", "request": { "body": { "temperature": 0.2 } }, "steps": 30,
+      "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.2 } }, "steps": 24,
       "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
       "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -74,27 +75,17 @@
     "plan": { "mode": "primary", "color": "secondary", "disable": true },
     "general": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
     "explore": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
-    "title": { "model": "9router/ocg/deepseek-v4-flash", "mode": "primary", "hidden": true },
-    "summary": { "model": "9router/ocg/deepseek-v4-flash", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/ocg/deepseek-v4-flash", "mode": "primary", "hidden": true, "steps": 10 }
+    "title": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
+    "summary": { "model": "9router/oc/north-mini-code-free", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/oc/nemotron-3-ultra-free", "mode": "primary", "hidden": true, "steps": 10 }
   },
   "experimental": {
     "primary_tools": ["todowrite", "question"]
   },
-  "tool_output": { "max_lines": 3000, "max_bytes": 76800 },
-  "compaction": { "auto": true, "preserve_recent_tokens": 8000, "reserved": 30000, "prune": true },
+  "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
+  "compaction": { "auto": true, "preserve_recent_tokens": 7000, "reserved": 25000, "prune": true },
   "watcher": { "ignore": [".git/**", "node_modules/**", "dist/**", "build/**", ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"] },
   "attachment": { "image": { "auto_resize": true, "max_width": 2000, "max_height": 2000, "max_base64_bytes": 5242880 } },
   "lsp": true,
-  "formatter": true,
-  "mcp": {
-    "model-health": {
-      "type": "stdio",
-      "command": "python",
-      "args": ["-u", "scripts/model_health_mcp.py"],
-      "env": {
-        "NINEROUTER_URL": "http://127.0.0.1:20128/v1"
-      }
-    }
-  }
+  "formatter": true
 }
