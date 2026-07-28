@@ -1,4 +1,4 @@
-// Profile: Free | Combo: nemotron (primary agents) + openrouter nemotron (hidden agents)
+// Profile: Free | Balanced: OC (orchestrator + executor) + OpenRouter (researcher + reviewer) + hidden
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/oc/nemotron-3-ultra-free",
@@ -45,7 +45,7 @@
     "orchestrator": {
       "color": "#7c3aed",
       "description": "Workflow orchestrator — parallel research/review via foreground task calls, lalu eksekusi oleh executor.",
-      "mode": "primary", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
+      "mode": "primary", "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
       "prompt": "Decompose requests into independent work packages. Dispatch researcher+reviewer concurrently. Synthesize, then delegate implementation to executor. No background tasks. No duplicated work.",
       "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
     },
@@ -66,7 +66,7 @@
     "executor": {
       "color": "#10b981",
       "description": "Single implementation worker for a focused, non-overlapping change set.",
-      "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
+      "mode": "subagent", "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
       "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
       "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
     },
@@ -74,9 +74,9 @@
     "plan": { "mode": "primary", "color": "secondary", "disable": true },
     "general": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
     "explore": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
-    "title": { "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "mode": "primary", "hidden": true },
-    "summary": { "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "mode": "primary", "hidden": true },
-    "compaction": { "model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "mode": "primary", "hidden": true, "steps": 10 }
+    "title": { "model": "9router/oc/nemotron-3-ultra-free", "mode": "primary", "hidden": true },
+    "summary": { "model": "9router/oc/nemotron-3-ultra-free", "mode": "primary", "hidden": true },
+    "compaction": { "model": "9router/oc/nemotron-3-ultra-free", "mode": "primary", "hidden": true, "steps": 10 }
   },
   "experimental": {
     "primary_tools": ["todowrite", "question"]

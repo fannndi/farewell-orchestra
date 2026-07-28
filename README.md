@@ -38,11 +38,11 @@ Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (pa
 |---------|------|-------------|------------|----------|----------|:-----:|
 | **paid** | Berbayar | deepseek-v4-pro | deepseek-v4-flash | deepseek-v4-flash | deepseek-v4-pro | 30/25/24/30 |
 | **hybrid** | Campuran | deepseek-v4-flash | deepseek-v4-flash | north-mini-code-free | north-mini-code-free | 25/25/18/24 |
-| **free** | Gratis | nemotron-3-ultra-free | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free | 25/22/20/25 |
+| **free** | Gratis | nemotron (OpenRouter) | nemotron-3-ultra-free (OC) | nemotron-3-ultra-free (OC) | nemotron (OpenRouter) | 25/22/20/25 |
 
 - **Paid** — Kualitas maksimum. 2 DeepSeek model via OCG. Konteks 1M token.
 - **Hybrid** — 2 paid (orchestrator + executor) + 2 free (researcher + reviewer).
-- **Free** — Nol biaya. Nemotron Ultra + North Mini Code via OCG.
+- **Free** — Nol biaya. Balanced: orchestrator+executor pakai Nemotron (OpenRouter), researcher+reviewer pakai Nemotron (OC). Load terdistribusi.
 
 ```bash
 opencode                                    # paid (default)
