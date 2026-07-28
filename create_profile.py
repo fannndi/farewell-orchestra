@@ -1,0 +1,89 @@
+import os
+
+base = r"C:\Users\FANNNDI\Documents\farewell-orchestra"
+profile_dir = os.path.join(base, "profiles")
+os.makedirs(profile_dir, exist_ok=True)
+
+limited_path = os.path.join(profile_dir, "opencode.limited.jsonc")
+limited_content = """// Profile: Limited | Models: ollama/minimax-m3 + free opencode models
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/minimax-m3",
+  "small_model": "9router/oc/north-mini-code-free",
+  "default_agent": "orchestrator",
+  "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
+  "subagent_depth": 1,
+  "share": "disabled",
+  "permission": { "*": "ask" },
+  "references": {
+    "projects": { "path": "~/projects", "description": "Folder project Boss — biar orchestrator bisa akses tanpa prompt approval" },
+    "opencode-sdk": { "repository": "anomalyco/opencode-sdk-js", "description": "OpenCode SDK — reference for custom tools" },
+    "opencode-config": { "path": "~/.config/opencode", "description": "OpenCode global config directory", "hidden": true }
+  },
+  "autoupdate": "notify",
+  "provider": {
+    "9router": {
+      "name": "9Router Gateway",
+      "npm": "@ai-sdk/openai-compatible",
+      "env": ["NINEROUTER_API_KEY"],
+      "options": {
+        "baseURL": "http://127.0.0.1:20128/v1",
+        "apiKey": "{env:NINEROUTER_API_KEY}",
+        "setCacheKey": true,
+        "timeout": 300000, "headerTimeout": 90000, "chunkTimeout": 120000
+      },
+      "models": {
+        // PRIMARY — ollama local via 9router (always available)
+        "ollama/minimax-m3": { "name": "ollama/minimax-m3", "reasoning": true, "tool_call": true, "limit": { "context": 128000, "output": 64000 } },
+        // FREE MODELS — 9router free tier (when available)
+        "oc/deepseek-v4-flash-free": { "name": "oc/deepseek-v4-flash-free", "reasoning": true, "tool_call": true, "limit": { "context": 200000, "output": 128000 } },
+        "oc/north-mini-code-free": { "name": "oc/north-mini-code-free", "reasoning": true, "tool_call": true, "limit": { "context": 256000, "output": 128000 } },
+        "oc/nemotron-3-ultra-free": { "name": "oc/nemotron-3-ultra-free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } },
+        "oc/big-pickle": { "name": "oc/big-pickle", "reasoning": true, "tool_call": true, "limit": { "context": 200000, "output": 32000 } },
+        "oc/mimo-v2.5-free": { "name": "oc/mimo-v2.5-free", "reasoning": true, "tool_call": true, "limit": { "context": 200000, "output": 32000 } }
+      }
+    }
+  },
+  "agent": {
+    "orchestrator": {
+      "color": "#7c3aed", "description": "Workflow orchestrator", "mode": "primary", "model": "ollama/minimax-m3", "request": { "body": { "temperature": 0.2 } }, "steps": 25,
+      "prompt": "Decompose requests into independent work packages. Dispatch researcher+reviewer concurrently. Synthesize, then delegate implementation to executor. No background tasks. No duplicated work.",
+      "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } }
+    },
+    "researcher": {
+      "color": "#3b82f6", "description": "Read-only researcher", "mode": "subagent", "model": "9router/oc/deepseek-v4-flash-free", "request": { "body": { "temperature": 0.1 } }, "steps": 25,
+      "prompt": "Read-only. Return evidence with file:line. Concise. No edits, no bash, no delegation.",
+      "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
+    },
+    "reviewer": {
+      "color": "#f59e0b", "description": "Read-only reviewer", "mode": "subagent", "model": "ollama/minimax-m3", "request": { "body": { "temperature": 0.1 } }, "steps": 18,
+      "prompt": "Read-only. Return prioritized findings: [BLOCKING]/[SHOULD]/[NICE]/[FYI]. No edits, no bash, no delegation.",
+      "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
+    },
+    "executor": {
+      "color": "#10b981", "description": "Implementation worker", "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.2 } }, "steps": 24,
+      "prompt": "Implement only the scoped change. Follow conventions. Verify. Report files+results. No delegation, no scope creep.",
+      "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" }
+    },
+    "build": { "mode": "primary", "color": "primary", "disable": true },
+    "plan": { "mode": "primary", "color": "secondary", "disable": true },
+    "general": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
+    "explore": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
+    "title": { "model": "ollama/minimax-m3", "mode": "primary", "hidden": true },
+    "summary": { "model": "ollama/minimax-m3", "mode": "primary", "hidden": true },
+    "compaction": { "model": "ollama/minimax-m3", "mode": "primary", "hidden": true, "steps": 10 }
+  },
+  "experimental": { "primary_tools": ["todowrite", "question"] },
+  "tool_output": { "max_lines": 2000, "max_bytes": 51200 },
+  "compaction": { "auto": true, "preserve_recent_tokens": 7000, "reserved": 25000, "prune": true },
+  "watcher": { "ignore": [".git/**", "node_modules/**", "dist/**", "build/**", ".next/**", ".venv/**", "venv/**", "__pycache__/**", ".pytest_cache/**"] },
+  "attachment": { "image": { "auto_resize": true, "max_width": 2000, "max_height": 2000, "max_base64_bytes": 5242880 } },
+  "lsp": true,
+  "formatter": true
+}"""
+
+with open(limited_path, "w") as f:
+    f.write(limited_content)
+
+print("Created:", limited_path)
+print("Content length:", len(limited_content), "chars")

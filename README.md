@@ -1,41 +1,31 @@
 # Farewell Orchestra
 
-An OpenCode agent orchestration framework. Manage 4 specialized agents (orchestrator, researcher, reviewer, executor) with explicit, GIGO-enforced workflows for safe, deterministic delegation.
+Agent orchestration framework untuk OpenCode. Empat AI agent (orchestrator, researcher, reviewer, executor) kerja bareng ngerjain task dari Boss.
 
-## How to Use
+## Cara Pake
 
-Just run `opencode` in this directory. Boss gives tasks, orchestrator validates then decomposes, reviewer+researcher audit in parallel, executor implements YAGNI-first. One command, autonomous coordination.
+Jalanin `opencode` di folder ini, kasih task. Orchestrator bakal decomposisi, fan-out ke researcher+reviewer parallel, sintesis, delegasi ke executor.
 
-## Model Configuration
+## Profile
 
-- **Orchestrator**: deepseek-v4-flash
-- **Sub-agents** (researcher, reviewer, executor): use free models
+```
+switch.bat     # atau switch.sh
+```
 
-## Switching Profiles
+| # | Profile | Model |
+|:-:|---------|-------|
+| 1 | **V1** (Default) | orchestrator=deepseek-v4-flash · researcher=deepseek-v4-flash-free · reviewer/executor=north-mini-code-free |
+| 2 | **Limited** | orchestrator/researcher=ollama/minimax-m3 · reviewer/executor=north-mini-code-free |
 
-Run `switch.bat` (Windows) or `switch.sh` (Linux/macOS) to switch between Free, Hybrid, and Paid profiles.
+Pilih 1 atau 2, restart opencode.
 
-## Quick Reference
+## Architecture
 
-| Variant | Description | Model Config |
-|---------|-------------|--------------|
-| Free | Solo(executor) | Free model |
-| Free + 1 | Executor + Researcher | Free + Free |
-| Free + 2 | Executor + Reviewer | Free + Free |
-| Free + 3 | Full orchestration | Free + Free + Free |
-| Hybrid + 1 | Solo(executor) + Free researcher | Free + Free |
-| Hybrid + 2 | Solo(executor) + Free reviewer | Free + Free |
-| Hybrid + 3 | Solo(executor) + Free orchestration | Free + Free + Free |
-| Paid | Full orchestration + Paid orchestrator | Paid + Free |
+| Agent | Role | Model (V1) |
+|-------|------|-----------|
+| orchestrator | Tech Lead — validasi, dekomposisi, delegasi | deepseek-v4-flash |
+| researcher | Forensic investigator — evidence file:line | deepseek-v4-flash-free |
+| reviewer | QA/Security — STRIDE audit, [BLOCKING] | north-mini-code-free |
+| executor | Developer — YAGNI-first, verify-first | north-mini-code-free |
 
-## Examples
-
-```bash
-# Simple task
-opencode "Fix this"
-
-# Explain a pattern
-opencode "Explain [file:line]"
-
-# Test setup
-opencode "/check"</command>
+Detail lengkap: `AGENTS.md`, `.opencode/agents/`, `.opencode/skills/`.
