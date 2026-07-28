@@ -28,4 +28,6 @@ Format: `| Tanggal | Type | Trigger | Error | Root Cause | Fix |`
 | 2026-07-28 | Final elimination: V1 winner setelah stress test | N/A | N/A | Setelah stress test berat di semua 4 role agent, V1 (deepseek-v4-flash + deepseek-free + north-mini-code) dipilih sebagai pemenang. Profiles/, switch.bat, switch.sh dihapus. Hanya opencode.jsonc kept. |
 | 2026-07-28 | minimax-m3 small context | orchestrator context 128K instead of 1M | limit.context hardcoded conservative default | set limit.context=1000000 to match Flash premium tier |
 
+| 2026-07-28 | STALE_REFERENCE | repo cleanup audit | 11 orphan files committed (tui.json, temp-line-count.txt, create_profile.py, scripts/, docs/, compact-check.md) | personal TUI config + dead one-shot scripts + unused docs in repo root | deleted all, fixed stale sub-project.md ref to docs/Tasks.md |
+
 *Append-only. Satu baris per insiden non-trivial. Jangan overwrite.*
