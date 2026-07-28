@@ -33,10 +33,10 @@
 
 | Agent | Primary Model | Steps |
 |-------|---------------|-------|
-| Orchestrator | 9router/oc/nemotron-3-ultra-free | 25 |
-| Researcher | 9router/oc/nemotron-3-ultra-free | 22 |
-| Reviewer | 9router/oc/nemotron-3-ultra-free | 20 |
-| Executor | 9router/oc/nemotron-3-ultra-free | 25 |
+| Orchestrator | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | 25 |
+| Researcher | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | 22 |
+| Reviewer | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | 20 |
+| Executor | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | 25 |
 
 ## Output Format
 

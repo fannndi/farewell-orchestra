@@ -14,12 +14,12 @@ Display real-time status of the orchestra system.
   "timestamp": "2026-07-28T13:45:00Z",
   "profile": "hybrid",
   "agents": {
-    "orchestrator": { "model": "9router/oc/nemotron-3-ultra-free", "steps_used": 12, "steps_limit": 25, "status": "active" },
-    "researcher":  { "model": "9router/oc/nemotron-3-ultra-free", "steps_used": 8,  "steps_limit": 22, "status": "idle" },
-    "reviewer":    { "model": "9router/oc/nemotron-3-ultra-free", "steps_used": 5,  "steps_limit": 20, "status": "idle" },
-    "executor":    { "model": "9router/oc/nemotron-3-ultra-free", "steps_used": 0,  "steps_limit": 25, "status": "idle" }
+    "orchestrator": { "model": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "steps_used": 12, "steps_limit": 25, "status": "active" },
+    "researcher":  { "model": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "steps_used": 8,  "steps_limit": 22, "status": "idle" },
+    "reviewer":    { "model": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "steps_used": 5,  "steps_limit": 20, "status": "idle" },
+    "executor":    { "model": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free", "steps_used": 0,  "steps_limit": 25, "status": "idle" }
   },
-  "tokens": { "used": 12400, "limit": 128000, "pct": 10 },
+  "tokens": { "used": 12400, "limit": 1000000, "pct": 1 },
   "uptime_seconds": 3600,
   "active_project": "farewell-orchestra"
 }

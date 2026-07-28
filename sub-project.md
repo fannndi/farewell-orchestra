@@ -36,8 +36,8 @@ Maintain orchestrator framework (agents, skills, commands, templates, config pro
 ## Memori Agent
 
 | Agent | Konteks | File kunci |
-|-------|---------|------------|
-| orchestrator | Validasi input, dekomposisi task, delegasi parallel, sintesis hasil | AGENTS.md, .opencode/agents/orchestrator.md |
-| researcher | Investigasi codebase, forensic debug, tech stack research, web research | .opencode/agents/researcher.md, .opencode/skills/forensic.md |
-| reviewer | STRIDE audit, convention enforcement, cross-file drift detection | .opencode/agents/reviewer.md, .opencode/skills/stride-audit.md |
-| executor | YAGNI-first implementasi, verification-ground-truth, error healing mandiri, update sub-project.md | .opencode/agents/executor.md, .opencode/skills/minimal-impl.md, sub-project.md |
+|-------|---------|-----------|
+| orchestrator | Validasi input, dekomposisi task, delegasi parallel, sintesis hasil — pakai deepseek-v4-flash (primary) | opencode.jsonc, profiles/hybrid-v1.jsonc, profiles/hybrid-v[1-8].jsonc |
+| researcher | Investigasi codebase, forensic debug, tech stack research — pakai deepseek-v4-flash-free | opencode.jsonc |
+| reviewer | STRIDE audit, convention enforcement, cross-file drift — pakai north-mini-code-free | opencode.jsonc |
+| executor | YAGNI-first implementasi, verification-ground-truth, error healing — pakai north-mini-code-free | opencode.jsonc |

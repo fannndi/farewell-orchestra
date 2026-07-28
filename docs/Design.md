@@ -8,9 +8,9 @@
 | Agent | Mode | Model | Permission | Fokus |
 |-------|------|-------|------------|-------|
 | Orchestrator | primary | DeepSeek Flash | * deny (read:allow, skill:allow, question:allow) | Decompose, validate, Delegate |
-| Researcher | subagent | 9router/oc/nemotron-3-ultra-free | * deny (read:allow, glob:allow, grep:allow) | Cross-file tracing, tech stack research |
-| Reviewer | subagent | 9router/oc/nemotron-3-ultra-free | * deny (read:allow, websearch:allow) | STRIDE audit, convention enforcement |
-| Executor | subagent | 9router/oc/nemotron-3-ultra-free | * deny (read:allow, edit:allow, bash:allow) | Implementasi YAGNI-first, ground-truth verification |
+| Researcher | subagent | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | *  deny (read:allow, glob:allow, grep:allow) | Cross-file tracing, tech stack research |
+| Reviewer | subagent | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | *  deny (read:allow, websearch:allow) | STRIDE audit, convention enforcement |
+| Executor | subagent | openrouter/nvidia/nemotron-3-ultra-550b-a55b:free | *  deny (read:allow, edit:allow, bash:allow) | Implementasi YAGNI-first, ground-truth verification |
 
 ## Arus Proyek
 
