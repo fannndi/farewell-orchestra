@@ -54,11 +54,11 @@ BOILERPLATE = {
         }
     },
     "experimental": {"primary_tools": ["todowrite", "question"]},
-    "tool_output": {"max_lines": 2000, "max_bytes": 51200},
+    "tool_output": {"max_lines": 1000, "max_bytes": 20000},
     "compaction": {
         "auto": True,
-        "preserve_recent_tokens": 7000,
-        "reserved": 25000,
+        "preserve_recent_tokens": 4000,
+        "reserved": 14000,
         "prune": True
     },
     "watcher": {
