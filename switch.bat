@@ -13,11 +13,11 @@ echo  6. CODEX-OR — cx/gpt-5.6-luna + OpenRouter free
 echo.
 set /P CH="Choice (1-6): "
 
-if "%CH%"=="1" set SRC=%BASE%profiles\opencode.default.jsonc
+if "%CH%"=="1" set SRC=%BASE%profiles\opencode.default-oc.jsonc
 if "%CH%"=="2" set SRC=%BASE%profiles\opencode.default-or.jsonc
-if "%CH%"=="3" set SRC=%BASE%profiles\opencode.ollama.jsonc
+if "%CH%"=="3" set SRC=%BASE%profiles\opencode.ollama-oc.jsonc
 if "%CH%"=="4" set SRC=%BASE%profiles\opencode.ollama-or.jsonc
-if "%CH%"=="5" set SRC=%BASE%profiles\opencode.codex.jsonc
+if "%CH%"=="5" set SRC=%BASE%profiles\opencode.codex-oc.jsonc
 if "%CH%"=="6" set SRC=%BASE%profiles\opencode.codex-or.jsonc
 
 if "%SRC%"=="" ( echo Invalid choice. & pause & exit /b 1 )

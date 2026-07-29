@@ -1,4 +1,4 @@
-// Profile: Codex | cx/gpt-5.6-luna (codex) + OC free (north-mini-code + deepseek-free)
+// Profile: Codex | cx/gpt-5.6-luna (codex) + north-mini-code-free + nemotron-3-ultra-free
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "9router/cx/gpt-5.6-luna",
@@ -19,15 +19,15 @@
       "models": {
         "cx/gpt-5.6-luna": { "name": "cx/gpt-5.6-luna", "reasoning": true, "tool_call": true, "limit": { "context": 256000, "output": 128000 } },
         "oc/north-mini-code-free": { "name": "oc/north-mini-code-free", "reasoning": true, "tool_call": true, "limit": { "context": 256000, "output": 128000 } },
-        "oc/deepseek-v4-flash-free": { "name": "oc/deepseek-v4-flash-free", "reasoning": true, "tool_call": true, "limit": { "context": 200000, "output": 128000 } }
+        "oc/nemotron-3-ultra-free": { "name": "oc/nemotron-3-ultra-free", "reasoning": true, "tool_call": true, "limit": { "context": 1000000, "output": 128000 } }
       }
     }
   },
   "agent": {
     "orchestrator": { "color": "#7c3aed", "description": "Workflow orchestrator", "mode": "primary", "model": "9router/cx/gpt-5.6-luna", "request": { "body": { "temperature": 0.2 } }, "steps": 20, "prompt": "Decompose requests.", "permission": { "*": "deny", "edit": "deny", "bash": "deny", "question": "allow", "skill": "allow", "todowrite": "allow", "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" } } },
     "researcher": { "color": "#3b82f6", "description": "Read-only researcher", "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 18, "prompt": "Read-only. Return evidence with file:line.", "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" } },
-    "reviewer": { "color": "#f59e0b", "description": "Read-only reviewer", "mode": "subagent", "model": "9router/oc/north-mini-code-free", "request": { "body": { "temperature": 0.1 } }, "steps": 14, "prompt": "Read-only. Return prioritized findings.", "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" } },
-    "executor": { "color": "#10b981", "description": "Implementation worker", "mode": "subagent", "model": "9router/oc/deepseek-v4-flash-free", "request": { "body": { "temperature": 0.2 } }, "steps": 18, "prompt": "Implement only the scoped change.", "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" } },
+    "reviewer": { "color": "#f59e0b", "description": "Read-only reviewer", "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.1 } }, "steps": 14, "prompt": "Read-only. Return prioritized findings.", "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "webfetch": "allow", "websearch": "allow", "lsp": "allow", "skill": "allow", "task": "deny" } },
+    "executor": { "color": "#10b981", "description": "Implementation worker", "mode": "subagent", "model": "9router/oc/nemotron-3-ultra-free", "request": { "body": { "temperature": 0.2 } }, "steps": 18, "prompt": "Implement only the scoped change.", "permission": { "*": "deny", "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow", "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow", "task": "deny" } },
     "build": { "mode": "primary", "color": "primary", "disable": true },
     "plan": { "mode": "primary", "color": "secondary", "disable": true },
     "general": { "mode": "subagent", "disable": true, "permission": { "*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny" } },
