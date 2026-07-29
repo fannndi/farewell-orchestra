@@ -106,8 +106,17 @@ AGENT_TEMPLATES = {
         "prompt": "Read-only. Return evidence with file:line.",
         "permission": {
             "read": "allow", "glob": "allow", "grep": "allow",
-            "list": "allow", "bash": "allow", "webfetch": "allow", "websearch": "allow",
+            "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
+            "bash": {
+                "*": "allow",
+                "rm *": "deny", "del *": "deny", "Remove-Item *": "deny",
+                "git commit *": "deny", "git push *": "deny",
+                "git merge *": "deny", "git rebase *": "deny",
+                "git reset *": "deny", "git clean *": "deny",
+                "npm *": "deny", "bun *": "deny", "pnpm *": "deny", "yarn *": "deny",
+                "pip *": "deny", "poetry *": "deny"
+            },
             "external_directory": {"*": "allow"},
             "task": "deny"
         }
@@ -121,8 +130,17 @@ AGENT_TEMPLATES = {
         "prompt": "Read-only. Return prioritized findings.",
         "permission": {
             "read": "allow", "glob": "allow", "grep": "allow",
-            "list": "allow", "bash": "allow", "webfetch": "allow", "websearch": "allow",
+            "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
+            "bash": {
+                "*": "allow",
+                "rm *": "deny", "del *": "deny", "Remove-Item *": "deny",
+                "git commit *": "deny", "git push *": "deny",
+                "git merge *": "deny", "git rebase *": "deny",
+                "git reset *": "deny", "git clean *": "deny",
+                "npm *": "deny", "bun *": "deny", "pnpm *": "deny", "yarn *": "deny",
+                "pip *": "deny", "poetry *": "deny"
+            },
             "external_directory": {"*": "allow"},
             "task": "deny"
         }
