@@ -7,7 +7,22 @@
   "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
   "subagent_depth": 1,
   "share": "disabled",
-  "permission": "allow",
+  "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "bash": "allow",
+    "task": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "question": "allow",
+    "todowrite": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "external_directory": { "*": "allow" }
+  },
   "references": {
     "projects": { "path": "~/projects", "description": "Folder project Boss" },
     "opencode-sdk": { "repository": "anomalyco/opencode-sdk-js", "description": "OpenCode SDK" },
@@ -54,6 +69,7 @@
         "skill": "allow",
         "todowrite": "allow",
         "lsp": "allow",
+        "external_directory": { "*": "allow" },
         "task": { "*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow" }
       }
     },
@@ -76,6 +92,7 @@
         "websearch": "allow",
         "lsp": "allow",
         "skill": "allow",
+        "external_directory": { "*": "allow" },
         "task": "deny"
       }
     },
@@ -98,6 +115,7 @@
         "websearch": "allow",
         "lsp": "allow",
         "skill": "allow",
+        "external_directory": { "*": "allow" },
         "task": "deny"
       }
     },
@@ -118,6 +136,7 @@
         "bash": "allow",
         "lsp": "allow",
         "skill": "allow",
+        "external_directory": { "*": "allow" },
         "task": "deny"
       }
     },
