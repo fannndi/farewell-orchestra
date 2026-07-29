@@ -86,7 +86,7 @@ AGENT_TEMPLATES = {
         "description": "Workflow orchestrator",
         "mode": "primary",
         "request": {"body": {"temperature": 0.2}},
-        "steps": 20,
+        "steps": 22,
         "prompt": "Decompose requests.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -101,7 +101,7 @@ AGENT_TEMPLATES = {
         "description": "Read-only researcher",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
-        "steps": 22,
+        "steps": 24,
         "prompt": "Read-only. Return evidence with file:line.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -116,7 +116,7 @@ AGENT_TEMPLATES = {
         "description": "Read-only reviewer",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
-        "steps": 18,
+        "steps": 20,
         "prompt": "Read-only. Return prioritized findings.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -131,7 +131,7 @@ AGENT_TEMPLATES = {
         "description": "Implementation worker",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.2}},
-        "steps": 18,
+        "steps": 25,
         "prompt": "Implement only the scoped change.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -157,8 +157,15 @@ DISABLED_AGENTS = {
 
 
 def load_profiles():
-    with open(PROFILES_JSON, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(PROFILES_JSON, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"[ERROR] File not found: {PROFILES_JSON}", file=sys.stderr)
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] Invalid JSON in {PROFILES_JSON}: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 def find_profile(registry, name):
@@ -171,10 +178,11 @@ def find_profile(registry, name):
 def collect_models(registry, profile):
     """Collect all unique model IDs used in this profile."""
     models = set()
-    models.add(profile["model"])
-    models.add(profile["small_model"])
-    for agent_name, model_id in profile["agents"].items():
+    models.add(profile.get("model", ""))
+    models.add(profile.get("small_model", ""))
+    for agent_name, model_id in profile.get("agents", {}).items():
         models.add(model_id)
+    models.discard("")
     return models
 
 
@@ -212,7 +220,10 @@ def build_provider_models(registry, profile):
     model_ids = collect_models(registry, profile)
     result = {}
     for mid in sorted(model_ids):
-        cfg = registry["models"].get(mid, {"reasoning": True, "tool_call": True})
+        cfg = registry["models"].get(mid)
+        if cfg is None:
+            print(f"[WARN] Model '{mid}' not found in registry.models, using defaults", file=sys.stderr)
+            cfg = {"reasoning": True, "tool_call": True}
         key = short_model_id(mid)
         result[key] = {
             "name": key,
@@ -275,14 +286,117 @@ def generate(profile_name, to_stdout=False):
         sys.exit(1)
 
     import shutil
-    shutil.copy2(temp_path, root_path)
+    try:
+        shutil.copy2(temp_path, root_path)
+    except Exception as e:
+        print(f"[ERROR] Failed to copy to {root_path}: {e}", file=sys.stderr)
+        sys.exit(1)
     print(f"[OK] Copied -> {root_path}  ({profile['label']})")
+
+
+def validate_registry(registry):
+    """Validate profiles.json integrity. Return list of errors."""
+    errors = []
+    seen_names = set()
+    models_reg = registry.get("models", {})
+
+    for i, p in enumerate(registry.get("profiles", [])):
+        name = p.get("name", f"#{i}")
+        # Required fields
+        for field in ("name", "label", "model", "small_model"):
+            if field not in p:
+                errors.append(f"[ERROR] Profile '{name}' missing field '{field}'")
+        # Duplicate names
+        if name in seen_names:
+            errors.append(f"[ERROR] Duplicate profile name: '{name}'")
+        seen_names.add(name)
+
+        # Check agents
+        agents = p.get("agents", {})
+        if not agents:
+            errors.append(f"[ERROR] Profile '{name}' has no agents")
+        else:
+            for agent_name in AGENT_TEMPLATES:
+                mid = agents.get(agent_name)
+                if mid and mid not in models_reg and mid != p.get("model"):
+                    errors.append(f"[WARN] Profile '{name}' agent '{agent_name}' model '{mid}' not in registry")
+
+        # Check model references
+        for ref_key in ("model", "small_model"):
+            mid = p.get(ref_key)
+            if mid and mid not in models_reg:
+                errors.append(f"[WARN] Profile '{name}' {ref_key} '{mid}' not in registry")
+
+    if not registry.get("profiles"):
+        errors.append("[WARN] No profiles defined")
+
+    return errors
+
+
+def diff_profiles(name_a, name_b, registry):
+    """Compare two profiles side by side."""
+    pa = find_profile(registry, name_a)
+    pb = find_profile(registry, name_b)
+
+    if not pa:
+        print(f"[ERROR] Profile '{name_a}' not found", file=sys.stderr)
+        sys.exit(1)
+    if not pb:
+        print(f"[ERROR] Profile '{name_b}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    # Collect all agent names to compare
+    all_agents = ["orchestrator", "researcher", "reviewer", "executor"]
+
+    print(f"\n  {'Profile A (' + pa['name'] + ')':<35} vs    {'Profile B (' + pb['name'] + ')':<35}")
+    print("  " + "-" * 75)
+    for agent in all_agents:
+        ma = short_model(pa["agents"].get(agent, pa["model"]))
+        mb = short_model(pb["agents"].get(agent, pb["model"]))
+        symbol = "!=" if ma != mb else " ="
+        print(f"  {agent:<14} {ma:<20} {symbol}    {mb:<20}")
+
+    # Show model-level diff
+    models_a = collect_models(None, pa)
+    models_b = collect_models(None, pb)
+    only_a = models_a - models_b
+    only_b = models_b - models_a
+    if only_a:
+        print(f"\n  >>> Hanya di {pa['name']}: {', '.join(short_model_id(m) for m in only_a)}")
+    if only_b:
+        print(f"  >>> Hanya di {pb['name']}: {', '.join(short_model_id(m) for m in only_b)}")
+    if not only_a and not only_b:
+        print("  >>> Model sama semua (cuma label beda)")
 
 
 def short_model(mid):
     """Return short readable model name from full model ID."""
     s = short_model_id(mid)
     return s.replace("-ultra-550b-a55b", "").replace(":free", "")
+
+
+def inspect_profile(name, registry):
+    """Print detailed profile info."""
+    profile = find_profile(registry, name)
+    if not profile:
+        print(f"[ERROR] Profile '{name}' not found.", file=sys.stderr)
+        sys.exit(1)
+
+    models = collect_models(registry, profile)
+
+    print(f"Profile: {profile['name']}")
+    print(f"Label:   {profile['label']}")
+    print(f"Model:   {profile['model']}")
+    print(f"Small:   {profile['small_model']}")
+    print()
+    print("Agents:")
+    for agent in ["orchestrator", "researcher", "reviewer", "executor"]:
+        model = profile["agents"].get(agent, profile["model"])
+        print(f"  {agent:<14} {model}")
+    print()
+    print(f"Unique models ({len(models)}):")
+    for m in sorted(models):
+        print(f"  {m}")
 
 
 def show_menu():
@@ -337,9 +451,12 @@ if __name__ == "__main__":
         registry = load_profiles()
         names = [p["name"] for p in registry["profiles"]]
         print("Usage:")
-        print("  python profiles/generate.py <profile-name>   -> write temp -> copy to opencode.jsonc")
-        print("  python profiles/generate.py --menu | -i      -> interactive menu")
-        print("  python profiles/generate.py --stdout <name>  -> print to stdout")
+        print("  python profiles/generate.py <profile-name>     -> generate & copy to opencode.jsonc")
+        print("  python profiles/generate.py --menu | -i        -> interactive menu")
+        print("  python profiles/generate.py --stdout <name>    -> print to stdout")
+        print("  python profiles/generate.py --validate         -> check profiles.json integrity")
+        print("  python profiles/generate.py --diff <A> <B>     -> compare two profiles")
+        print("  python profiles/generate.py --inspect <name>   -> inspect profile details")
         print(f"\nProfiles: {', '.join(names)}")
         sys.exit(0)
 
@@ -349,6 +466,28 @@ if __name__ == "__main__":
 
     if args[0] == "--stdout" and len(args) > 1:
         generate(args[1], to_stdout=True)
+        sys.exit(0)
+
+    if args[0] == "--validate":
+        registry = load_profiles()
+        errors = validate_registry(registry)
+        if errors:
+            for e in errors:
+                print(e)
+            sys.exit(1)
+        else:
+            count = len(registry.get("profiles", []))
+            print(f"[OK] Registry valid, {count} profiles checked")
+        sys.exit(0)
+
+    if args[0] == "--diff" and len(args) > 2:
+        registry = load_profiles()
+        diff_profiles(args[1], args[2], registry)
+        sys.exit(0)
+
+    if args[0] == "--inspect" and len(args) > 1:
+        registry = load_profiles()
+        inspect_profile(args[1], registry)
         sys.exit(0)
 
     profile_name = args[0]
