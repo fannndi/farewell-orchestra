@@ -30,6 +30,8 @@
 | **Sensors (feedback)** | | |
 | JSON validation (generate.py) | ✅ | Temp→validasi→copy |
 | Post-generate hook | ✅ | Baru: `.opencode/hooks/post-generate.ps1` |
+| Custom tool: harness_status | ✅ | Baru: `.opencode/tools/harness_status.ts` — validate, profile, sensor cek |
+| Custom tool: learn | ✅ | Baru: `.opencode/tools/learn.ts` — log lesson struktur ke LESSONS.md |
 | verification-ground-truth skill | ⚠️ | Ada tapi cuma di executor |
 | STRIDE audit (reviewer) | ⚠️ | Manual, bukan otomatis |
 | doom_loop (built-in) | ✅ | Baru: `"deny"` — auto-block loop 3x tanpa nanya |
