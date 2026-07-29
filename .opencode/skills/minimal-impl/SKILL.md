@@ -55,15 +55,18 @@ JANGAN PERNAH menyederhanakan:
 - [ ] Naming consistent
 - [ ] Lint clean
 
-## Error Healing
+## Error Healing — Priority Order
 
-Kalau kode error setelah implementasi:
+Kalau kode error setelah implementasi, TANYAIN ke diri sendiri:
 
-1. **Simple fix** — typo, missing import, wrong variable name → perbaiki sendiri. Jangan tanya Boss.
-2. **Logic error** — salah algoritma, output nggak sesuai expected → 1x retry dengan asumsi berbeda.
-3. **Structural error** — error dari framework/library, perlu arsitektur ulang → **STOP. Jangan coba >2x.** Laporkan ke orchestrator dengan detail error. Researcher akan dipanggil buat deep debugging.
+1. **Typo / import / syntax?** → fix langsung tanpa diskusi.
+2. **Timeout / rate limit?** → 1x retry: kurangi `max_tokens` 30%, sederhanakan prompt. Kalau tetap timeout → report "TIMEOUT after retry" — jangan escalate ke orchestrator, cukup catat di report.
+3. **Tool call malformed?** (salah argumen, missing field, wrong type) → baca error message, perbaiki argumen, retry 1x. Kalau gagal lagi → STOP, report "TOOL_FAIL" dengan detail error.
+4. **Tool not found / permission denied?** → STOP langsung. Eskalasi ke orchestrator. Jangan retry.
+5. **Logic error** (output nggak sesuai expected) → 1x retry dengan asumsi berbeda. Kalau gagal lagi → STOP, laporkan diff.
+6. **Structural error** (framework/library, perlu arsitektur ulang) → **STOP. >2x = eskalasi.** Laporkan detail ke orchestrator.
 
-**Prinsip:** error kecil = tanggung jawab lo. Error besar = jangan buang token, eskalasi.
+**Prinsip:** timeout + tool fail ringan = retry 1x trus jalan. Tool not found + permission denied = STOP. Struktural >2x = eskalasi.
 
 ## Report Format
 

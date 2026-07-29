@@ -15,8 +15,6 @@ Empat AI asisten kerja buat Boss. Masing-masing punya persona (`.opencode/agents
 
 Prinsip Boss: **SIMPLE · SHORT · MODULAR**. Bahasa Indonesia campur Inggris. Santai, teknis, nggak ada basa-basi.
 
-### Team Dynamics — "Software House Mini" | Agent | Role analog | Spesialisasi | |-------|------------|-------------| | Orchestrator | Tech Lead | Validasi input, dekomposisi task, delegasi, keputusan final | | Researcher | Senior Research Dev | Investigasi codebase, riset tech stack, deep debugging | | Reviewer | QA/Security Lead | Audit keamanan, enforce konvensi, cumulative judgment | | Executor | Developer | Implementasi YAGNI-first, error healing mandiri | Alur: **Boss → Orchestrator** (validate + decompose) → **Researcher + Reviewer** (parallel read-only) → **Orchestrator** (synthesize) → **Executor** (implement) → **Report ke Boss.**
-
 ## Orchestration Rules
 
 1. **Anti-GIGO first.** Validasi input sebelum dispatch. Goal/Scope/Acceptance wajib.
@@ -56,16 +54,11 @@ Prinsip: **lebih baik STOP sekarang daripada sampah di akhir.** Semua guardrail 
 
 ## Session Flow
 
-0. **Path check.** Kalau Boss sebut project path atau /work-on → resolve target root, baca `sub-project.md` anchor. Kalau nggak ada → tawarin /new-project.
-1. User submits request
-2. Orchestrator invoke `anti-gigo` — validasi input
-   - CLEAN → lanjut step 3
-   - AMBIGU → invoke `grill` — interview Boss sampai clear, baru step 3
-3. `orchestrate` — dekomposisi + fan-out researcher/reviewer
-4. Sintesis hasil → executor brief
-5. Executor invoke `minimal-impl` — implementasi
-6. Executor update `sub-project.md` Memori Agent → baris sendiri
-7. Report ke Boss
+0. **Path check.** Boss sebut project path? → resolve target root, baca `sub-project.md` anchor. Kalau nggak ada → tawarin /new-project.
+1. User submits request → **Anti-GIGO** (validasi). CLEAN? → lanjut. AMBIGU? → grill. TRASH? → STOP.
+2. **Orchestrate** — dekomposisi → fan-out researcher+reviewer parallel → sintesis → executor brief.
+3. **Executor** — implementasi + verifikasi. Update `sub-project.md` Memori Agent.
+4. **Report** — 3 baris ke Boss.
 
 ## Cross-Project Usage
 
@@ -81,18 +74,4 @@ Ganti `~/projects/**` ke folder tempat Boss biasa clone repo.
 
 Lihat `project-guide.md` buat panduan lengkap (alias, symlink, prompt integrasi).
 
-## Files
 
-| File | Purpose |
-|------|---------|
-| `opencode.jsonc` | Default config + agent definitions |
-| `profiles/*.jsonc` | 6 profile configs (default, def-or, ollama, oll-or, codex, codex-or) |
-| `.opencode/agents/` | Agent persona files |
-| `.opencode/skills/` | Agent specialization skills (auto-discovered) |
-| `AGENTS.md` | This file |
-| `README.md` | Project documentation |
-| `LESSONS.md` | Error log + improvement tracking |
-| `project-guide.md` | Cara pakai orchestra dari project lain (cross-project access) |
-| `templates/sub-project.md` | Template anchor file per sub-project |
-| `.opencode/skills/` | Native-discoverable skills (`bootstrap-project`) |
-| `.opencode/command/` | Slash commands (`/check`, `/new-project`) |

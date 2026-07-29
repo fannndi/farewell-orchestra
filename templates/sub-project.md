@@ -42,4 +42,7 @@
 | reviewer | {{REVIEW_CTX}} | {{REVIEW_FILES}} |
 | executor | {{EXEC_CTX}} | {{EXEC_FILES}} |
 
-*Diupdate executor tiap selesai task. Bukan log lengkap — cukup 1 kalimat konteks terakhir + file yg sering disentuh.*
+*Diupdate executor tiap selesai task — 1 kalimat konteks terakhir + file kunci. Orchestrator update Keputusan & Konteks tiap ada keputusan baru.*
+
+## Keputusan & Konteks
+{{max 5 bullets — keputusan arsitektur, task yg ditunda, temuan penting. Diupdate orchestrator tiap ada keputusan baru.}}
