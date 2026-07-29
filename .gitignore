@@ -34,3 +34,4 @@ target/
 .nyc_output/
 coverage/
 .opencode/agent-sessions/
+profiles/opencode.temp.jsonc

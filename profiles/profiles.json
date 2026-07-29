@@ -1,0 +1,110 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "description": "Profile registry — single source of truth for all model assignments",
+
+  "models": {
+    "9router/ocg/deepseek-v4-flash": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 200000 }
+    },
+    "9router/oc/north-mini-code-free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 256000, "output": 128000 }
+    },
+    "9router/oc/nemotron-3-ultra-free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 128000 }
+    },
+    "9router/openrouter/cohere/north-mini-code:free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 128000, "output": 128000 }
+    },
+    "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 128000, "output": 128000 }
+    },
+    "9router/cx/gpt-5.6-luna": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 256000, "output": 128000 }
+    },
+    "9router/ollama/minimax-m3": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 200000 }
+    }
+  },
+
+  "profiles": [
+    {
+      "name": "default-oc",
+      "label": "Default | ocg/deepseek-v4-flash + 9router free",
+      "model": "9router/ocg/deepseek-v4-flash",
+      "small_model": "9router/oc/north-mini-code-free",
+      "agents": {
+        "orchestrator": "9router/ocg/deepseek-v4-flash",
+        "researcher": "9router/oc/north-mini-code-free",
+        "reviewer": "9router/oc/nemotron-3-ultra-free",
+        "executor": "9router/oc/nemotron-3-ultra-free"
+      }
+    },
+    {
+      "name": "default-or",
+      "label": "Default | ocg/deepseek-v4-flash + OpenRouter free",
+      "model": "9router/ocg/deepseek-v4-flash",
+      "small_model": "9router/openrouter/cohere/north-mini-code:free",
+      "agents": {
+        "orchestrator": "9router/ocg/deepseek-v4-flash",
+        "researcher": "9router/openrouter/cohere/north-mini-code:free",
+        "reviewer": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+        "executor": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+      }
+    },
+    {
+      "name": "codex-oc",
+      "label": "Codex | cx/gpt-5.6-luna + 9router free",
+      "model": "9router/cx/gpt-5.6-luna",
+      "small_model": "9router/oc/north-mini-code-free",
+      "agents": {
+        "orchestrator": "9router/cx/gpt-5.6-luna",
+        "researcher": "9router/oc/north-mini-code-free",
+        "reviewer": "9router/oc/nemotron-3-ultra-free",
+        "executor": "9router/oc/nemotron-3-ultra-free"
+      }
+    },
+    {
+      "name": "codex-or",
+      "label": "Codex | cx/gpt-5.6-luna + OpenRouter free",
+      "model": "9router/cx/gpt-5.6-luna",
+      "small_model": "9router/openrouter/cohere/north-mini-code:free",
+      "agents": {
+        "orchestrator": "9router/cx/gpt-5.6-luna",
+        "researcher": "9router/openrouter/cohere/north-mini-code:free",
+        "reviewer": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+        "executor": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+      }
+    },
+    {
+      "name": "ollama-oc",
+      "label": "Ollama | ollama/minimax-m3 (local) + 9router free",
+      "model": "9router/ollama/minimax-m3",
+      "small_model": "9router/oc/north-mini-code-free",
+      "agents": {
+        "orchestrator": "9router/ollama/minimax-m3",
+        "researcher": "9router/oc/north-mini-code-free",
+        "reviewer": "9router/oc/nemotron-3-ultra-free",
+        "executor": "9router/oc/nemotron-3-ultra-free"
+      }
+    },
+    {
+      "name": "ollama-or",
+      "label": "Ollama | ollama/minimax-m3 (local) + OpenRouter free",
+      "model": "9router/ollama/minimax-m3",
+      "small_model": "9router/openrouter/cohere/north-mini-code:free",
+      "agents": {
+        "orchestrator": "9router/ollama/minimax-m3",
+        "researcher": "9router/openrouter/cohere/north-mini-code:free",
+        "reviewer": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+        "executor": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+      }
+    }
+  ]
+}
