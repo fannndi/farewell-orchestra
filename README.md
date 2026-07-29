@@ -35,17 +35,21 @@ Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (pa
 | Profile | Orchestrator | Researcher | Reviewer | Executor | Steps |
 |---------|-------------|------------|----------|----------|:-----:|
 | **Default** 🏆 | deepseek-v4-flash | deepseek-v4-flash-free | north-mini-code-free | deepseek-v4-flash-free | 25/25/18/24 |
-| **Def-OR** | deepseek-v4-flash | nemotron-ultra-550b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
+| **Def-OR** | deepseek-v4-flash | gpt-oss-20b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
 | **Ollama** | ollama/minimax-m3 | ollama/minimax-m3 | north-mini-code-free | north-mini-code-free | 25/25/18/24 |
-| **Oll-OR** | ollama/minimax-m3 | nemotron-ultra-550b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
+| **Oll-OR** | ollama/minimax-m3 | gpt-oss-20b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
+| **Codex** | cx/gpt-5.6-luna | north-mini-code-free | north-mini-code-free | deepseek-v4-flash-free | 25/25/18/24 |
+| **Codex-OR** | cx/gpt-5.6-luna | gpt-oss-20b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
 
 - **Default** — Champion. deepseek-v4-flash paid orchestrator + OC free sub-agents.
-- **Def-OR** — Default dgn OpenRouter free model (nemotron ultra, north-mini-code, gpt-oss-20b).
+- **Def-OR** — Default dgn OpenRouter free model.
 - **Ollama** — Local-first. ollama/minimax-m3 untuk orchestrator + researcher.
 - **Oll-OR** — Ollama dgn OpenRouter free model.
+- **Codex** — cx/gpt-5.6-luna orchestrator + OC free (north-mini-code + deepseek-free).
+- **Codex-OR** — Codex dgn OpenRouter free model.
 
 ```bash
-switch.bat                       # Windows: pilih 1-4 sesuai profile
+switch.bat                       # Windows: pilih 1-6 sesuai profile
 # Atau copy manual:
 copy profiles\opencode.default.jsonc opencode.jsonc
 ```
@@ -64,7 +68,11 @@ copy profiles\opencode.default.jsonc opencode.jsonc
 |------|---------|
 | `opencode.jsonc` | Default config (V1 profile) |
 | `profiles/opencode.default.jsonc` | Default — deepseek-v4-flash (paid) + OC free |
+| `profiles/opencode.default-or.jsonc` | Def-OR — deepseek-v4-flash + OR free |
 | `profiles/opencode.ollama.jsonc` | Ollama profile — ollama/minimax-m3 (local) + OC free |
+| `profiles/opencode.ollama-or.jsonc` | Oll-OR — ollama/minimax-m3 + OR free |
+| `profiles/opencode.codex.jsonc` | Codex — cx/gpt-5.6-luna (codex) + OC free |
+| `profiles/opencode.codex-or.jsonc` | Codex-OR — cx/gpt-5.6-luna + OR free |
 | `switch.bat` | Profile switcher |
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
