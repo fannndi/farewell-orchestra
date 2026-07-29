@@ -21,7 +21,7 @@ ROOT_FILE = os.path.join(PROFILES_DIR, "..", "opencode.jsonc")
 BOILERPLATE = {
     "$schema": "https://opencode.ai/config.json",
     "default_agent": "orchestrator",
-    "instructions": ["AGENTS.md", ".opencode/agents/*.md"],
+    "instructions": ["AGENTS.md"],
     "subagent_depth": 1,
     "share": "disabled",
     "permission": {
@@ -104,7 +104,7 @@ AGENT_TEMPLATES = {
         "steps": 24,
         "prompt": "Read-only. Return evidence with file:line.",
         "permission": {
-            "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
+            "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
             "external_directory": {"*": "allow"},
@@ -119,7 +119,7 @@ AGENT_TEMPLATES = {
         "steps": 20,
         "prompt": "Read-only. Return prioritized findings.",
         "permission": {
-            "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
+            "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
             "external_directory": {"*": "allow"},
@@ -292,6 +292,18 @@ def generate(profile_name, to_stdout=False):
         print(f"[ERROR] Failed to copy to {root_path}: {e}", file=sys.stderr)
         sys.exit(1)
     print(f"[OK] Copied -> {root_path}  ({profile['label']})")
+
+    # Run post-generation hook if available
+    hook_script = os.path.join(os.path.dirname(PROFILES_DIR), ".opencode", "hooks", "post-generate.ps1")
+    if os.path.isfile(hook_script):
+        try:
+            import subprocess
+            subprocess.run(
+                ["powershell", "-NoProfile", "-File", hook_script, "-ConfigPath", root_path],
+                capture_output=False, timeout=30
+            )
+        except Exception as e:
+            print(f"[WARN] Hook failed: {e}", file=sys.stderr)
 
 
 def validate_registry(registry):

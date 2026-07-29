@@ -55,9 +55,23 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 - **3x koreksi root cause sama** → report pattern.
 
 ## On Error Patterns
-- Timeout 3x per sesi → kurangi step budget tiap agent 20%.
-- Tool fail 3x beruntun tool sama → report ke Boss.
-- Agent+tool+intent sama 3x berturut-turut → STOP. Detected loop.
+- **Timeout 3x per sesi** → kurangi step budget tiap agent 20%.
+- **Tool fail 3x beruntun tool sama** → report ke Boss.
+- **Agent+tool+intent sama 3x berturut-turut** → STOP. Detected loop.
+
+### Exponential Backoff
+Setiap retry berturut-turut, kurangi budget agent dengan formula:
+- Retry ke-1: budget * 0.8 (turun 20%)
+- Retry ke-2: budget * 0.6 (turun 40%)
+- Retry ke-3: budget * 0.4 (turun 60%) → STOP
+
+### Loop Heuristics (sebelum 3x trigger)
+Deteksi lebih awal kalau:
+- Agent ngeluarin **error message yg sama persis** 2x berturut-turut → flag warning
+- Agent manggil **tool + argumen yg sama** 2x tanpa progress → flag warning
+- Agent ngelakuin **read file yg sama** >3x tanpa nulis apapun → flag warning
+
+Kalau flags ini muncul, intervensi: kurangi scope atau ganti approach sebelum 3x trigger.
 
 ## Forbidden
 - Never: "genuinely," "honestly," "I think," "I will now..."
