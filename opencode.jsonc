@@ -173,7 +173,7 @@
           "temperature": 0.1
         }
       },
-      "steps": 18,
+      "steps": 22,
       "prompt": "Read-only. Return evidence with file:line.",
       "permission": {
         "read": "allow",
@@ -202,7 +202,7 @@
           "temperature": 0.1
         }
       },
-      "steps": 14,
+      "steps": 18,
       "prompt": "Read-only. Return prioritized findings.",
       "permission": {
         "read": "allow",

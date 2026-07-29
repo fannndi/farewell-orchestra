@@ -101,7 +101,7 @@ AGENT_TEMPLATES = {
         "description": "Read-only researcher",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
-        "steps": 18,
+        "steps": 22,
         "prompt": "Read-only. Return evidence with file:line.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -116,7 +116,7 @@ AGENT_TEMPLATES = {
         "description": "Read-only reviewer",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
-        "steps": 14,
+        "steps": 18,
         "prompt": "Read-only. Return prioritized findings.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -246,9 +246,20 @@ def generate(profile_name, to_stdout=False):
         sys.stdout.write(header + output + "\n")
         return
 
+    # No-op detection: skip if same profile already active
+    root_path = os.path.abspath(ROOT_FILE)
+    if os.path.isfile(root_path):
+        try:
+            with open(root_path, "r", encoding="utf-8") as f:
+                existing_header = f.readline().strip()
+            if existing_header == header.strip():
+                print(f"[OK] Already active: {profile['label']} (no change)")
+                return
+        except Exception:
+            pass  # proceed if can't read
+
     # Write to temp first, then atomically copy to root
     temp_path = os.path.abspath(TEMP_FILE)
-    root_path = os.path.abspath(ROOT_FILE)
 
     with open(temp_path, "w", encoding="utf-8") as f:
         f.write(header + output + "\n")
