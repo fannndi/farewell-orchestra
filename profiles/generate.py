@@ -198,16 +198,24 @@ def build_agent_config(profile):
     return agents
 
 
+PROVIDER_PREFIX = "9router/"
+
+def short_model_id(full_id):
+    """Strip provider prefix for provider.models keys."""
+    if full_id.startswith(PROVIDER_PREFIX):
+        return full_id[len(PROVIDER_PREFIX):]
+    return full_id
+
+
 def build_provider_models(registry, profile):
     """Build provider.models section — only models used by this profile."""
     model_ids = collect_models(registry, profile)
     result = {}
     for mid in sorted(model_ids):
         cfg = registry["models"].get(mid, {"reasoning": True, "tool_call": True})
-        # Strip 9router/ prefix for the key inside provider.models
-        key = mid
+        key = short_model_id(mid)
         result[key] = {
-            "name": mid,
+            "name": key,
             "reasoning": cfg.get("reasoning", True),
             "tool_call": cfg.get("tool_call", True),
             "limit": cfg.get("limit", {"context": 128000, "output": 128000})
@@ -262,7 +270,8 @@ def generate(profile_name, to_stdout=False):
 
 def short_model(mid):
     """Return short readable model name from full model ID."""
-    return mid.split("/")[-1].replace("-ultra-550b-a55b", "").replace(":free", "")
+    s = short_model_id(mid)
+    return s.replace("-ultra-550b-a55b", "").replace(":free", "")
 
 
 def show_menu():

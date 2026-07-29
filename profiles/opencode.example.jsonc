@@ -58,8 +58,8 @@
         "chunkTimeout": 120000
       },
       "models": {
-        "9router/oc/nemotron-3-ultra-free": {
-          "name": "9router/oc/nemotron-3-ultra-free",
+        "oc/nemotron-3-ultra-free": {
+          "name": "oc/nemotron-3-ultra-free",
           "reasoning": true,
           "tool_call": true,
           "limit": {
@@ -67,8 +67,8 @@
             "output": 128000
           }
         },
-        "9router/oc/north-mini-code-free": {
-          "name": "9router/oc/north-mini-code-free",
+        "oc/north-mini-code-free": {
+          "name": "oc/north-mini-code-free",
           "reasoning": true,
           "tool_call": true,
           "limit": {
@@ -76,8 +76,8 @@
             "output": 128000
           }
         },
-        "9router/ocg/deepseek-v4-flash": {
-          "name": "9router/ocg/deepseek-v4-flash",
+        "ocg/deepseek-v4-flash": {
+          "name": "ocg/deepseek-v4-flash",
           "reasoning": true,
           "tool_call": true,
           "limit": {
