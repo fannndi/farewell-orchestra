@@ -21,6 +21,7 @@
     "todowrite": "allow",
     "lsp": "allow",
     "skill": "allow",
+    "doom_loop": "deny",
     "external_directory": {
       "*": "allow"
     }

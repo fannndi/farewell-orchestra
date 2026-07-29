@@ -29,6 +29,7 @@ BOILERPLATE = {
         "list": "allow", "bash": "allow", "task": "allow", "webfetch": "allow",
         "websearch": "allow", "question": "allow", "todowrite": "allow",
         "lsp": "allow", "skill": "allow",
+        "doom_loop": "deny",
         "external_directory": {"*": "allow"}
     },
     "references": {

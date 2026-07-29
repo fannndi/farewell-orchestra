@@ -32,13 +32,13 @@
 | Post-generate hook | ✅ | Baru: `.opencode/hooks/post-generate.ps1` |
 | verification-ground-truth skill | ⚠️ | Ada tapi cuma di executor |
 | STRIDE audit (reviewer) | ⚠️ | Manual, bukan otomatis |
+| doom_loop (built-in) | ✅ | Baru: `"deny"` — auto-block loop 3x tanpa nanya |
 | **Missing Sensors** | | |
-| PreToolUse hooks | ❌ | Gak ada yg blokir action berbahaya sebelum dieksekusi |
-| Loop detection heuristic | ❌ | Baru di docs (orchestrator.md) tapi belum di-skrip |
-| Exponential backoff | ❌ | Baru di docs, belum otomatis |
+| PreToolUse/PostToolUse hooks | ❌ | OpenCode gak support hooks system |
+| Loop detection heuristic | ⚠️ | doom_loop built-in udah, heuristic manual di orchestrator.md |
+| Exponential backoff | ⚠️ | Baru di docs, belum otomatis |
 | Automated rollback | ❌ | Kalau generate gagal, gak ada undo |
 | Cost tracking | ❌ | Gak tau berapa token tiap session |
-| Health check endpoint | ❌ | Gak ada `/health` |
 | CI/CD integration | ❌ | Gak ada test di pipeline |
 | **Orchestration** | | |
 | Fan-out parallel | ✅ | Researcher+reviewer parallel |

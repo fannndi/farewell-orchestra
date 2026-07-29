@@ -35,3 +35,4 @@ target/
 coverage/
 .opencode/agent-sessions/
 profiles/opencode.temp.jsonc
+/source
