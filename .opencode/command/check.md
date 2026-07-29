@@ -1,11 +1,13 @@
 # Farewell Orchestra — Health Check
 
-Run on every new session. Validasi struktur workspace.
+Run on every new session. Validasi struktur workspace + profile.
 
 ## 1. Core files
 
 - [ ] opencode.jsonc — valid JSON, ada `agent.orchestrator`
 - [ ] AGENTS.md — ada, tidak kosong
+- [ ] project-guide.md — ada
+- [ ] LESSONS.md — ada
 - [ ] .opencode/agents/orchestrator.md — ada
 - [ ] .opencode/agents/researcher.md — ada
 - [ ] .opencode/agents/reviewer.md — ada
@@ -13,35 +15,35 @@ Run on every new session. Validasi struktur workspace.
 
 ## 2. Skills (9 file di .opencode/skills/)
 
-- [ ] .opencode/skills/anti-gigo/SKILL.md — ada
-- [ ] .opencode/skills/grill/SKILL.md — ada
-- [ ] .opencode/skills/orchestrate/SKILL.md — ada
-- [ ] .opencode/skills/forensic/SKILL.md — ada
-- [ ] .opencode/skills/web-research/SKILL.md — ada
-- [ ] .opencode/skills/stride-audit/SKILL.md — ada
-- [ ] .opencode/skills/minimal-impl/SKILL.md — ada
-- [ ] .opencode/skills/verification-ground-truth/SKILL.md — ada
-- [ ] .opencode/skills/bootstrap-project/SKILL.md — ada
+- [ ] anti-gigo, grill, orchestrate, forensic, web-research — ada
+- [ ] stride-audit, minimal-impl, verification-ground-truth — ada
+- [ ] bootstrap-project — ada
 
-## 3. Profiles (3 file)
+## 3. Profiles (6 file)
 
-- [ ] profiles/opencode.paid.jsonc — valid JSON, 4 agents
-- [ ] profiles/opencode.hybrid.jsonc — valid JSON, 4 agents
-- [ ] profiles/opencode.free.jsonc — valid JSON, 4 agents
+- [ ] profiles/opencode.default.jsonc — valid JSON
+- [ ] profiles/opencode.default-or.jsonc — valid JSON
+- [ ] profiles/opencode.ollama.jsonc — valid JSON
+- [ ] profiles/opencode.ollama-or.jsonc — valid JSON
+- [ ] profiles/opencode.codex.jsonc — valid JSON
+- [ ] profiles/opencode.codex-or.jsonc — valid JSON
 
-## 4. Persona skills frontmatter
+## 4. Profile aktif
 
-- [ ] .opencode/agents/orchestrator.md — punya `skills:` key
-- [ ] .opencode/agents/researcher.md — punya `skills:` key
-- [ ] .opencode/agents/reviewer.md — punya `skills:` key
-- [ ] .opencode/agents/executor.md — punya `skills:` key
+- [ ] Cek opencode.jsonc `model` field — profile mana yg aktif
+- [ ] Step budget: orchestrator 20 / researcher 18 / reviewer 14 / executor 18
+- [ ] Cek `instructions` — ada AGENTS.md
 
-## 5. Consistency
+## 5. Persona skills frontmatter
 
-- [ ] opencode.jsonc steps match profiles/opencode.paid.jsonc steps
-- [ ] README 3 profiles section match actual profile count
-- [ ] Tidak ada file ketinggalan dari arsitektur lama (paid-limit, free-backup)
+- [ ] Setiap agent file punya `skills:` key dan file skill-nya ada
+
+## 6. Test scripts
+
+- [ ] test/test_models.bat — ada
+- [ ] test/test_or_models.bat — ada
+- [ ] test/test_codex.bat — ada
 
 ## Result
 
-Semua checkboxes di atas harus ✅. Kalau ada yang ❌ → workspace stale, perlu sync.
+Semua checkboxes harus ✅. Kalau ada ❌ → perlu sync.

@@ -7,7 +7,7 @@ description: Use before writing code — YAGNI ladder, verify-first, cleanup, er
 
 Boss bayar per token DAN per tool call. Setiap byte kode harus justified.
 
-## YAGNI Ladder (top = cheapest, start from top)
+## YAGNI Ladder
 
 1. **Does this need to exist?** → No? Stop. Delete.
 2. **Stdlib does it?** → Use it.
@@ -18,32 +18,27 @@ Boss bayar per token DAN per tool call. Setiap byte kode harus justified.
 
 ## Budget Rules
 
-- **Read files ONLY if needed.** Brief kasih file+line → langsung ke sana.
-- **Prefer delete over add.** Menghapus 5 baris > menambah 3 baris.
-- **Satu change per edit.** Jangan batch unrelated fixes.
-- **Verification:** EXACT command dari brief. Jangan nambah check.
-- **Never announce tool calls.** Jangan bilang "I will now..." — just do.
+- **Read files ONLY if needed.** Langsung ke file+line.
+- **Prefer delete over add.** Hapus 5 > tambah 3.
+- **Satu change per edit.** Jangan batch.
+- **Verification:** EXACT command dari brief.
 
 ## Not-Lazy Guard
 
-JANGAN PERNAH menyederhanakan:
-- Input validation di trust boundary
-- Error handling yang mencegah data loss
-- Security (auth, encryption, sanitization)
-- Accessibility
+JANGAN pernah menyederhanakan:
+- Input validation / security / auth
+- Error handling yang cegah data loss
 - Apapun yang Boss explicitly minta
 
 ## Precision
 
-- **Typo = reject.** Diff-check setiap identifier.
-- **Duplication >2x** → extract. Don't Repeat Yourself.
-- **No premature abstraction:** jangan bikin interface kalau cuma 1 implementasi.
-- **Follow existing file style.** Jangan campur snake_case/camelCase.
+- **Typo = reject.** Diff-check identifier.
+- **No premature abstraction.** Jangan interface kalau 1 implementasi.
+- **Follow existing file style.** Jangan campur gaya.
 
 ## Cleanup Before Report
 
-- Hapus unused imports, dead variables, dead comments
-- Hapus console.log, breakpoints, debug prints
+- Hapus unused imports, dead vars, console.log
 - Cek naming consistency dengan file yang diedit
 
 ## DoD — Definition of Done

@@ -5,13 +5,10 @@ description: Use when anti-GIGO finds input incomplete or ambiguous — Socratic
 
 # Grill-Me — Socratic Requirement Extraction
 
-Dipanggil orchestrator saat anti-GIGO deteksi input ambigu. Bukan gatekeeper kayak anti-GIGO — ini discovery tool. Goal: ubah ide vague Boss jadi brief presisi buat researcher + reviewer.
-
 ## Prinsip
-
-- **Satu pertanyaan per satu waktu.** Jangan banjirin Boss. Satu `question` tool call = satu pertanyaan, 2-4 opsi multiple-choice + "Other".
-- **Fakta = cari sendiri.** Kalau jawaban bisa disimpulkan dari codebase/konfigurasi → jangan tanya. Cari sendiri lewat read/grep/glob.
-- **Keputusan = Boss.** Desain, arsitektur, trade-off → tanya Boss. Jangan asumsi.
+- **Satu pertanyaan per satu waktu.** Jangan banjirin Boss. Satu `question` tool call = satu pertanyaan.
+- **Fakta = cari sendiri.** Cari lewat read/grep/glob sebelum tanya Boss.
+- **Keputusan = Boss.** Desain, arsitektur, trade-off → tanya Boss.
 
 ## Decision Tree — Walk Down Semua Cabang
 
@@ -27,10 +24,9 @@ Dipanggil orchestrator saat anti-GIGO deteksi input ambigu. Bukan gatekeeper kay
 Jangan skip cabang. Tiap jawaban bisa buka cabang baru → gali terus sampai semua clear.
 
 ## Workflow
-
 1. Orchestrator invoke grill setelah anti-GIGO deteksi input <70% lengkap.
 2. Interview Boss — satu pertanyaan per waktu, tiap level decision tree, sampai semua clear.
-3. **Sign-off** — summary decisions (≤5 bullets) + "Go / adjust?" prompt. Jangan fan-out ke researcher/reviewer sebelum sign-off.
+3. **Sign-off** — summary decisions (≤5 bullets) + "Go / adjust?" prompt. Jangan fan-out sebelum sign-off.
 
 ## Mantra
 

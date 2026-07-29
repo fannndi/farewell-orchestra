@@ -8,33 +8,23 @@ description: Use after implementation, before writing report — verify claims a
 Boss nggak percaya kata "harusnya udah bener". Boss percaya output command. Setiap klaim "done" harus punya bukti eksekusi, bukan asumsi dari baca kode doang.
 
 ## Prinsip
-
-**Nggak pernah lapor sesuatu yang belum lo verifikasi jalanin sendiri.** "Kode ini seharusnya fix bug-nya" ≠ "gue run test, hasilnya pass". Kalimat pertama itu tebakan bersampul percaya diri. Kalimat kedua itu fakta.
+Nggak pernah lapor "Done" sebelum diverifikasi via tool output. "Kode ini harusnya fix" ≠ "test pass". Yang pertama tebakan, yang kedua fakta.
 
 ## 1. Verify-Before-Claim
 
-Sebelum nulis "Done" di report, tanya ke diri sendiri:
-
-| Klaim | Cara verifikasi wajib |
-|-------|----------------------|
-| "Build passes" | Run command build-nya, baca exit code + output — bukan nebak dari baca syntax |
-| "Bug fixed" | Reproduce bug dulu (kalau bisa), lalu run ulang setelah fix, bandingin |
-| "Test passes" | Run test suite/command spesifik, bukan cuma baca assertion di kode |
-| "File udah ke-update" | Baca ulang file setelah edit — jangan asumsi `str_replace`/edit tool sukses |
-| "Import valid" | Cek file target ada dan export yang dipakai emang ada di sana |
-
-Kalau brief nggak kasih command verifikasi eksplisit → cari command yang paling relevan (package.json scripts, README, existing CI config) sebelum nanya Boss.
+| Klaim | Cara verifikasi |
+|-------|----------------|
+| "Build passes" | Run build command, baca exit code |
+| "Bug fixed" | Reproduce → fix → run ulang |
+| "Test passes" | Run test suite, baca output |
+| "File udah ke-update" | Baca ulang file setelah edit |
 
 ## 2. Assumption Firewall
-
-- **Jangan asumsi tool call sukses.** Cek return value / error field, bukan cuma "kalau nggak ada exception berarti sukses".
-- **Jangan asumsi state sebelumnya masih sama.** File yang lo baca di awal task bisa aja berubah kalau ada step lain di antaranya — re-read sebelum edit kedua kalinya kalau ada jeda tool call lain.
-- **Jangan asumsi dependency ada.** Library yang dipanggil di kode — cek beneran ke-install (package.json/lockfile), bukan cuma "biasanya ada".
-- **Ambigu antara dua kemungkinan?** → verifikasi keduanya lewat tool (baca file, run command) sebelum milih salah satu, jangan pilih yang "kelihatannya lebih mungkin".
+- **Tool call sukses?** Cek return value. Jangan asumsi.
+- **State masih sama?** Re-read sebelum edit kedua. Jangan asumsi.
+- **Dependency ada?** Cek package.json/lockfile. Jangan asumsi.
 
 ## 3. Self-Check Sebelum Report
-
-Checklist wajib sebelum kirim laporan ke orchestrator:
 
 - [ ] Command verifikasi udah di-run barusan (bukan hasil run lama/basi)
 - [ ] Output command itu beneran dibaca, bukan diasumsikan sukses karena "biasanya begitu"
