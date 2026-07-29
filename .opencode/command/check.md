@@ -19,30 +19,30 @@ Run on every new session. Validasi struktur workspace + profile.
 - [ ] stride-audit, minimal-impl, verification-ground-truth — ada
 - [ ] bootstrap-project — ada
 
-## 3. Profiles (6 file)
+## 3. Profile system
 
-- [ ] profiles/opencode.default.jsonc — valid JSON
-- [ ] profiles/opencode.default-or.jsonc — valid JSON
-- [ ] profiles/opencode.ollama.jsonc — valid JSON
-- [ ] profiles/opencode.ollama-or.jsonc — valid JSON
-- [ ] profiles/opencode.codex.jsonc — valid JSON
-- [ ] profiles/opencode.codex-or.jsonc — valid JSON
+- [ ] profiles/profiles.json — valid JSON, ada models + profiles
+- [ ] profiles/generate.py — bisa generate profile
+- [ ] profiles/opencode.temp.jsonc — auto-generated (di-gitignore)
+- [ ] profiles/opencode.example.jsonc — contoh hasil generate
+- [ ] switch.bat — bisa panggil generate.py --menu
 
 ## 4. Profile aktif
 
-- [ ] Cek opencode.jsonc `model` field — profile mana yg aktif
-- [ ] Step budget: orchestrator 20 / researcher 18 / reviewer 14 / executor 18
-- [ ] Cek `instructions` — ada AGENTS.md
+- [ ] `python profiles/generate.py --inspect <active>` — model assignments bener
+- [ ] `python profiles/generate.py --validate` — semua profile valid
+- [ ] Step budget: orchestrator 22 / researcher 24 / reviewer 20 / executor 25
+- [ ] Cek `instructions` — cuma AGENTS.md (gak load *.md semua)
 
 ## 5. Persona skills frontmatter
 
 - [ ] Setiap agent file punya `skills:` key dan file skill-nya ada
 
-## 6. Test scripts
+## 6. Custom tools
 
-- [ ] test/test_models.bat — ada
-- [ ] test/test_or_models.bat — ada
-- [ ] test/test_codex.bat — ada
+- [ ] .opencode/tools/verify.ts + verify.py — verification gate
+- [ ] .opencode/tools/harness_status.ts — health check
+- [ ] .opencode/tools/learn.ts — lesson logger
 
 ## Result
 
