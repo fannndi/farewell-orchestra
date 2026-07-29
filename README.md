@@ -35,21 +35,17 @@ Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (pa
 | Profile | Orchestrator | Researcher | Reviewer | Executor | Steps |
 |---------|-------------|------------|----------|----------|:-----:|
 | **Default** 🏆 | deepseek-v4-flash | deepseek-v4-flash-free | north-mini-code-free | deepseek-v4-flash-free | 25/25/18/24 |
-| **Ollama** | ollama/minimax-m3 | ollama/minimax-m3 | north-mini-code-free | north-mini-code-free | 25/25/18/24 |
-| **Def-OC** | deepseek-v4-flash | nemotron-3-ultra-free | north-mini-code-free | deepseek-v4-flash-free | 25/25/18/24 |
-| **Oll-OC** | ollama/minimax-m3 | nemotron-3-ultra-free | north-mini-code-free | deepseek-v4-flash-free | 25/25/18/24 |
 | **Def-OR** | deepseek-v4-flash | nemotron-ultra-550b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
+| **Ollama** | ollama/minimax-m3 | ollama/minimax-m3 | north-mini-code-free | north-mini-code-free | 25/25/18/24 |
 | **Oll-OR** | ollama/minimax-m3 | nemotron-ultra-550b:free (OR) | north-mini-code:free (OR) | gpt-oss-20b:free (OR) | 25/25/18/24 |
 
 - **Default** — Champion. deepseek-v4-flash paid orchestrator + OC free sub-agents.
-- **Ollama** — Local-first. ollama/minimax-m3 untuk orchestrator + researcher.
-- **Def-OC** — Default dgn OC free model terbaik (nemotron-3-ultra-free untuk researcher).
-- **Oll-OC** — Ollama dgn OC free model terbaik (researcher pake nemotron-3-ultra-free).
 - **Def-OR** — Default dgn OpenRouter free model (nemotron ultra, north-mini-code, gpt-oss-20b).
+- **Ollama** — Local-first. ollama/minimax-m3 untuk orchestrator + researcher.
 - **Oll-OR** — Ollama dgn OpenRouter free model.
 
 ```bash
-switch.bat                       # Windows: pilih 1-6 sesuai profile
+switch.bat                       # Windows: pilih 1-4 sesuai profile
 # Atau copy manual:
 copy profiles\opencode.default.jsonc opencode.jsonc
 ```
@@ -67,7 +63,7 @@ copy profiles\opencode.default.jsonc opencode.jsonc
 | File | Purpose |
 |------|---------|
 | `opencode.jsonc` | Default config (V1 profile) |
-| `profiles/opencode.default.jsonc` | Default profile — deepseek-v4-flash (paid) + OC free |
+| `profiles/opencode.default.jsonc` | Default — deepseek-v4-flash (paid) + OC free |
 | `profiles/opencode.ollama.jsonc` | Ollama profile — ollama/minimax-m3 (local) + OC free |
 | `switch.bat` | Profile switcher |
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
