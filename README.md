@@ -42,8 +42,7 @@ Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (pa
 
 ```bash
 switch.bat                       # Windows: pilih 1 (V1) atau 2 (Limited)
-switch.sh                        # Unix: pilih 1 (V1) atau 2 (Limited)
-# atau copy manual:
+# Atau copy manual:
 copy profiles\hybrid-v1.jsonc opencode.jsonc
 copy profiles\opencode.limited.jsonc opencode.jsonc
 ```
@@ -63,7 +62,7 @@ copy profiles\opencode.limited.jsonc opencode.jsonc
 | `opencode.jsonc` | Default config (V1 profile) |
 | `profiles/hybrid-v1.jsonc` | V1 profile — champion, deepseek + free models |
 | `profiles/opencode.limited.jsonc` | Limited profile — ollama/minimax-m3 + free models |
-| `switch.bat` / `switch.sh` | Profile switcher |
+| `switch.bat` | Profile switcher |
 | `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
 | `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |

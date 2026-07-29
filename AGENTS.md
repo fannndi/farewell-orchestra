@@ -86,7 +86,7 @@ Lihat `project-guide.md` buat panduan lengkap (alias, symlink, prompt integrasi)
 | File | Purpose |
 |------|---------|
 | `opencode.jsonc` | Default config + agent definitions |
-| `profiles/*.jsonc` | 3 tiered config profiles (paid, hybrid, free) |
+| `profiles/*.jsonc` | 2 profile configs (V1/hybrid-v1, Limited) |
 | `.opencode/agents/` | Agent persona files |
 | `.opencode/skills/` | Agent specialization skills (auto-discovered) |
 | `AGENTS.md` | This file |

@@ -54,15 +54,15 @@ Orchestrator deteksi path, baca anchor, langsung gas.
 2. Boss kasih `/work-on <project>` atau sebut path project
 3. Orchestrator baca `sub-project.md` → dapet context (fase, task aktif, profile)
 4. Kerja sesuai orchestration rules: anti-gigo → decompose → parallel researcher/reviewer → execute → report 3 baris
-5. Executor update `sub-project.md` (task aktif, sesi terakhir) tiap selesai
+5. Executor update `sub-project.md` (Memori Agent, task aktif) tiap selesai
 
 ## File Penting
 
 | File | Fungsi |
 |------|--------|
 | `templates/sub-project.md` | Template anchor — di-copy ke tiap sub-project, jadi otak-nya orchestra di project itu |
-| `/work-on` | Slash command — switch context ke sub-project |
-| `/new-project` | Slash command — scaffold 10 docs + sub-project.md |
+| `.opencode/command/work-on.md` | `/work-on` command — switch context ke sub-project |
+| `.opencode/command/new-project.md` | `/new-project` command — scaffold 10 docs + sub-project.md |
 | `.opencode/skills/bootstrap-project/` | Skill: generate 10 dokumentasi standar |
 
 ## Kapan TIDAK Perlu
@@ -73,4 +73,5 @@ Project kecil, sekali pakai, nggak butuh dokumentasi → skip `/new-project`. La
 
 - Kalau lupa nama project, ketik `/work-on` kosong — orchestrator bakal tanya.
 - `sub-project.md` adalah otak orchestra di project itu. Jangan dihapus.
-- Profile (paid/hybrid/free) dipilih pas `/new-project` atau bisa diganti manual di `sub-project.md`.
+- Path dengan spasi: gunakan quotes. Contoh: `/work-on "my app"`
+- Profile (V1/Limited) dipilih pas `/new-project` atau bisa diganti manual di `sub-project.md`.

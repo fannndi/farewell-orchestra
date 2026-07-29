@@ -8,7 +8,7 @@
 - **Satu kalimat:** {{ONE_LINER}}
 - **Path absolut:** {{PROJECT_PATH}}
 - **Repo:** {{REPO_URL}}
-- **Profile:** {{PROFILE}} (paid | hybrid | free)
+- **Profile:** {{PROFILE}} (V1 | Limited)
 - **Fase:** {{CURRENT_PHASE}} — detail di `docs/Tasks.md`
 - **Task aktif:** {{ACTIVE_TASK}}
 
