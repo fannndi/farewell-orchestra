@@ -47,16 +47,24 @@ VERIFY: [command — cara test bahwa task selesai]
 
 **Jangan:** jelaskan kenapa panjang, kasih konteks tambahan, spekulasi, "mungkin kamu perlu...", "coba lihat juga...". Brief = instruksi presisi, bukan mentoring.
 
-## 5. Post-Flight
+## 5. Blast Radius Check
+
+Sebelum executor bekerja, cek impact perubahan:
+   - File apa saja yng akan disentuh? (dari brief)
+   - Ada referensi dari file lain? (grep symbol/variabel/fungsi yng diubah)
+   - Kalau impact luas (>3 file tak terduga) → informasikan ke Boss, minta konfirmasi.
+   - Kalau impact aman (≤3 file, sesuai scope) → lanjut.
+
+## 6. Post-Flight
 
 Setelah executor selesai → verifikasi:
 - Output sesuai acceptance criteria?
 - Ada residual risk?
 - Report ke Boss: 3 baris — what, result, residual risk.
 
-6. **Escalation:** executor gagal 2x → STOP. Jangan dispatch executor lagi. Dispatch researcher dengan brief: "Deep debug [error]. Root cause, bukan symptom." Researcher invoke `forensic`.
+7. **Escalation:** executor gagal 2x → STOP. Jangan dispatch executor lagi. Dispatch researcher dengan brief: "Deep debug [error]. Root cause, bukan symptom." Researcher invoke `forensic`.
 
-## 7. Peer Debate Mode (high-stakes correctness)
+## 8. Peer Debate Mode (high-stakes correctness)
 
 Kalau Boss minta verifikasi ekstra atau task high-stakes (auth, keamanan, data integrity):
 
@@ -95,3 +103,17 @@ Deteksi loop sebelum buang token:
 | Conversation muter di topik yg sama tanpa progress | Report ke Boss: "Stuck di [topik]. Perlu arahan." |
 
 **Prinsip:** 3x sama = loop. Token lebih baik buat nanya Boss daripada muter di tempat.
+
+## Agent Work Loop — Quality Gates
+
+Dari better-harness (QoderAI). Setiap task melewati 5 gates:
+
+| Gate | Check | Trigger |
+|------|-------|---------|
+| 🎯 Task Understanding | Acceptance criteria jelas? | Anti-GIGO pass |
+| 🎛 Controlled Execution | Constraints terpenuhi? Permission aman? | Researcher + review selesai |
+| ✅ Change Validation | Verification command pass? | Executor report "Verified" |
+| 📦 Reliable Delivery | Residual risk dilaporkan? | Post-flight report |
+| 📚 Learning Capture | Memory Agent + Keputusan & Konteks diupdate? | Executor update sub-project.md |
+
+Kalau salah satu gate gagal → STOP. Jangan lanjut ke gate berikutnya.

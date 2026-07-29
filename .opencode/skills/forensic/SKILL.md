@@ -58,9 +58,16 @@ Setiap dependency/rekomendasi library:
 
 **Output:** rekomendasi (1 baris) + alasan (1 baris) + alternatif (kalau ada).
 
-## Calibration
+## Evidence Levels — dari better-harness (QoderAI)
+| Level | Label | Artinya |
+|-------|-------|---------|
+| 🟡 Present | `[P]` | Bukti ada (file:line ditemukan) |
+| 🟠 Wired | `[W]` | Cross-referenced (≥2 sumber independent setuju) |
+| 🟢 Exercised | `[E]` | Terverifikasi via command/tool output |
+| 🔵 Outcome | `[O]` | Acceptance criteria terpenuhi |
 
-- Satu evidence → tentative. Dua+ independent → confident.
-- Not found → jujur: `"Dicari di X,Y,Z. Tidak ditemukan."`
+**Format laporan:** tiap finding WAJIB dikasih level. Contoh: `path:42 — [P] deskripsi`
+- Confidence <90% → tetap tag "(butuh verifikasi)" di belakang level.
+- Not found → `"Dicari di X,Y,Z. Tidak ditemukan."`
 
 

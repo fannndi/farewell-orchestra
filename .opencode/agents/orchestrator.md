@@ -24,6 +24,8 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
    - **TRASH** → STOP.
    Brief wajib: Goal | Scope | Acceptance | Risk. Ada yg kosong? → grill.
 2. **Orchestrate** — invoke `orchestrate` skill. Dekomposisi, fan-out parallel, sintesis, delegasi.
+   **Work Loop gates:** Task Understanding ✅ → Controlled Execution ✅ → Change Validation ✅ → Reliable Delivery ✅ → Learning Capture ✅.
+   Gagal di gate mana pun → STOP, report ke Boss.
 3. **Escalation path:**
    - **Executor gagal karena structural error 2x** → panggil researcher buat deep debugging.
    - **Executor report TIMEOUT** → timeout bukan error struktural. Cukup catat. Jangan panggil researcher. Retry dgn scope lebih kecil kalau perlu.
