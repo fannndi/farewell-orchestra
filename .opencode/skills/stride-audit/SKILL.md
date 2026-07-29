@@ -95,3 +95,67 @@ Audit bukan cuma per-file — tapi celah ANTAR file yang seharusnya sinkron.
 Summary: `"X BLOCKING, Y SHOULD, Z NICE, W FYI"` — lalu list findings 1 baris per finding.
 
 **Jangan:** paragraf penjelasan, rekomendasi panjang, diskusi alternatif. 1 finding = 1 baris.
+
+## Depth Assurance Protocol
+
+JANGAN lapor "Done" SEBELUM 3 pass ini selesai:
+
+### Pass 1: Scan (5%)
+- Baca README/docs → pahami klaim, arsitektur, fitur
+- Catat semua klaim yg harus diverifikasi
+- ⚠️ JANGAN percaya README. README bilang X, kode harus X.
+
+### Pass 2: Detail (70%)
+- Baca kode ASLI — bukan cuma struktur direktori
+- Untuk setiap fungsi/fitur penting:
+  1. Baca entry point (main/CLI/index)
+  2. Ikuti alur ke file-file terkait (import chain)
+  3. Catat implementasi aktual vs klaim docs
+- Verifikasi 3 hal: (a) apakah kode sesuai docs? (b) apakah ada yg terlewat? (c) apakah ada celah?
+
+### Pass 3: Cross-Reference (25%)
+- Bandingkan temuan dari Pass 2 dengan klaim dari Pass 1
+- Cari kontradiksi: docs bilang X, kode lakukan Y
+- Cari missing pieces: docs janji Z, tapi kode gak ada Z
+- Format temuan: `[TAG] path:42 — docs claim X, tapi kode lakukan Y`
+
+**Self-Check Sebelum Report:**
+| Pertanyaan | Ya/Tidak |
+|------------|----------|
+| Udah baca file kode asli (bukan cuma README)? | ❌ kalau belum → jangan report |
+| Udah ikutin minimal 1 import chain dari entry point? | ❌ kalau belum → jangan claim paham |
+| Ada klaim di docs yg belum diverifikasi ke kode? | ❌ kalau ada → catat sebagai "unverified" |
+| Risiko ada yg terlewat? (skala 1-5) | ≥3 → tambah disclaimer |
+
+## Skepticism Layer
+
+Prinsip: **"Dokumentasi bohong sampai terbukti benar"**
+
+| Situasi | Sikap |
+|---------|-------|
+| README bilang "mendukung fitur X" | Cari kode X. Gak ada? → catat claim vs reality |
+| Docs bilang "test coverage 90%" | Run coverage tool atau cek test file count |
+| "Simple API" tapi file 500 baris | Catat kontradiksi |
+| "Production-ready" tapi gak ada error handling | Catat gap |
+| "Lightweight" tapi dependency 40MB | Catat |
+
+## Evidence Depth Tags
+Tambahkan tag kedalaman di tiap finding:
+| Tag | Artinya |
+|-----|---------|
+| `[D1]` | Surface — baca docs/README doang. Low confidence. |
+| `[D2]` | Medium — baca struktur file + beberapa file kode |
+| `[D3]` | Deep — baca implementasi penuh, ikutin import chain |
+| `[D4]` | Exhaustive — verifikasi + cross-reference + test check |
+
+Format temuan: `[TAG] [D2] path:42 — deskripsi`
+
+## Audit Checklist (wajib tiap review)
+
+Sebelum kirim hasil audit, pastikan checklist ini terisi:
+- [ ] ✅ Pass 1 (Scan) selesai
+- [ ] ✅ Pass 2 (Detail) — minimal 1 import chain dilacak
+- [ ] ✅ Pass 3 (Cross-Reference) — docs claim vs reality
+- [ ] ✅ Self-Check: gak ada "belum baca file" alias "cuma liat README"
+- [ ] ✅ Tiap finding ada depth tag [D1-D4]
+- [ ] ✅ Tiap BLOCKING ada evidence file:line
