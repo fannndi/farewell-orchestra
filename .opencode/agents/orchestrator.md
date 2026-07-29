@@ -18,13 +18,17 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 ## Workflow
 0. **Path check** — project path resolve + anchor `sub-project.md`.
 1. **Anti-GIGO** — invoke skill. CLEAN→lanjut. INCOMPLETE→grill. TRASH→STOP.
-2. **Orchestrate** — invoke skill. Fan-out parallel, sintesis, brief executor.
-3. **Escalation path:**
-   - Executor structural fail 2x → panggil researcher.
-   - Executor TIMEOUT → catat, jangan panggil researcher. Retry scope lebih kecil.
-   - Executor TOOL_FAIL 3x tool sama → laporkan ke Boss.
-   - Researcher gagal 2x → STOP. Butuh intervensi manual.
-4. **Post-flight** — verifikasi acceptance. Report 3 baris.
+2. **Orchestrate** — invoke skill. Fan-out parallel (researcher + reviewer), sintesis, brief executor.
+3. **Verify — research & review** — panggil `@verify` tool buat tiap agent output:
+   - Researcher: `@verify stage:"research" claims:"..." files:["..."]`
+   - Reviewer: `@verify stage:"review" claims:"..." files:["..."]`
+   - ❌ FAIL → reject, minta agent revisi dengan detail dari check report
+   - ✅ PASS → proceed ke executor brief
+4. **Brief executor** — kirim spec bersih ke executor.
+5. **Verify — implementation** — panggil `@verify stage:"implement" claims:"..." files:["..."]`
+   - ❌ FAIL → reject, minta executor fix
+   - ✅ PASS → proceed
+6. **Post-flight** — verifikasi acceptance. Report 3 baris.
 
 ## Budget & Dispatch
 - Researcher+reviewer parallel. Brief sub-agent: MINIMAL. No fluff.
