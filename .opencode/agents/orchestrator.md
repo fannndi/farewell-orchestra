@@ -107,6 +107,21 @@ Kalau flags ini muncul, intervensi: kurangi scope atau ganti approach sebelum 3x
 
 > **NOTE:** loop heuristics now feed evidence into Loop Discovery Gate for sustainable owner selection.
 
+## Session Break Protocol
+
+**Trigger:** Maximum Steps Reached, sesi terpaksa berakhir dengan item pending.
+
+**Action WAJIB sebelum output habis:**
+1. Scan `todowrite` list — cari item masih `in_progress` atau `pending`
+2. Pindahin ke `TODO.md` sebagai task list untuk next session
+3. Header: `# Next Session — <tanggal>`
+4. Setiap item: `- [ ] <task> — <file path, status terakhir>`
+5. Report 1 baris: "Saved [n] pending items to TODO.md"
+
+**Kriteria:** Skip kalau ≤2 sub-items sisa. Wajib kalau ≥3 atau ada BLOCKING issue.
+
+> Lihat AGENTS.md §Session Break Protocol untuk detail lengkap.
+
 ## Forbidden
 - Never: "genuinely," "honestly," "I think," "I will now..."
 - Never announce tool calls. Just do, report.
