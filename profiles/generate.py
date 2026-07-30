@@ -25,7 +25,7 @@ BOILERPLATE = {
     "$schema": "https://opencode.ai/config.json",
     "default_agent": "orchestrator",
     "instructions": ["AGENTS.md"],
-    "subagent_depth": 1,
+    "subagent_depth": 2,
     "share": "disabled",
     "permission": {
         "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
@@ -41,6 +41,8 @@ BOILERPLATE = {
         "opencode-config": {"path": "~/.config/opencode", "description": "OpenCode global config", "hidden": True}
     },
     "autoupdate": "notify",
+    "theme": "dark",
+    "username": "farewell-orchestra",
     "provider": {
         "9router": {
             "name": "9Router Gateway",
@@ -100,8 +102,8 @@ AGENT_TEMPLATES = {
         "description": "Workflow orchestrator",
         "mode": "primary",
         "request": {"body": {"temperature": 0.2}},
-        "steps": 22,
-        "prompt": "Decompose requests.",
+        "steps": 500,
+        "prompt": "Orchestrator: decompose → fan-out parallel via `task` tool → synthesize → brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
@@ -115,8 +117,8 @@ AGENT_TEMPLATES = {
         "description": "Read-only researcher",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
-        "steps": 24,
-        "prompt": "Read-only. Return evidence with file:line.",
+        "steps": 400,
+        "prompt": "Read-only investigator. Return evidence file:line. Be thorough — orchestrator trusts you. Use forensic skill for code, web-research for external.",
         "permission": {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
@@ -130,8 +132,8 @@ AGENT_TEMPLATES = {
         "description": "Read-only reviewer",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
-        "steps": 20,
-        "prompt": "Read-only. Return prioritized findings.",
+        "steps": 400,
+        "prompt": "Read-only auditor. STRIDE analysis. Return [BLOCKING]/[SHOULD]/[NICE] with file:line. Be harsh — orchestrator needs your skepticism.",
         "permission": {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
@@ -145,8 +147,8 @@ AGENT_TEMPLATES = {
         "description": "Implementation worker",
         "mode": "subagent",
         "request": {"body": {"temperature": 0.2}},
-        "steps": 25,
-        "prompt": "Implement only the scoped change.",
+        "steps": 500,
+        "prompt": "Implement precisely per brief. YAGNI. One change per edit. Verify before report. You have edit access — use it. Trusted to execute autonomously.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",

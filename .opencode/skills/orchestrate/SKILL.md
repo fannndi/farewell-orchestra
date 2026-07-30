@@ -24,7 +24,7 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer.
 
-## 3. Fan-Out — WAJIB
+## 3. Fan-Out — WAJIB via `task` Tool
 
 | Task | Agent | Read-only |
 |------|-------|:---------:|
@@ -32,10 +32,45 @@ Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher +
 | Security/architecture audit | reviewer | ✅ |
 | Implementation | executor (tunggu sintesis) | ❌ |
 
-**ALWAYS dispatch researcher + reviewer in parallel. NEVER skip.** 3 pengecualian:
-- Task cuma implementasi → tetap dispatch researcher buat cek state
-- Task cuma research → tetap dispatch reviewer buat cross-check
+**ALWAYS dispatch researcher + reviewer in parallel via `task` tool. NEVER skip.**
+
+### Cara Dispatch yang Benar
+
+GUNAKAN `task` tool. BUKAN lakukan sendiri.
+
+```python
+# ✅ BENAR — Parallel dispatch researcher + reviewer
+task(subagent_type="researcher", description="[deskripsi pendek]",
+     prompt="[brief dengan context + file references + expected output]")
+task(subagent_type="reviewer", description="[deskripsi pendek]",
+     prompt="[brief dengan context + file references + expected output]")
+
+# ✅ BENAR — Dispatch executor setelah sintesis
+task(subagent_type="executor", description="exec: [task]",
+     prompt="[5-field brief, max 200 token]")
+
+# ❌ SALAH — Jangan lakukan ini:
+# baca file sendiri → review sendiri → implement sendiri
+```
+
+### Trust Your Sub-Agents
+
+| Agent | Model | Kemampuan | Lo harus... |
+|-------|-------|-----------|-------------|
+| researcher | `north-mini-code-free` | forensic, web-research, read-only | Percaya dia baca file & lapor evidence |
+| reviewer | `nemotron-3-ultra-free` | stride-audit, read-only | Percaya dia audit security & konvensi |
+| executor | `nemotron-3-ultra-free` | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
+
+**Prinsip:** 
+- Sub-agent punya **model + skill + tool masing-masing**. Mereka specialized.
+- Lo (orchestrator) tugasnya **decompose + dispatch + verify**, bukan ngerjain.
+- Kalau sub-agent gagal → **re-dispatch dengan error detail**, bukan ambil alih.
+- Kalau gagal 2x → **escalate ke researcher untuk deep debug**, bukan coba sendiri.
+
+### Pengecualian (hanya ini yang diizinkan)
 - Task trivial (1 baris typo fix) → langsung handle, gak perlu fan-out
+- Simple file ops (read, grep, glob) sebagai preparation buat dispatch context
+- Emergency fix (Boss bilang "coba aja" atau production down)
 
 ## 4. Synthesize
 
@@ -77,7 +112,6 @@ Score ≥45 → tanya Boss. <45 & aman → silent lanjut.
 ## 8. Post-Flight
 
 Verifikasi acceptance criteria. Report 3 baris: what, result, residual risk.
-Kalau semua item completed → invoke Todo Completion Protocol (AGENTS.md).
 
 ## 9. Escalation
 
@@ -129,9 +163,70 @@ Detail lengkap: `references/loop-discovery.md`
 
 > Runtime loop = STOP + design gate. Detail: `references/loop-discovery.md` §13-14
 
+## 15. Dispatch Checklist (Khusus Orchestrator)
+
+Jalankan ini secara sadar tiap kali mulai task:
+
+```
+□ 1. Task non-trivial? → Wajib dispatch researcher + reviewer
+□ 2. Udah panggil task() tool? (subagent_type diisi)
+□ 3. Researcher task() udah? → go
+□ 4. Reviewer task() udah? → go (parallel!)
+□ 5. Tunggu hasil keduanya? → jangan lanjut sebelum dua-duanya selesai
+□ 6. Verify hasil researcher? → @verify stage:"research"
+□ 7. Verify hasil reviewer? → @verify stage:"review"
+□ 8. Sintesis hasil? → max 3 bullet
+□ 9. Blast radius check? → score ≥45 tanya Boss
+□ 10. Executor task() udah? → 5 field, max 200 token
+□ 11. Verify hasil executor? → @verify stage:"implement"
+□ 12. Report 3 baris? → what, result, residual risk
+```
+
+Kalau checklist >3 NO → STOP. Lo lagi ambil alih kerjaan sub-agent.
+
+## 16. Stress Test — Dispatch Loop Precision
+
+Periodik (tiap 3-5 sesi) jalankan simulasi ini untuk verifikasi dispatch berjalan:
+
+### Skenario A: Research + Review (tanpa implementasi)
+```
+Brief: "Cari semua file yang pake pattern X dan audit keamanannya"
+Dispatch: researcher(forensic: cari pattern X) + reviewer(stride-audit: audit security)
+Expected: 2 task tool calls parallel → verify → report
+```
+
+### Skenario B: Full Pipeline (research → review → implement)
+```
+Brief: "Tambah validasi di form login, cek dulu state-nya"
+Dispatch: researcher(cek state) + reviewer(audit existing) → sintesis → executor(tambah validasi)
+Expected: 3 task tool calls total, sequential (R+V parallel → E)
+```
+
+### Skenario C: Loop Recovery
+```
+Brief: "Benerin bug di kalkulator" — di mana executor gagal 2x
+Dispatch: executor → fail → researcher(deep debug) → executor retry
+Expected: executor task → fail → researcher task → executor task lagi
+```
+
+### Skenario D: Multi-Model Trust
+```
+Brief: "Audit + refactor semua file di modul X"
+Expected: researcher(north-mini-code-free) + reviewer(nemotron-3-ultra-free) → executor(nemotron-3-ultra-free)
+FAIL jika: orchestrator melakukan research/review/implement sendiri
+```
+
+### Scoring
+- PASS = semua dispatch via task tool, nggak ada yg dikerjain sendiri
+- PARTIAL = dispatch tp orchestrator ikut campur
+- FAIL = orchestrator kerjain sendiri
+
+**Target: 100% PASS.** Kalau <80% → review dan tighten docs.
+
 ## Rules
 
 - NEVER duplicate work. Once delegated, move on.
 - Executor brief = MINIMAL. 5 field, max 200 token.
 - Background tasks = FORBIDDEN. Semua foreground.
 - Verify-first: jangan report "done" sebelum verify.
+- **Trust > Control.** Lo hired sub-agent karena mereka capable. Percaya. Dispatch. Verify. Move on.

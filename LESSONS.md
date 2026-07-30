@@ -14,6 +14,8 @@
 | 2026-07-29 | Adaptasi better-harness putaran 2 — blast radius upgrade, work loop 15 check, evidence bundle | Adaptasi pertama cuma superficial (grep blast radius, 5 gate, 4 level) | Better-harness pake tree-sitter AST + BFS call graph + scoring engine — gue cuma baca file doang pas pertama | Upgrade blast radius: import-based graph + BFS traversal + scoring + core rules + test gap. Work loop: 5→15 checks. Evidence bundle: 4 lane pre-execution context. |
 | 2026-07-29 | Enhance audit skill — Depth Assurance Protocol + skeptic layer + evidence depth tags | Audit better-harness cuma baca README — dangkal, gak baca kode asli. Boss tegur. | Reviewer gak punya protokol buat mencegah audit superficial | Tambah Depth Assurance (3 pass: Scan→Detail→Cross-Reference). Skepticism Layer: docs bohong sampai terbukti. Evidence depth tags [D1-D4]. Self-check sebelum report. |
 | 2026-07-30 | Audit + eksekusi 6 optimasi (P1+P2) | learn.ts pakai shell type/set-content, prune_rules missing, hardcode threshold di check/hook, BFS no early-stop, step budget flat | Sub-tool implementation fragile (shell wrapper), generator boilerplate stale, doc-as-config drift | Refactor learn.ts ke pure Node FS + strict regex YYYY-MM-DD. Tambah prune_rules (tool_output head/tail, file_lists collapse). Baca step budget dari opencode.jsonc. Early-stop BFS >25 affected atau depth>2. Scale step budget by task size (TRIVIAL=8, LARGE=25). |
+| 2026-07-30 | Boss komplain session break terus-menerus — "malah merepotkanku" | Session Break Protocol auto-trigger setiap kena step limit (O:22, R:24, V:20, E:25). Boss report "selalu disuruh ke next session" — ini friction. | Step budget terlalu kecil untuk sesi real. Session Break Protocol wajib jalan otomatis di step limit tanpa tanya Boss dulu. | Naikkan step budget drastis: O:22→500, R:24→400, V:20→400, E:25→500. Ubah Session Break Protocol dari mandatory → optional (trigger only kalau Boss bilang stop). Scale step budgets by task size ditambah level MASSIVE. — verify:pass `read opencode.jsonc + orchestrator.md + AGENTS.md — budget tercermin di 3 file, session break jadi manual trigger` |
+
 
 
 
@@ -28,7 +30,7 @@
 | AGENTS.md project rules | ✅ | 37 line, slim |
 | Agent persona files | ✅ | 4 agent, masing-masing |
 | Skills (on-demand) | ✅ | 9 skill files, lazy-loaded |
-| Step budgets | ✅ | O:22, R:24, V:20, E:25 |
+| Step budgets | ✅ | O:500, R:400, V:400, E:500 |
 | Tool permissions | ✅ | Terbaru: scoped (researcher/reviewer no edit) |
 | **Sensors (feedback)** | | |
 | JSON validation (generate.py) | ✅ | Temp→validasi→copy |

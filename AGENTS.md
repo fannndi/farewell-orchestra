@@ -2,14 +2,41 @@
 
 ## Agent Architecture
 
-| Role | Mode | Skills | Deskripsi |
-|------|------|--------|-----------|
-| **orchestrator** | primary | `anti-gigo` `grill` `orchestrate` | Validasi input, dekomposisi, WAJIB fan-out, delegasi, sintesis |
-| **researcher** | subagent | `forensic` `web-research` | Investigasi read-only — evidence file:line |
-| **reviewer** | subagent | `stride-audit` | Audit read-only — STRIDE, convention, drift |
-| **executor** | subagent | `minimal-impl` `verification-ground-truth` | Writer — YAGNI, verify-first, delete-over-add |
+| Role | Mode | Model | Skills | Deskripsi |
+|------|------|-------|--------|-----------|
+| **orchestrator** | primary | `ocg/deepseek-v4-flash` | `anti-gigo` `grill` `orchestrate` | Validasi input, dekomposisi, WAJIB fan-out, delegasi, sintesis |
+| **researcher** | subagent | `north-mini-code-free` | `forensic` `web-research` | Investigasi read-only — evidence file:line |
+| **reviewer** | subagent | `nemotron-3-ultra-free` | `stride-audit` | Audit read-only — STRIDE, convention, drift |
+| **executor** | subagent | `nemotron-3-ultra-free` | `minimal-impl` `verification-ground-truth` | Writer — YAGNI, verify-first, delete-over-add |
 
-Prinsip: **SIMPLE · SHORT · MODULAR**. Bahasa campur Inggris.
+## Trust & Dispatch — Prinsip Orkestrasi
+
+**Setiap agent punya model + skill dedicated. Orchestrator WAJIB percaya dan dispatch.**
+
+| Prinsip | Maksud |
+|---------|--------|
+| **Percaya, jangan serakah** | Sub-agent mampu. Lo bukan satu-satunya yg bisa baca/tulis kode. |
+| **Dispatch, jangan kerjain** | Setiap task = `task(subagent_type=...)`. Kecuali 1 baris typo fix. |
+| **Parallel, jangan serial** | Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain. |
+| **Verify, jangan tebak** | @verify tool setiap hasil. Kalau FAIL → re-dispatch dengan error detail. |
+| **Eskalasi, jangan loop** | Executor gagal 2x → dispatch researcher deep debug, bukan retry terus. |
+
+### Mekanisme Dispatch (WAJIB paham)
+
+```python
+# Researcher — read-only, forensic/web search
+task(subagent_type="researcher", prompt="...", description="research: [topic]")
+
+# Reviewer — read-only, STRIDE audit
+task(subagent_type="reviewer", prompt="...", description="review: [scope]")
+
+# Executor — write access, implementasi
+task(subagent_type="executor", prompt="...", description="exec: [task]")
+```
+
+Orchestrator punya `task` permission terbatas: **hanya** researcher, reviewer, executor. Gak bisa dispatch agent lain.
+
+Prinsip: **SIMPLE · SHORT · MODULAR · TRUST**. Bahasa campur Inggris.
 
 ## Safety & Guardrails
 
@@ -24,35 +51,6 @@ Prinsip: **SIMPLE · SHORT · MODULAR**. Bahasa campur Inggris.
 
 Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `project-guide.md` buat setup `permission.external_directory`.
 
-## Session Break Protocol (Step Limit / Max Steps)
+## Verify Before Report
 
-**Trigger:** Kena "Maximum Steps Reached" atau sesi terpaksa berakhir dengan item pending.
-
-**Action WAJIB sebelum output habis:**
-1. Scan `todowrite` list — cari item masih `in_progress` atau `pending`
-2. Pindahin ke `TODO.md` sebagai task list untuk next session
-3. Tulis `TODO.md` header: `# Next Session — <tanggal>`
-4. Setiap item: `- [ ] <task> — <file path, status terakhir>`
-5. Report 1 baris: "Saved [n] pending items to TODO.md"
-
-**Kriteria:** Skip kalau task tinggal verify doang (≤2 sub-items sisa). Wajib kalau ≥3 sub-items atau ada BLOCKING issue belum diresolve.
-
-**Maturity:** [D] AGENTS.md | [W] `.opencode/agents/orchestrator.md` post-flight | [E] sesi ini (contoh: researcher limit di sesi ini) | [V] cek TODO.md setelah step limit
-
-## Todo Completion Protocol
-
-**Trigger:** Semua todowrite items `completed` ATAU Boss bilang "selesai" / "done" / "beres"
-
-**Action WAJIB:**
-1. **Verify** tiap item yang diclaim `completed` benar-benar berfungsi — jalankan `@verify` atau verification command
-2. **Arsip ke TODO.md:**
-   - Pindahkan item completed ke baris `✅ <item> — <timestamp>` di bagian "Done"
-   - Hapus item dari pending
-3. **Reset** kalau semua item selesai:
-   - Ganti header jadi `# Todo — <tanggal>`
-   - Kosongkan bagian pending, siap diisi session berikutnya
-4. **Log insiden non-trivial** ke LESSONS.md via `@learn` kalau ada pola error atau temuan arsitektural
-
-**Larangan:** Jangan report "semua done" tanpa verify tiap item. Verify dulu, baru report.
-
-**Maturity:** [D] AGENTS.md | [W] Post-flight step 8 di orchestrate skill | [E] sesi ini | [V] cek TODO.md setelah complete
+Jangan claim "done" sebelum verify. Tool output > intuisi. Kalau verify FAIL → jangan lanjut, fix dulu.
