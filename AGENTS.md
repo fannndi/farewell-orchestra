@@ -38,3 +38,21 @@ Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `project
 **Kriteria:** Skip kalau task tinggal verify doang (≤2 sub-items sisa). Wajib kalau ≥3 sub-items atau ada BLOCKING issue belum diresolve.
 
 **Maturity:** [D] AGENTS.md | [W] `.opencode/agents/orchestrator.md` post-flight | [E] sesi ini (contoh: researcher limit di sesi ini) | [V] cek TODO.md setelah step limit
+
+## Todo Completion Protocol
+
+**Trigger:** Semua todowrite items `completed` ATAU Boss bilang "selesai" / "done" / "beres"
+
+**Action WAJIB:**
+1. **Verify** tiap item yang diclaim `completed` benar-benar berfungsi — jalankan `@verify` atau verification command
+2. **Arsip ke TODO.md:**
+   - Pindahkan item completed ke baris `✅ <item> — <timestamp>` di bagian "Done"
+   - Hapus item dari pending
+3. **Reset** kalau semua item selesai:
+   - Ganti header jadi `# Todo — <tanggal>`
+   - Kosongkan bagian pending, siap diisi session berikutnya
+4. **Log insiden non-trivial** ke LESSONS.md via `@learn` kalau ada pola error atau temuan arsitektural
+
+**Larangan:** Jangan report "semua done" tanpa verify tiap item. Verify dulu, baru report.
+
+**Maturity:** [D] AGENTS.md | [W] Post-flight step 8 di orchestrate skill | [E] sesi ini | [V] cek TODO.md setelah complete

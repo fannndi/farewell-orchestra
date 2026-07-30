@@ -527,6 +527,38 @@ def show_menu():
             input(f"\n  '{choice}' bukan angka. [Enter]...")
 
 
+def rollback():
+    """Restore latest backup from profiles/backups/ to opencode.jsonc"""
+    import glob, json, shutil
+    root_path = os.path.abspath(ROOT_FILE)
+    backup_pattern = os.path.join(BACKUP_DIR, "opencode.*.jsonc")
+    backups = sorted(glob.glob(backup_pattern), reverse=True)
+
+    if not backups:
+        print("[ERROR] No backup found")
+        sys.exit(1)
+
+    latest = backups[0]
+    print(f"[INFO] Restoring from backup: {os.path.basename(latest)}")
+
+    # Validate JSON before copying (same pattern as generate())
+    try:
+        with open(latest, "r", encoding="utf-8") as f:
+            raw = f.read()
+            json.loads(raw[raw.index("{"):])
+    except Exception as e:
+        print(f"[ERROR] Backup file invalid JSON: {e}")
+        sys.exit(1)
+
+    try:
+        shutil.copy2(latest, root_path)
+    except Exception as e:
+        print(f"[ERROR] Failed to copy to {root_path}: {e}")
+        sys.exit(1)
+
+    print(f"[OK] Restored from backup: {os.path.basename(latest)}")
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
 
@@ -540,6 +572,7 @@ if __name__ == "__main__":
         print("  python profiles/generate.py --validate         -> check profiles.json integrity")
         print("  python profiles/generate.py --diff <A> <B>     -> compare two profiles")
         print("  python profiles/generate.py --inspect <name>   -> inspect profile details")
+        print("  python profiles/generate.py --rollback         -> restore latest backup to opencode.jsonc")
         print(f"\nProfiles: {', '.join(names)}")
         sys.exit(0)
 
@@ -571,6 +604,10 @@ if __name__ == "__main__":
     if args[0] == "--inspect" and len(args) > 1:
         registry = load_profiles()
         inspect_profile(args[1], registry)
+        sys.exit(0)
+
+    if args[0] == "--rollback":
+        rollback()
         sys.exit(0)
 
     profile_name = args[0]
