@@ -5,13 +5,26 @@ description: Use after anti-gigo passes — decompose request, fan-out parallel,
 
 # Orchestrate
 
-Input sudah CLEAN. Sekarang dekomposisi + delegasi. **WAJIB fan-out. Jangan kerjain sendiri.**
+Input sudah CLEAN. **WAJIB fan-out. Jangan kerjain sendiri.**
 
 ## 1. Decompose
 
-Pecah request jadi work packages independen. Tiap package ≤ 5 baris brief.
+Pecah jadi work packages independen. Tiap package ≤ 5 baris brief.
 
-## 2. Fan-Out — WAJIB
+## 2. Evidence Bundle — Context Sebelum Fan-Out
+
+Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
+
+| Lane | Sumber | Output |
+|------|--------|--------|
+| A: Memory | sub-project.md | `[MEMORY] agent terakhir kerja apa` |
+| B: Lessons | LESSONS.md | `[LESSONS] error pattern: n kejadian` |
+| C: State | git status + grep | `[STATE] file [n] modified, [m] bersih` |
+| D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
+
+Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer.
+
+## 3. Fan-Out — WAJIB
 
 | Task | Agent | Read-only |
 |------|-------|:---------:|
@@ -19,44 +32,100 @@ Pecah request jadi work packages independen. Tiap package ≤ 5 baris brief.
 | Security/architecture audit | reviewer | ✅ |
 | Implementation | executor (tunggu sintesis) | ❌ |
 
-**ALWAYS dispatch researcher + reviewer in parallel.** NEVER skip. Kalau task cuma implementasi doang → tetap dispatch researcher untuk cek konteks. Kalau cuma research → tetap dispatch reviewer untuk cross-check.
+**ALWAYS dispatch researcher + reviewer in parallel. NEVER skip.** 3 pengecualian:
+- Task cuma implementasi → tetap dispatch researcher buat cek state
+- Task cuma research → tetap dispatch reviewer buat cross-check
+- Task trivial (1 baris typo fix) → langsung handle, gak perlu fan-out
 
-## 3. Synthesize
+## 4. Synthesize
 
-Gabung hasil researcher + reviewer → max 3 bullet. Konflik? reviewer (security) > researcher (facts). Tapi researcher punya bukti file:line sanggah reviewer → catat sebagai "dispute" ke Boss.
+Gabung hasil researcher + reviewer → max 3 bullet. Konflik? reviewer (security) > researcher (facts). Tapi researcher punya bukti file:line sanggah reviewer → catat "dispute" ke Boss.
 
-## 4. Brief Executor — 5 field, max 200 token
+## 5. Brief Executor — 5 field, max 200 token
 
 ```
-TASK: [1 kalimat]
-FILES: [path, path]
-CONTEXT: [1-2 kalimat]
-TRIED: [optional — apa yg udah gagal]
-VERIFY: [command buat test]
+TASK: [1 kalimat — apa yg harus dihasilkan]
+FILES: [path, path — file yg disentuh]
+CONTEXT: [1-2 kalimat — kenapa, constraint]
+TRIED: [opsional — apa yg udah gagal, biar nggak diulang]
+VERIFY: [command — cara test bahwa task selesai]
 ```
 
-## 5. Verify
+## 6. Blast Radius — Impact Analysis
+
+**a. Build graph:** List file yg disentuh → grep import chain → BFS.
+
+**b. Score impact:**
+| Metric | Threshold | Score |
+|--------|-----------|-------|
+| Files changed | ≤3=low, ≤8=med, >8=high | 0/10/20 |
+| Impact radius (affected) | ≤5=low, ≤15=med, >15=high | 0/10/20 |
+| Core code hit? | auth/security/db/deploy file touched? | +25 |
+| Test gaps? | file tanpa test pair | +5 each |
+
+**c. Core rules trigger high alert:** `auth`, `login`, `credential`, `token`, `password`, `secret`, `permission`, `middleware`, `guard`, `rbac`, `database`, `migration`, `schema`, `deploy`, `release`
+
+**d. Report:** `Blast Radius: [SCORE]/100 — [LOW|MEDIUM|HIGH|CRITICAL]`
+Score ≥45 → tanya Boss. <45 & aman → silent lanjut.
+
+## 7. Verify Gate
 
 - **Research & Review:** Panggil `@verify stage:"research/review" claims:"..." files:["..."]`
 - **Implement:** Panggil `@verify stage:"implement" claims:"..." files:["..."]`
-- ❌ FAIL → reject, minta revisi
-- ✅ PASS → next
+- ❌ FAIL → reject, minta revisi. ✅ PASS → next.
 
-## 6. Blast Radius (sebelum executor kerja)
+## 8. Post-Flight
 
+Verifikasi acceptance criteria. Report 3 baris: what, result, residual risk.
+
+## 9. Escalation
+
+Executor gagal 2x → STOP dispatch executor. Dispatch researcher: "Deep debug [error]. Root cause, bukan symptom." Researcher invoke `forensic`.
+
+## 10. Peer Debate (trigger: `debat` / `double check` / high-stakes)
+
+1. Researcher → analisis + evidence file:line
+2. Reviewer → critique findings researcher (tunjuk celah/missing evidence)
+3. Researcher rebuttal → tanggapi dengan bukti tambahan atau akui
+4. Orchestrator → gabung final conclusion
+
+Format output:
 ```
-Files changed → grep imports → BFS impact.
-Score: ≤3 files=0, ≤8=10, >8=20 | radius ≤5=0, ≤15=10, >15=20 | core hit? +25 | test gap? +5 each
-Score ≥45 → tanya Boss sebelum lanjut.
+✅ AGREED: [poin sepakat]
+⚠️ DEBAT: researcher klaim X vs reviewer counter Y — [resolusi]
+📋 FINAL: [kesimpulan final]
 ```
 
-## 7. Post-Flight
+**Token efficiency:** Rebuttal pake `task_id` resume subagent, jangan dispatch ulang.
 
-Verifikasi acceptance. Report 3 baris: what, result, residual risk.
+## 11. Agent Work Loop — 15 Quality Gates (5 dimensi)
+
+Tiap task lewati ini sebelum report. Gagal 1 → STOP, report ke Boss.
+
+| Dimensi | Check | Passing criteria |
+|---------|-------|------------------|
+| 🎯 Task Understanding | Intent, Context, Scope | Goal jelas, path disebut, in/out scope eksplisit |
+| 🎛 Execution | Reproducible, Permission, Constraint | Tool available, file di workspace, stack konsisten |
+| ✅ Change Validation | Verify, Failure Diagnosis, Re-verify | Verification command ada, error di-identifikasi, fix re-run |
+| 📦 Delivery | Acceptance, Risk, Rollback | Output sesuai criteria, risk dilapor, perubahan reversibel |
+| 📚 Learning | Keputusan Log, Memory Update, Lesson | sub-project.md update, memori agent update, LESSONS.md log |
+
+Gagal 3x di gate sama → eskalasi ke Boss.
+
+## 12. Loop Guard
+
+| Sinyal | Action |
+|--------|--------|
+| Agent+tool+intent sama 3x berturut-turut | STOP, tanya Boss |
+| Executor gagal error identik 2x | Escalate ke researcher |
+| Researcher balik hasil sama 2x | Udah cukup — jangan research lagi |
+| Conversation muter tanpa progress | Report: "Stuck di [topik]. Perlu arahan." |
+
+**Prinsip:** 3x sama = loop. Token lebih baik buat nanya Boss.
 
 ## Rules
 
 - NEVER duplicate work. Once delegated, move on.
-- Executor gagal 2x → dispatcher researcher deep debug.
-- 3x loop (agent+tool+intent sama) → STOP, tanya Boss.
-- Output: 3 lines max.
+- Executor brief = MINIMAL. 5 field, max 200 token.
+- Background tasks = FORBIDDEN. Semua foreground.
+- Verify-first: jangan report "done" sebelum verify.
