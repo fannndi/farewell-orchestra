@@ -38,7 +38,7 @@ $agentNames = @('orchestrator', 'researcher', 'reviewer', 'executor')
 Write-Host "[TEST 1] Step Budget Consistency" -ForegroundColor Yellow
 $t1=$true
 $docO=0; $docR=0; $docV=0; $docE=0
-if ($orchMd -match 'O:(\d+)\s+R:(\d+)\s+V:(\d+)\s+E:(\d+)') {
+if ($agentsMd -match 'O:(\d+)\s+R:(\d+)\s+V:(\d+)\s+E:(\d+)') {
     $docO=[int]$Matches[1]; $docR=[int]$Matches[2]; $docV=[int]$Matches[3]; $docE=[int]$Matches[4]
 }
 $checks1 = @{orchestrator=$docO; researcher=$docR; reviewer=$docV; executor=$docE}

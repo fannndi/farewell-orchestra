@@ -47,6 +47,20 @@ Prinsip: **SIMPLE · SHORT · MODULAR · TRUST**. Bahasa campur Inggris.
 | **Structured output** | [BLOCKING]/file:line/3-bar | Format enforcement per role |
 | **Grill gate** | Input ambiguous | Interview Boss sampai clear. Jangan dispatch |
 
+## Step Budgets
+
+Declared: **O:500 R:400 V:400 E:500** — max ceiling. Scale per-task:
+
+| Task size | Signal | Executor | R/V steps |
+|-----------|--------|----------|-----------|
+| TRIVIAL | 1 file, ≤3 baris, no blast | 20 | 15 |
+| SMALL | 1-2 files, ≤20 baris, low blast | 40 | 30 |
+| MEDIUM | 3-5 files, low-medium blast | 80 | 60 |
+| LARGE | >5 files atau high blast | 150 | 100 |
+| MASSIVE | Full audit + refactor multi-module | 500 (max) | 400 (max) |
+
+Estimasi: `8 + (files * 5) + (brief_lines * 2)`. Kalau ragu naikkan 1 tingkat.
+
 ## Cross-Project Usage
 
 Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `project-guide.md` buat setup `permission.external_directory`.

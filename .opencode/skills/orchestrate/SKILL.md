@@ -86,22 +86,9 @@ TRIED: [opsional — apa yg udah gagal, biar nggak diulang]
 VERIFY: [command — cara test bahwa task selesai]
 ```
 
-## 6. Blast Radius — Impact Analysis
+## 6. Blast Radius — Impact Check
 
-**a. Build graph:** List file yg disentuh → grep import chain → BFS.
-
-**b. Score impact:**
-| Metric | Threshold | Score |
-|--------|-----------|-------|
-| Files changed | ≤3=low, ≤8=med, >8=high | 0/10/20 |
-| Impact radius (affected) | ≤5=low, ≤15=med, >15=high | 0/10/20 |
-| Core code hit? | auth/security/db/deploy file touched? | +25 |
-| Test gaps? | file tanpa test pair | +5 each |
-
-**c. Core rules trigger high alert:** `auth`, `login`, `credential`, `token`, `password`, `secret`, `permission`, `middleware`, `guard`, `rbac`, `database`, `migration`, `schema`, `deploy`, `release`
-
-**d. Report:** `Blast Radius: [SCORE]/100 — [LOW|MEDIUM|HIGH|CRITICAL]`
-Score ≥45 → tanya Boss. <45 & aman → silent lanjut.
+Grep import chain dari file yg disentuh. Core files (auth/security/db/deploy/middleware) langsung tanya Boss. Selainnya silent lanjut.
 
 ## 7. Verify Gate
 
@@ -112,6 +99,7 @@ Score ≥45 → tanya Boss. <45 & aman → silent lanjut.
 ## 8. Post-Flight
 
 Verifikasi acceptance criteria. Report 3 baris: what, result, residual risk.
+Sisipkan step usage: `steps: [used]/[total]` — biar tau budget real vs ceiling.
 
 ## 9. Escalation
 
@@ -133,19 +121,17 @@ Format output:
 
 **Token efficiency:** Rebuttal pake `task_id` resume subagent, jangan dispatch ulang.
 
-## 11. Agent Work Loop — 15 Quality Gates (5 dimensi)
+## 11. Quality Check — 5 Gates
 
-Tiap task lewati ini sebelum report. Gagal 1 → STOP, report ke Boss.
+Tiap task lewati ini sebelum report:
 
-| Dimensi | Check | Passing criteria |
-|---------|-------|------------------|
-| 🎯 Task Understanding | Intent, Context, Scope | Goal jelas, path disebut, in/out scope eksplisit |
-| 🎛 Execution | Reproducible, Permission, Constraint | Tool available, file di workspace, stack konsisten |
-| ✅ Change Validation | Verify, Failure Diagnosis, Re-verify | Verification command ada, error di-identifikasi, fix re-run |
-| 📦 Delivery | Acceptance, Risk, Rollback | Output sesuai criteria, risk dilapor, perubahan reversibel |
-| 📚 Learning | Keputusan Log, Memory Update, Lesson | sub-project.md update, memori agent update, LESSONS.md log |
+1. **Scope jelas?** — Goal + path disebut, in/out scope eksplisit
+2. **Tool available?** — File di workspace, permission cukup
+3. **Verify done?** — Ada verification command, error di-identifikasi
+4. **Delivery match?** — Output sesuai acceptance criteria, risk dilapor
+5. **Memory updated?** — sub-project.md 1 baris, LESSONS.md kalau perlu
 
-Gagal 3x di gate sama → eskalasi ke Boss.
+Gagal 1 → STOP, report ke Boss. Gagal 3x gate sama → eskalasi.
 
 ## 12. Loop Discovery Gate
 
@@ -162,66 +148,6 @@ Detail lengkap: `references/loop-discovery.md`
 | Conversation muter tanpa progress | Report: "Stuck di [topik]. Perlu arahan." |
 
 > Runtime loop = STOP + design gate. Detail: `references/loop-discovery.md` §13-14
-
-## 15. Dispatch Checklist (Khusus Orchestrator)
-
-Jalankan ini secara sadar tiap kali mulai task:
-
-```
-□ 1. Task non-trivial? → Wajib dispatch researcher + reviewer
-□ 2. Udah panggil task() tool? (subagent_type diisi)
-□ 3. Researcher task() udah? → go
-□ 4. Reviewer task() udah? → go (parallel!)
-□ 5. Tunggu hasil keduanya? → jangan lanjut sebelum dua-duanya selesai
-□ 6. Verify hasil researcher? → @verify stage:"research"
-□ 7. Verify hasil reviewer? → @verify stage:"review"
-□ 8. Sintesis hasil? → max 3 bullet
-□ 9. Blast radius check? → score ≥45 tanya Boss
-□ 10. Executor task() udah? → 5 field, max 200 token
-□ 11. Verify hasil executor? → @verify stage:"implement"
-□ 12. Report 3 baris? → what, result, residual risk
-```
-
-Kalau checklist >3 NO → STOP. Lo lagi ambil alih kerjaan sub-agent.
-
-## 16. Stress Test — Dispatch Loop Precision
-
-Periodik (tiap 3-5 sesi) jalankan simulasi ini untuk verifikasi dispatch berjalan:
-
-### Skenario A: Research + Review (tanpa implementasi)
-```
-Brief: "Cari semua file yang pake pattern X dan audit keamanannya"
-Dispatch: researcher(forensic: cari pattern X) + reviewer(stride-audit: audit security)
-Expected: 2 task tool calls parallel → verify → report
-```
-
-### Skenario B: Full Pipeline (research → review → implement)
-```
-Brief: "Tambah validasi di form login, cek dulu state-nya"
-Dispatch: researcher(cek state) + reviewer(audit existing) → sintesis → executor(tambah validasi)
-Expected: 3 task tool calls total, sequential (R+V parallel → E)
-```
-
-### Skenario C: Loop Recovery
-```
-Brief: "Benerin bug di kalkulator" — di mana executor gagal 2x
-Dispatch: executor → fail → researcher(deep debug) → executor retry
-Expected: executor task → fail → researcher task → executor task lagi
-```
-
-### Skenario D: Multi-Model Trust
-```
-Brief: "Audit + refactor semua file di modul X"
-Expected: researcher(north-mini-code-free) + reviewer(nemotron-3-ultra-free) → executor(nemotron-3-ultra-free)
-FAIL jika: orchestrator melakukan research/review/implement sendiri
-```
-
-### Scoring
-- PASS = semua dispatch via task tool, nggak ada yg dikerjain sendiri
-- PARTIAL = dispatch tp orchestrator ikut campur
-- FAIL = orchestrator kerjain sendiri
-
-**Target: 100% PASS.** Kalau <80% → review dan tighten docs.
 
 ## Rules
 
