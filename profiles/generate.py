@@ -308,17 +308,55 @@ def generate(profile_name, to_stdout=False):
         sys.exit(1)
     print(f"[OK] Copied -> {root_path}  ({profile['label']})")
 
-    # Run post-generation hook if available
-    hook_script = os.path.join(os.path.dirname(PROFILES_DIR), ".opencode", "hooks", "post-generate.ps1")
-    if os.path.isfile(hook_script):
+    # ── Hook lifecycle ─────────────────────────────────────────────────
+    # Architecture: Zero-inspired. dispatch.ps1 reads hooks.jsonc, filters by event.
+    # Events: beforeGenerate, afterGenerate, beforeCommit, sessionStart, sessionEnd
+    # Payload: JSON via stdin. Exit 0=continue, non-zero=block.
+    # ───────────────────────────────────────────────────────────────────
+    import subprocess, json, time
+
+    def _run_hooks(event, payload_extra=None):
+        """Run hooks for given event via dispatch.ps1. Return True if OK, False if blocked."""
+        dispatcher_script = os.path.join(os.path.dirname(PROFILES_DIR), ".opencode", "hooks", "dispatch.ps1")
+        if not os.path.isfile(dispatcher_script):
+            return True  # no dispatcher = no hooks = continue
+
+        payload = {
+            "event": event,
+            "toolName": "generate",
+            "toolCallId": f"generate-{event}",
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "profile": profile_name,
+        }
+        if payload_extra:
+            payload.update(payload_extra)
+
         try:
-            import subprocess
-            subprocess.run(
-                ["powershell", "-NoProfile", "-File", hook_script, "-ConfigPath", root_path],
-                capture_output=False, timeout=30
+            result = subprocess.run(
+                ["powershell", "-NoProfile", "-File", dispatcher_script, "-Event", event],
+                input=json.dumps(payload),
+                capture_output=True, text=True, timeout=60
             )
+            if result.stdout:
+                for line in result.stdout.strip().splitlines():
+                    print(f"  [HOOK] {line}")
+            if result.returncode != 0:
+                print(f"[ERROR] Hook '{event}' blocked: {result.stderr.strip()}", file=sys.stderr)
+                return False
+            return True
+        except subprocess.TimeoutExpired:
+            print(f"[WARN] Hook '{event}' timed out (60s), continuing", file=sys.stderr)
+            return True
         except Exception as e:
-            print(f"[WARN] Hook failed: {e}", file=sys.stderr)
+            print(f"[WARN] Hook '{event}' error: {e}, continuing", file=sys.stderr)
+            return True
+
+    # Pre-generate: blocking (validate profiles.json before proceeding)
+    if not _run_hooks("beforeGenerate"):
+        sys.exit(1)
+
+    # Post-generate: non-blocking (validation, link checks)
+    _run_hooks("afterGenerate", {"output_path": root_path})
 
 
 def validate_registry(registry):

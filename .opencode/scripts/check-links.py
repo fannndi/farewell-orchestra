@@ -30,7 +30,7 @@ FORWARD_REFS = {
 }
 
 # Files where reference-like patterns are narrative prose, not file refs
-NARRATIVE_FILES = {"LESSONS.md"}
+NARRATIVE_FILES = {"LESSONS.md", "check.md"}
 
 # Patterns
 LINK_RE = re.compile(r'(?<!!)\[([^\]]*)\]\(([^)]+)\)')           # [text](path)

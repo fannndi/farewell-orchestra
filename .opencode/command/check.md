@@ -60,6 +60,39 @@ Checklist for every custom tool / mechanism:
 
 **Legend:** [D] ada di doc/config | [W] agent/skill instructions nyebut | [E] pernah dipanggil | [V] ada cara verify
 
+## 8. Doc Link Integrity Checker
+
+Disarankan dan beneran diterapkan:
+
+- **Script:** `.opencode/scripts/check-links.py` — melacak semua refs di markdown
+- **Coverage:** Formal links (text diikuti path dalam kurung), refs seperti `filename.md` dan `filename.md:42`
+- **Forward refs:** file yang akan dihasilkan oleh bootstrap-project (sub-project.md, PRD.md, dsb.) dikecualikan
+- **Automatic validation:** Dipanggil setiap generate profile (sesiStart + hooks setelahTool)
+- **Exit code:** 0 kalau semua beres, 1 kalau ada broken references
+- **Output:** `[LINK-CHECK] Scanning <N> markdown files...` + report per broken ref format `  BROKEN <rel>:<line> — <target> -> NOT FOUND`
+- **Failure handling:** Hook dispatcher mereturnkan error, profile generation diblokir (exit 1)
+
+Integrasi:
+
+- hooks/**/hooks.jsonc event `sessionEnd` trigger `./scripts/check-links.py`
+- Dispatcher sudah menerapkan payload arsitektur via stdin JSON
+- Confidence tinggi (pemeriksaan langsung di file, bukan asumsi)
+
+Verifikasi:
+- Run `python .opencode/scripts/check-links.py`
+- Di CI: `python profiles/generate.py default-oc` → jalankan check-links melalui hook
+
+Hasil expected:
+- `[LINK-CHECK] Scanning <N> markdown files...`
+- `[LINK-CHECK] OK — <X> references verified (<Y> links, <Z> file refs), 0 broken`
+
+Kalau gagal:
+- Report broken refs ke revision list
+- Run `git log --grep="doc` untuk wisata changelog terakhir
+- Edit file yang rusak atau perbaiki link yang rusak
+
+**Legend:** [D] ada di doc/config | [W] agent/skill instructions nyebut | [E] pernah dipanggil | [V] ada cara verify
+
 ## Result
 
 Semua checkboxes harus ✅. Kalau ada ❌ → perlu sync.

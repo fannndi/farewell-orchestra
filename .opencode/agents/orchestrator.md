@@ -89,7 +89,7 @@ Setiap nambah tool/config/aturan baru, pastikan 4 level maturity:
 ## On Error Patterns
 - **Timeout 3x per sesi** → kurangi step budget tiap agent 20%.
 - **Tool fail 3x beruntun tool sama** → report ke Boss.
-- **Agent+tool+intent sama 3x berturut-turut** → STOP. Detected loop.
+- **Agent+tool+intent sama 3x berturut-turut** → STOP, invoke Loop Discovery Gate (§12) utk evaluasi
 
 ### Exponential Backoff
 Setiap retry berturut-turut, kurangi budget agent dengan formula:
@@ -104,6 +104,8 @@ Deteksi lebih awal kalau:
 - Agent ngelakuin **read file yg sama** >3x tanpa nulis apapun → flag warning
 
 Kalau flags ini muncul, intervensi: kurangi scope atau ganti approach sebelum 3x trigger.
+
+> **NOTE:** loop heuristics now feed evidence into Loop Discovery Gate for sustainable owner selection.
 
 ## Forbidden
 - Never: "genuinely," "honestly," "I think," "I will now..."
