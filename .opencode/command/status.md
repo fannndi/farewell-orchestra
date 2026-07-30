@@ -17,13 +17,12 @@ Panggil via orchestrator: `@harness_status check:"all" format:"json"`
 {
   "timestamp": "2026-07-30T13:45:00Z",
   "active_project": "farewell-orchestra",
-  "profile": "9router/ocg/deepseek-v4-flash",
-  "small_model": "9router/oc/north-mini-code-free",
+  "profile": "<profile-name>",
   "agents": {
-    "orchestrator": { "model": "ocg/deepseek-v4-flash", "steps_limit": 22 },
-    "researcher":  { "model": "north-mini-code-free",    "steps_limit": 24 },
-    "reviewer":    { "model": "nemotron-3-ultra-free",   "steps_limit": 20 },
-    "executor":    { "model": "nemotron-3-ultra-free",   "steps_limit": 25 }
+    "orchestrator": { "model": "<paid-model>", "steps_limit": 500 },
+    "researcher":  { "model": "<free-model>",  "steps_limit": 400 },
+    "reviewer":    { "model": "<free-model>",  "steps_limit": 400 },
+    "executor":    { "model": "<free-model>",  "steps_limit": 500 }
   },
   "profiles": {
     "total": 6,

@@ -2,12 +2,12 @@
 
 ## Cost Model — Paid Orchestrator, Free Sub-Agents
 
-| Role | Model | Biaya | Tugas |
-|------|-------|-------|-------|
-| **orchestrator** | `ocg/deepseek-v4-flash` | 💰 PAID | Decompose, dispatch, verify, report. **JANGAN nulis kode.**  |
-| **researcher** | `north-mini-code-free` | 🆓 FREE | Baca file, forensic, web research — semua read-only |
-| **reviewer** | `nemotron-3-ultra-free` | 🆓 FREE | Audit STRIDE, review konvensi, cek keamanan |
-| **executor** | `nemotron-3-ultra-free` | 🆓 FREE | Nulis kode, edit file, implementasi |
+| Role | Biaya | Tugas |
+|------|-------|-------|
+| **orchestrator** | 💰 PAID | Decompose, dispatch, verify, report. **JANGAN nulis kode.**  |
+| **researcher** | 🆓 FREE | Baca file, forensic, web research — semua read-only |
+| **reviewer** | 🆓 FREE | Audit STRIDE, review konvensi, cek keamanan |
+| **executor** | 🆓 FREE | Nulis kode, edit file, implementasi |
 
 **Aturan emas: Jangan pake model paid buat kerjaan yg model free bisa lakuin.**
 Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.

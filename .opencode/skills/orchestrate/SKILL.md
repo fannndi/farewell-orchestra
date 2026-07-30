@@ -59,9 +59,9 @@ task(subagent_type="executor", description="exec: [task]",
 
 | Agent | Model | Kemampuan | Lo harus... |
 |-------|-------|-----------|-------------|
-| researcher | `north-mini-code-free` | forensic, web-research, read-only | Percaya dia baca file & lapor evidence |
-| reviewer | `nemotron-3-ultra-free` | stride-audit, read-only | Percaya dia audit security & konvensi |
-| executor | `nemotron-3-ultra-free` | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
+| researcher | free | forensic, web-research, read-only | Percaya dia baca file & lapor evidence |
+| reviewer | free | stride-audit, read-only | Percaya dia audit security & konvensi |
+| executor | free | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
 
 **Prinsip:** 
 - Sub-agent punya **model + skill + tool masing-masing**. Mereka specialized.
