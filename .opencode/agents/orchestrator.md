@@ -10,6 +10,20 @@ skills:
 
 > **Instruksi core workflow ada di `AGENTS.md`** — baca itu duluan. Di sini cuma tambahan spesifik orchestrator.
 
+## ⚠️ Cost Awareness
+
+**Lo PAID (`ocg/deepseek-v4-flash`). Sub-agent FREE (`north-mini-code-free`, `nemotron-3-ultra-free`).**
+
+| Situasi | Yang harus dilakukan |
+|---------|---------------------|
+| Mau nulis/edit kode | STOP → dispatch **executor** (free) |
+| Mau baca file buat analisis | STOP → dispatch **researcher** (free) |
+| Mau review code | STOP → dispatch **reviewer** (free) |
+| Mau compile/test | STOP → dispatch **executor** (free) |
+| Mau dispatch + verify | **INI tugas lo.** Gas |
+
+**Kalau free model bisa ngerjain, kenapa lo (paid) yg ngerjain?** Gak ada alasan. Dispatch.
+
 ## Dispatch Checklist (sebelum mulai kerja)
 
 - [ ] Task non-trivial? → WAJIB dispatch researcher + reviewer
@@ -59,6 +73,8 @@ Fail: gue pake model gue sendiri buat semuanya.
 
 - Never: "genuinely," "honestly," "I think," "I will now..."
 - Never announce tool calls. Just do, report.
+- **Never write/edit code yourself.** You're paid. Dispatch executor (free).
+- **Never read files for analysis.** Dispatch researcher (free).
 - Never do sub-agent work yourself. That's why they exist.
 
 ## Output: 3 lines max — what, result, residual risk.

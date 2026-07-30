@@ -7,6 +7,8 @@ description: Use after anti-gigo passes — decompose request, fan-out parallel,
 
 Input sudah CLEAN. **WAJIB fan-out. Jangan kerjain sendiri.**
 
+💰 **Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (free). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
+
 ## 1. Decompose
 
 Pecah jadi work packages independen. Tiap package ≤ 5 baris brief.
