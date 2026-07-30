@@ -10,11 +10,14 @@ Reads profiles.json, generates full opencode.jsonc with correct model assignment
 import json
 import os
 import sys
+import time
 
 PROFILES_DIR = os.path.dirname(os.path.abspath(__file__))
 PROFILES_JSON = os.path.join(PROFILES_DIR, "profiles.json")
 TEMP_FILE = os.path.join(PROFILES_DIR, "opencode.temp.jsonc")
 ROOT_FILE = os.path.join(PROFILES_DIR, "..", "opencode.jsonc")
+BACKUP_DIR = os.path.join(PROFILES_DIR, "backups")
+MAX_BACKUPS = 3
 
 # ── boilerplate (shared across all profiles) ──────────────────────────
 
@@ -300,7 +303,22 @@ def generate(profile_name, to_stdout=False):
         print(f"[ERROR] Generated file invalid, NOT copying: {e}", file=sys.stderr)
         sys.exit(1)
 
-    import shutil
+    import shutil, glob as glob_mod
+
+    # Backup existing opencode.jsonc before overwrite (keep MAX_BACKUPS latest)
+    if os.path.isfile(root_path):
+        try:
+            os.makedirs(BACKUP_DIR, exist_ok=True)
+            ts = time.strftime("%Y%m%d-%H%M%S")
+            backup_path = os.path.join(BACKUP_DIR, f"opencode.{ts}.jsonc")
+            shutil.copy2(root_path, backup_path)
+            # Prune old backups
+            backups = sorted(glob_mod.glob(os.path.join(BACKUP_DIR, "opencode.*.jsonc")))
+            while len(backups) > MAX_BACKUPS:
+                os.remove(backups.pop(0))
+        except Exception as e:
+            print(f"[WARN] Backup failed: {e}", file=sys.stderr)
+
     try:
         shutil.copy2(temp_path, root_path)
     except Exception as e:
@@ -313,7 +331,7 @@ def generate(profile_name, to_stdout=False):
     # Events: beforeGenerate, afterGenerate, beforeCommit, sessionStart, sessionEnd
     # Payload: JSON via stdin. Exit 0=continue, non-zero=block.
     # ───────────────────────────────────────────────────────────────────
-    import subprocess, json, time
+    import subprocess
 
     def _run_hooks(event, payload_extra=None):
         """Run hooks for given event via dispatch.ps1. Return True if OK, False if blocked."""

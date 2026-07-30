@@ -37,4 +37,4 @@ Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `project
 
 **Kriteria:** Skip kalau task tinggal verify doang (≤2 sub-items sisa). Wajib kalau ≥3 sub-items atau ada BLOCKING issue belum diresolve.
 
-**Maturity:** [D] AGENTS.md | [W] orchestrator.md post-flight | [E] sesi ini (contoh: researcher limit di sesi ini) | [V] cek TODO.md setelah step limit
+**Maturity:** [D] AGENTS.md | [W] `.opencode/agents/orchestrator.md` post-flight | [E] sesi ini (contoh: researcher limit di sesi ini) | [V] cek TODO.md setelah step limit
