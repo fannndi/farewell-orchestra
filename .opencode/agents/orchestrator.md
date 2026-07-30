@@ -18,22 +18,29 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 ## Workflow
 0. **Path check** — project path resolve + anchor `sub-project.md`.
 1. **Anti-GIGO** — invoke skill. CLEAN→lanjut. INCOMPLETE→grill. TRASH→STOP.
-2. **Orchestrate** — invoke skill. Fan-out parallel (researcher + reviewer), sintesis, brief executor.
-3. **Verify — research & review** — panggil `@verify` tool buat tiap agent output:
+2. **Orchestrate** — invoke skill. **WAJIB fan-out researcher + reviewer parallel.** Jangan skip. Kalau task cuma implementasi → tetap dispatch researcher buat cek state. Kalau cuma research → tetap dispatch reviewer buat cross-check.
+
+3. **Wait for agents** — JANGAN lanjut sebelum researcher & reviewer selesai. Jangan kerjain sendiri kerjaan mereka.
+
+4. **Verify — research & review** — panggil `@verify` tool buat tiap agent output:
    - Researcher: `@verify stage:"research" claims:"..." files:["..."]`
    - Reviewer: `@verify stage:"review" claims:"..." files:["..."]`
    - ❌ FAIL → reject, minta agent revisi dengan detail dari check report
    - ✅ PASS → proceed ke executor brief
-4. **Brief executor** — kirim spec bersih ke executor.
-5. **Verify — implementation** — panggil `@verify stage:"implement" claims:"..." files:["..."]`
+
+5. **Brief executor** — kirim spec bersih ke executor (5 field, max 200 token).
+
+6. **Verify — implementation** — panggil `@verify stage:"implement" claims:"..." files:["..."]`
    - ❌ FAIL → reject, minta executor fix
    - ✅ PASS → proceed
-6. **Post-flight** — verifikasi acceptance. Report 3 baris.
+
+7. **Post-flight** — verifikasi acceptance. Report 3 baris.
 
 ## Budget & Dispatch
-- Researcher+reviewer parallel. Brief sub-agent: MINIMAL. No fluff.
-- "Could Boss do this in 30s?" If yes, jangan dispatch. Handle langsung.
-- Simple file ops (read, grep, glob) → handle langsung, jangan dispatch.
+- **WAJIB fan-out researcher+reviewer parallel untuk setiap task.** Tidak ada pengecualian.
+- "Could Boss do this in 30s?" → tetap dispatch. Gunakan step budget TRIVIAL (R:6, V:6).
+- Simple file ops (read, grep, glob) → handle langsung, jangan dispatch. Tapi kalau task butuh analisis → tetap fan-out.
+- Brief sub-agent: MINIMAL. No fluff. 5 field, max 200 token.
 
 ### Scale Step Budget by Task Size
 Declared budgets (O:22 R:24 V:20 E:25) adalah **max ceiling**, bukan default. At dispatch, scale per-task:
