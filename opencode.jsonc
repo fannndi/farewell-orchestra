@@ -102,7 +102,17 @@
     "auto": true,
     "preserve_recent_tokens": 4000,
     "reserved": 14000,
-    "prune": true
+    "prune": true,
+    "prune_rules": {
+      "tool_output": {
+        "min_chars": 500,
+        "keep_head_pct": 0.2,
+        "keep_tail_pct": 0.3
+      },
+      "file_lists": {
+        "collapse_to": "first_5_and_last_2"
+      }
+    }
   },
   "watcher": {
     "ignore": [
@@ -186,21 +196,17 @@
         "skill": "allow",
         "bash": {
           "*": "allow",
-          "rm *": "deny",
-          "del *": "deny",
-          "Remove-Item *": "deny",
           "git commit *": "deny",
           "git push *": "deny",
           "git merge *": "deny",
           "git rebase *": "deny",
           "git reset *": "deny",
           "git clean *": "deny",
+          "rm *": "deny",
+          "del *": "deny",
           "npm *": "deny",
           "bun *": "deny",
-          "pnpm *": "deny",
-          "yarn *": "deny",
-          "pip *": "deny",
-          "poetry *": "deny"
+          "pip *": "deny"
         },
         "external_directory": {
           "*": "allow"
@@ -231,21 +237,17 @@
         "skill": "allow",
         "bash": {
           "*": "allow",
-          "rm *": "deny",
-          "del *": "deny",
-          "Remove-Item *": "deny",
           "git commit *": "deny",
           "git push *": "deny",
           "git merge *": "deny",
           "git rebase *": "deny",
           "git reset *": "deny",
           "git clean *": "deny",
+          "rm *": "deny",
+          "del *": "deny",
           "npm *": "deny",
           "bun *": "deny",
-          "pnpm *": "deny",
-          "yarn *": "deny",
-          "pip *": "deny",
-          "poetry *": "deny"
+          "pip *": "deny"
         },
         "external_directory": {
           "*": "allow"

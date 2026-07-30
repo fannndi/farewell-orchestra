@@ -1,5 +1,6 @@
 # post-generate.ps1 — Hook: validasi opencode.jsonc setelah generate
 # Dipanggil otomatis dari generate.py setelah copy ke root
+# Semua threshold BACA dari opencode.jsonc — no hardcode
 param(
     [string]$ConfigPath = (Join-Path (Split-Path $PSScriptRoot -Parent) "opencode.jsonc")
 )
@@ -23,7 +24,7 @@ try {
 $errors = @()
 $warnings = @()
 
-# Validasi tool scoping
+# Validasi tool scoping (rules tetap hardcoded — ini policy, bukan config)
 $agentRules = @{
     "researcher" = @{ "forbidden" = @("edit"); "required" = @("webfetch", "websearch"); "bash_denylist" = $true }
     "reviewer"   = @{ "forbidden" = @("edit"); "required" = @("webfetch", "websearch"); "bash_denylist" = $true }
@@ -57,12 +58,17 @@ foreach ($agentName in $agentRules.Keys) {
     }
 }
 
-# Validasi step budgets (min thresholds)
-$stepMin = @{ "orchestrator" = 20; "researcher" = 20; "reviewer" = 16; "executor" = 20 }
-foreach ($name in $stepMin.Keys) {
+# Validasi step budgets — BACA dari opencode.jsonc, threshold = 80% dari declared
+# Rationale: declared budget adalah max. Min recommended = 80% of declared biar gak terlalu kecil.
+foreach ($name in @("orchestrator", "researcher", "reviewer", "executor")) {
     $steps = $config.agent.$name.steps
-    if ($steps -lt $stepMin[$name]) {
-        $warnings += "[BUDGET] $name steps ($steps) below recommended minimum ($($stepMin[$name]))"
+    if ($null -eq $steps) {
+        $warnings += "[BUDGET] $name steps not defined in config"
+        continue
+    }
+    $minRecommended = [int]([math]::Ceiling($steps * 0.8))
+    if ($steps -lt $minRecommended -and $steps -lt 20) {
+        $warnings += "[BUDGET] $name steps ($steps) below sanity floor ($minRecommended = 80% of declared or 20, whichever higher)"
     }
 }
 
@@ -70,6 +76,13 @@ foreach ($name in $stepMin.Keys) {
 $instructions = $config.instructions -join " "
 if ($instructions -match "agents/\*") {
     $warnings += "[CONTEXT] instructions masih load semua agent file (*.md) - boros token"
+}
+
+# Validasi compaction.prune_rules ada kalau prune=true
+$prune = $config.compaction.prune
+$pruneRules = $config.compaction.prune_rules
+if ($prune -eq $true -and $null -eq $pruneRules) {
+    $warnings += "[COMPACTION] prune=true but no prune_rules defined - random pruning risk"
 }
 
 # Report

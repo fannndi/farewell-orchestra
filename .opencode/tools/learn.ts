@@ -1,6 +1,6 @@
 import { tool } from "@opencode-ai/plugin"
-import { execSync } from "child_process"
-import path from "path"
+import * as fs from "fs"
+import * as path from "path"
 
 export default tool({
   description:
@@ -21,39 +21,60 @@ export default tool({
     const esc = (s: string) => s.replace(/\|/g, "\\|")
     const row = `| ${date} | ${esc(args.trigger)} | ${esc(args.error)} | ${esc(args.root_cause)} | ${esc(args.fix)} |\n`
 
-    // Find the end of the existing table (after the last data row)
-    const content = execSync(`type "${lessonsPath}"`, { encoding: "utf-8", timeout: 5000 })
+    // Read existing content (pure Node FS, no shell)
+    let content: string
+    try {
+      content = fs.readFileSync(lessonsPath, "utf-8")
+    } catch (e: any) {
+      return `## Learn Tool — ERROR\n\nCannot read LESSONS.md: ${e.message}\n\nPath: ${lessonsPath}`
+    }
 
-    // Find where to insert: after the separator line (|---|) and any existing data rows
     const lines = content.split("\n")
+
+    // Strict pipe detection: a real data row starts with | YYYY-MM-DD
+    // This prevents false positives on header separator, unicode pipes, or unrelated markdown
+    const DATA_ROW_RE = /^\|\s*\d{4}-\d{2}-\d{2}\s*\|/
+    const SEPARATOR_RE = /^\|[-\s|]+\|?$/
+
     let insertAt = -1
+
+    // Strategy 1: find the last existing data row and insert after it
     for (let i = lines.length - 1; i >= 0; i--) {
-      if (lines[i].startsWith("|") && lines[i].includes("|") && !lines[i].includes("---")) {
+      if (DATA_ROW_RE.test(lines[i])) {
         insertAt = i + 1
         break
       }
     }
+
+    // Strategy 2: no data rows yet — find the header separator and insert after it
     if (insertAt === -1) {
-      // fallback: find the table header separator
       for (let i = 0; i < lines.length; i++) {
-        if (lines[i].includes("|---")) {
-          insertAt = i + 2 // after separator + first data row
+        if (SEPARATOR_RE.test(lines[i])) {
+          insertAt = i + 1
           break
         }
       }
     }
-    if (insertAt === -1) insertAt = lines.length - 1
+
+    // Strategy 3: append before trailing blank line
+    if (insertAt === -1) {
+      // skip trailing empty lines, then insert after
+      let lastNonEmpty = lines.length - 1
+      while (lastNonEmpty >= 0 && lines[lastNonEmpty].trim() === "") {
+        lastNonEmpty--
+      }
+      insertAt = lastNonEmpty + 1
+    }
 
     lines.splice(insertAt, 0, row)
     const newContent = lines.join("\n")
 
-    execSync(
-      `set-content -Path "${lessonsPath}" -Value @"
-${newContent}
-"@ -Encoding utf8`,
-      { encoding: "utf-8", timeout: 5000, shell: "powershell" }
-    )
+    try {
+      fs.writeFileSync(lessonsPath, newContent, "utf-8")
+    } catch (e: any) {
+      return `## Learn Tool — ERROR\n\nCannot write LESSONS.md: ${e.message}`
+    }
 
-    return `Logged to LESSONS.md:\n  | ${date} | ${args.trigger} | ${args.error} | ${args.root_cause} | ${args.fix} |`
+    return `Logged to LESSONS.md:\n  ${row.trim()}`
   },
 })

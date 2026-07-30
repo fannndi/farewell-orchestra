@@ -19,9 +19,10 @@ export default tool({
     const errors: string[] = []
 
     // 1. Active profile
-    const opencodeConfig = path.join(worktree, "opencode.jsonc")
+    // Use forward slashes to avoid Python Unicode escapes (\\U in C:\\Users\\... → \\uXXXX)
+    const safePath = path.join(worktree, "opencode.jsonc").replace(/\\/g, "/")
     try {
-      const raw = execSync(`python -c "import json; c=open('${opencodeConfig}','r',encoding='utf-8').read(); d=json.loads(c[c.index('{'):]); print(d.get('model','?')); print(d.get('small_model','?'))"`, {
+      const raw = execSync(`python -c "import json; c=open('${safePath}','r',encoding='utf-8').read(); d=json.loads(c[c.index('{'):]); print(d.get('model','?')); print(d.get('small_model','?'))"`, {
         encoding: "utf-8",
         timeout: 5000,
       })

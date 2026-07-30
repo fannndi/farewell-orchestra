@@ -59,7 +59,17 @@ BOILERPLATE = {
         "auto": True,
         "preserve_recent_tokens": 4000,
         "reserved": 14000,
-        "prune": True
+        "prune": True,
+        "prune_rules": {
+            "tool_output": {
+                "min_chars": 500,
+                "keep_head_pct": 0.2,
+                "keep_tail_pct": 0.3
+            },
+            "file_lists": {
+                "collapse_to": "first_5_and_last_2"
+            }
+        }
     },
     "watcher": {
         "ignore": [
@@ -274,13 +284,17 @@ def generate(profile_name, to_stdout=False):
         sys.stdout.write(header + output + "\n")
         return
 
-    # No-op detection: skip if same profile already active
+    # No-op detection: compare header AND content hash
+    # Header-only comparison false-positive when BOILERPLATE changes but label stays
     root_path = os.path.abspath(ROOT_FILE)
     if os.path.isfile(root_path):
         try:
             with open(root_path, "r", encoding="utf-8") as f:
-                existing_header = f.readline().strip()
-            if existing_header == header.strip():
+                existing_raw = f.read()
+            existing_json_start = existing_raw.index("{")
+            existing_json = existing_raw[existing_json_start:].strip() if existing_json_start >= 0 else ""
+            generated_json = output.strip()
+            if existing_json == generated_json:
                 print(f"[OK] Already active: {profile['label']} (no change)")
                 return
         except Exception:

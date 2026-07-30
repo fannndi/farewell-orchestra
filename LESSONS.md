@@ -13,6 +13,9 @@
 | 2026-07-29 | Adaptasi better-harness (QoderAI) — blast radius + work loop + evidence levels | Farewell-orchestra gak punya impact analysis, quality gates, atau evidence scoring | Better-harness punya 3 fitur yg farewell-orchestra belum punya | Adaptasi blast radius pre-check di orchestrate skill. Agent Work Loop (5 gates) sebagai quality gate. Evidence levels (Present/Wired/Exercised/Outcome) di forensic skill. |
 | 2026-07-29 | Adaptasi better-harness putaran 2 — blast radius upgrade, work loop 15 check, evidence bundle | Adaptasi pertama cuma superficial (grep blast radius, 5 gate, 4 level) | Better-harness pake tree-sitter AST + BFS call graph + scoring engine — gue cuma baca file doang pas pertama | Upgrade blast radius: import-based graph + BFS traversal + scoring + core rules + test gap. Work loop: 5→15 checks. Evidence bundle: 4 lane pre-execution context. |
 | 2026-07-29 | Enhance audit skill — Depth Assurance Protocol + skeptic layer + evidence depth tags | Audit better-harness cuma baca README — dangkal, gak baca kode asli. Boss tegur. | Reviewer gak punya protokol buat mencegah audit superficial | Tambah Depth Assurance (3 pass: Scan→Detail→Cross-Reference). Skepticism Layer: docs bohong sampai terbukti. Evidence depth tags [D1-D4]. Self-check sebelum report. |
+| 2026-07-30 | Audit + eksekusi 6 optimasi (P1+P2) | learn.ts pakai shell type/set-content, prune_rules missing, hardcode threshold di check/hook, BFS no early-stop, step budget flat | Sub-tool implementation fragile (shell wrapper), generator boilerplate stale, doc-as-config drift | Refactor learn.ts ke pure Node FS + strict regex YYYY-MM-DD. Tambah prune_rules (tool_output head/tail, file_lists collapse). Baca step budget dari opencode.jsonc. Early-stop BFS >25 affected atau depth>2. Scale step budget by task size (TRIVIAL=8, LARGE=25). |
+
+
 
 ## Sensor Coverage Checklist
 

@@ -35,6 +35,18 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 - "Could Boss do this in 30s?" If yes, jangan dispatch. Handle langsung.
 - Simple file ops (read, grep, glob) → handle langsung, jangan dispatch.
 
+### Scale Step Budget by Task Size
+Declared budgets (O:22 R:24 V:20 E:25) adalah **max ceiling**, bukan default. At dispatch, scale per-task:
+
+| Task size | Signal | Executor steps | Researcher/Reviewer steps |
+|-----------|--------|----------------|--------------------------|
+| **TRIVIAL** | 1 file, ≤3 baris diff, no blast radius | 8 | 6 |
+| **SMALL** | 1-2 files, ≤20 baris, low blast radius | 14 | 10 |
+| **MEDIUM** | 3-5 files, low-medium blast radius | 20 | 16 |
+| **LARGE** | >5 files atau high blast radius (score ≥45) | 25 (max) | 24 (max) |
+
+Cara estimate di brief: `estimated_steps = min(declared_max, 8 + (files_affected * 2) + (brief_lines / 5))`. Kalau ragu → naikkan 1 tingkat. Ini menjaga token budget gak kebakar di task kecil, dan gak undershoot di task besar.
+
 ## Triggers
 
 | Boss says... | You do... |

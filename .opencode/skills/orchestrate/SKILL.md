@@ -92,15 +92,17 @@ Sebelum executor bekerja, analisis impact perubahan:
 Queue = changed files
 Visited = set()
 Affected = []
-While queue not empty AND affected < max:
+While queue not empty AND affected < max AND depth < max_depth:
   Current = queue.shift()
   For each file that IMPORTS current:
     If not visited → mark visited, add to queue, record depth + via
+  Early stop: if affected > 25 OR depth > 2 → return PARTIAL with warning
 ```
 - Depth 0 = file yg langsung diubah
 - Depth 1 = file yg import file yg diubah
 - Depth 2 = file yg import Depth 1, dst
 - Max depth: 3. Max affected symbols: 50.
+- **Early stop:** kalau affected > 25 atau depth > 2 sebelum max tercapai → stop traversal, return PARTIAL blast radius. Catat "truncated at depth N, M files untraced". Lebih aman daripada under-report impact.
 
 ### c. Score Impact
 | Metric | Threshold | Score |

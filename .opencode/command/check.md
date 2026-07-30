@@ -31,8 +31,10 @@ Run on every new session. Validasi struktur workspace + profile.
 
 - [ ] `python profiles/generate.py --inspect <active>` — model assignments bener
 - [ ] `python profiles/generate.py --validate` — semua profile valid
-- [ ] Step budget: orchestrator 22 / researcher 24 / reviewer 20 / executor 25
+- [ ] Step budget — BACA dari `opencode.jsonc.agent.<name>.steps` (jangan hardcode)
+  - Minimum sanity floor = 20 (atau 80% dari declared, mana yang lebih tinggi)
 - [ ] Cek `instructions` — cuma AGENTS.md (gak load *.md semua)
+- [ ] Cek `compaction.prune_rules` — ada kalau `prune: true`
 
 ## 5. Persona skills frontmatter
 
