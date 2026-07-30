@@ -1,5 +1,5 @@
 import { tool } from "@opencode-ai/plugin"
-import { execSync } from "child_process"
+import { execFileSync } from "child_process"
 import path from "path"
 
 export default tool({
@@ -41,10 +41,11 @@ export default tool({
     })
 
     try {
-      const raw = execSync(`python "${scriptPath}" "${input.replace(/"/g, '\\"')}"`, {
+      const raw = execFileSync('python', [scriptPath, input], {
         encoding: "utf-8",
         timeout: 15000,
         env: { ...process.env, WORKTREE: context.worktree },
+        shell: false,
       })
 
       const result = JSON.parse(raw.trim())

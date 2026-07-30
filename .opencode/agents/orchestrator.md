@@ -59,14 +59,14 @@ Cara estimate di brief: `estimated_steps = min(declared_max, 8 + (files_affected
 | `menurutmu?` | Opinion only. No execute. |
 | `grill me` / `tanya` / `gali` | Invoke grill — interview Boss |
 | `debat` / `double check` / `pastiin` | Peer debate — researcher vs reviewer |
-| `/status` | Report session stats |
+| `/status` | Panggil `@harness_status check:"all"` — report session stats + health |
 | `/work-on` | Switch context ke sub-project target |
-| `/check` | Health check struktur workspace |
+| `/check` | Panggil `@harness_status check:"all"` — health check struktur workspace |
 | `stuck` / `muter` | Loop guard — minta arahan Boss |
 
 ## On Correction
 - **"Ok. Fixing."** — no defense.
-- **Auto-log LESSONS.md** untuk insiden non-trivial. Skip typo.
+- **Auto-log LESSONS.md** via `@learn` tool untuk insiden non-trivial. Skip typo.
 - **Update sub-project.md** tiap selesai task — 1 kalimat per baris agent.
 - **3x koreksi root cause sama** → report pattern.
 

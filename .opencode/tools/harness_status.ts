@@ -1,6 +1,7 @@
 import { tool } from "@opencode-ai/plugin"
-import { execSync } from "child_process"
-import path from "path"
+import { execFileSync } from "child_process"
+import * as fs from "fs"
+import * as path from "path"
 
 export default tool({
   description:
@@ -18,29 +19,28 @@ export default tool({
     const results: string[] = []
     const errors: string[] = []
 
-    // 1. Active profile
-    // Use forward slashes to avoid Python Unicode escapes (\\U in C:\\Users\\... → \\uXXXX)
-    const safePath = path.join(worktree, "opencode.jsonc").replace(/\\/g, "/")
+    // 1. Active profile — pure Node.js, no shell
+    const configPath = path.join(worktree, "opencode.jsonc")
     try {
-      const raw = execSync(`python -c "import json; c=open('${safePath}','r',encoding='utf-8').read(); d=json.loads(c[c.index('{'):]); print(d.get('model','?')); print(d.get('small_model','?'))"`, {
-        encoding: "utf-8",
-        timeout: 5000,
-      })
-        .trim()
-        .split("\n")
-      results.push(`Active model: ${raw[0]}`)
-      results.push(`Small model:  ${raw[1]}`)
+      const raw = fs.readFileSync(configPath, "utf-8")
+      const jsonStart = raw.indexOf("{")
+      if (jsonStart >= 0) {
+        const config = JSON.parse(raw.slice(jsonStart))
+        results.push(`Active model: ${config.model || "?"}`)
+        results.push(`Small model:  ${config.small_model || "?"}`)
+      }
     } catch {
       errors.push("Cannot read opencode.jsonc")
     }
 
-    // 2. Profile validation
+    // 2. Profile validation — execFileSync is safe because generate.py is a known script
     if (args.check === "all" || args.check === "profiles") {
       try {
-        const valOut = execSync(`python profiles/generate.py --validate`, {
+        const valOut = execFileSync('python', ['profiles/generate.py', '--validate'], {
           cwd: worktree,
           encoding: "utf-8",
           timeout: 10000,
+          shell: false,
         })
         results.push(`Validation: ${valOut.trim()}`)
       } catch (e: any) {
@@ -48,37 +48,33 @@ export default tool({
       }
     }
 
-    // 3. Active profile detail
+    // 3. Active profile detail — pure Node.js
     if (args.check === "all" || args.check === "active") {
       try {
-        const allProfiles = execSync(
-          `python -c "import json; f=open('profiles/profiles.json','r',encoding='utf-8'); d=json.load(f); [print(p['name']) for p in d['profiles']]"`,
-          { cwd: worktree, encoding: "utf-8", timeout: 5000 }
-        )
-          .trim()
-          .split("\n")
-        results.push(`Available profiles (${allProfiles.length}): ${allProfiles.join(", ")}`)
+        const profilesRaw = fs.readFileSync(path.join(worktree, "profiles/profiles.json"), "utf-8")
+        const profilesData = JSON.parse(profilesRaw)
+        const profileNames = profilesData.profiles.map((p: any) => p.name)
+        results.push(`Available profiles (${profileNames.length}): ${profileNames.join(", ")}`)
       } catch {
         errors.push("Cannot list profiles")
       }
     }
 
-    // 4. Sensor coverage (from LESSONS.md)
+    // 4. Sensor coverage (from LESSONS.md) — pure Node.js
     if (args.check === "all" || args.check === "sensors") {
       try {
-        const sensors = execSync(
-          `python -c "
-import re
-c=open('LESSONS.md','r',encoding='utf-8').read()
-section=c[c.index('## Sensor Coverage'):c.index('## ',(c.index('## Sensor Coverage')+20))] if '## Sensor Coverage' in c else ''
-oks=section.count(chr(10004))
-nos=section.count('❌')
-partials=section.count('⚠️')
-print(f'Sensor coverage: {oks} OK, {nos} MISSING, {partials} PARTIAL')
-"`,
-          { cwd: worktree, encoding: "utf-8", timeout: 5000 }
-        )
-        results.push(sensors.trim())
+        const lessonsPath = path.join(worktree, "LESSONS.md")
+        const lessonsContent = fs.readFileSync(lessonsPath, "utf-8")
+        const sensorSection = lessonsContent.match(/## Sensor Coverage[\s\S]*?(?=## |$)/)
+        if (sensorSection) {
+          const section = sensorSection[0]
+          const oks = (section.match(/✅/g) || []).length
+          const nos = (section.match(/❌/g) || []).length
+          const partials = (section.match(/⚠️/g) || []).length
+          results.push(`Sensor coverage: ${oks} OK, ${nos} MISSING, ${partials} PARTIAL`)
+        } else {
+          errors.push("Sensor coverage section not found in LESSONS.md")
+        }
       } catch {
         errors.push("Cannot read sensor coverage")
       }

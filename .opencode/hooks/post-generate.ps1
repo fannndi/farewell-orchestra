@@ -26,8 +26,8 @@ $warnings = @()
 
 # Validasi tool scoping (rules tetap hardcoded — ini policy, bukan config)
 $agentRules = @{
-    "researcher" = @{ "forbidden" = @("edit"); "required" = @("webfetch", "websearch"); "bash_denylist" = $true }
-    "reviewer"   = @{ "forbidden" = @("edit"); "required" = @("webfetch", "websearch"); "bash_denylist" = $true }
+    "researcher" = @{ "forbidden" = @("edit", "bash"); "required" = @("webfetch", "websearch") }
+    "reviewer"   = @{ "forbidden" = @("edit", "bash"); "required" = @("webfetch", "websearch") }
     "executor"   = @{ "required" = @("edit") }
 }
 

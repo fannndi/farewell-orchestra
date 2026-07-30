@@ -85,11 +85,13 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
     valid_tags = ["BLOCKING", "SHOULD", "NICE", "FYI", "WARN", "INFO"]
     found_tags = re.findall(r'\[(\w+)\]', claims)
     bad_tags = [t for t in found_tags if t not in valid_tags]
+    detail = f"Tags found: {found_tags}" if found_tags else "No tags found"
+    if bad_tags:
+        detail += f"; INVALID: {bad_tags}"
     checks.append({
         "name": "priority tags",
         "status": "FAIL" if bad_tags else ("PASS" if found_tags else "WARN"),
-        "detail": f"Tags found: {found_tags}" if found_tags else "No tags found"
-        + (f"; INVALID: {bad_tags}" if bad_tags else "")
+        "detail": detail
     })
 
     # Check 2: BLOCKING items have file reference

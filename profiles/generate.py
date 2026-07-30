@@ -118,14 +118,6 @@ AGENT_TEMPLATES = {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
-            "bash": {
-                "*": "allow",
-                "git commit *": "deny", "git push *": "deny",
-                "git merge *": "deny", "git rebase *": "deny",
-                "git reset *": "deny", "git clean *": "deny",
-                "rm *": "deny", "del *": "deny",
-                "npm *": "deny", "bun *": "deny", "pip *": "deny"
-            },
             "external_directory": {"*": "allow"},
             "task": "deny"
         }
@@ -141,14 +133,6 @@ AGENT_TEMPLATES = {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
-            "bash": {
-                "*": "allow",
-                "git commit *": "deny", "git push *": "deny",
-                "git merge *": "deny", "git rebase *": "deny",
-                "git reset *": "deny", "git clean *": "deny",
-                "rm *": "deny", "del *": "deny",
-                "npm *": "deny", "bun *": "deny", "pip *": "deny"
-            },
             "external_directory": {"*": "allow"},
             "task": "deny"
         }
