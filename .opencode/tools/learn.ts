@@ -10,6 +10,8 @@ export default tool({
     error: tool.schema.string().describe("What error/bug happened?"),
     root_cause: tool.schema.string().describe("Why did it happen?"),
     fix: tool.schema.string().describe("What was the fix/changed?"),
+    verification: tool.schema.string().optional().describe("Command used to verify the fix, e.g. 'python generate.py --validate'"),
+    verified: tool.schema.enum(["pass", "fail", "unverified"]).optional().default("unverified").describe("Did the verification pass?"),
   },
 
   async execute(args, context) {
@@ -19,7 +21,10 @@ export default tool({
 
     // Escape pipe characters for markdown table
     const esc = (s: string) => s.replace(/\|/g, "\\|")
-    const row = `| ${date} | ${esc(args.trigger)} | ${esc(args.error)} | ${esc(args.root_cause)} | ${esc(args.fix)} |\n`
+    const fixPart = args.verification
+      ? `${esc(args.fix)} — verify:${args.verified} \`${esc(args.verification)}\``
+      : esc(args.fix)
+    const row = `| ${date} | ${esc(args.trigger)} | ${esc(args.error)} | ${esc(args.root_cause)} | ${fixPart} |\n`
 
     // Read existing content (pure Node FS, no shell)
     let content: string

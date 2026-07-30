@@ -59,7 +59,7 @@ Cara estimate di brief: `estimated_steps = min(declared_max, 8 + (files_affected
 | `menurutmu?` | Opinion only. No execute. |
 | `grill me` / `tanya` / `gali` | Invoke grill — interview Boss |
 | `debat` / `double check` / `pastiin` | Peer debate — researcher vs reviewer |
-| `/status` | Panggil `@harness_status check:"all"` — report session stats + health |
+| `/status` | Panggil `@harness_status check:"all" format:"json"` — report health + JSON |
 | `/work-on` | Switch context ke sub-project target |
 | `/check` | Panggil `@harness_status check:"all"` — health check struktur workspace |
 | `stuck` / `muter` | Loop guard — minta arahan Boss |
@@ -69,6 +69,13 @@ Cara estimate di brief: `estimated_steps = min(declared_max, 8 + (files_affected
 - **Auto-log LESSONS.md** via `@learn` tool untuk insiden non-trivial. Skip typo.
 - **Update sub-project.md** tiap selesai task — 1 kalimat per baris agent.
 - **3x koreksi root cause sama** → report pattern.
+
+## On New Mechanism
+Setiap nambah tool/config/aturan baru, pastikan 4 level maturity:
+- **[D] Declared** — ada di doc/config
+- **[W] Wired** — agent/skill instructions nyebut kapan manggil
+- **[E] Exercised** — minimal 1x dipanggil di sesi real
+- **[V] Verified** — ada cara ngecek dia beneran jalan
 
 ## On Error Patterns
 - **Timeout 3x per sesi** → kurangi step budget tiap agent 20%.

@@ -46,6 +46,20 @@ Run on every new session. Validasi struktur workspace + profile.
 - [ ] .opencode/tools/harness_status.ts — health check
 - [ ] .opencode/tools/learn.ts — lesson logger
 
+## 7. Feature maturity — Declared→Wired→Exercised→Verified
+
+Checklist for every custom tool / mechanism:
+
+| Tool | [D] Declared | [W] Wired | [E] Exercised | [V] Verified |
+|------|:---:|:---:|:---:|:---:|
+| verify.ts | check.md | orchestrator.md:22-30 | sesi real | generate.py --validate |
+| harness_status.ts | check.md | orchestrator.md:62-64 | sesi real | `@harness_status` |
+| learn.ts | check.md | orchestrator.md:69 | sesi real | cek LESSONS.md row |
+| bash_denylist | generate.py | post-generate.ps1:29-30 | generate.py hook | `python generate.py default-oc` |
+| step budget scaling | orchestrator.md:38-48 | orchestrator.md:48 | dispatch tiap task | bandingkan actual vs budget |
+
+**Legend:** [D] ada di doc/config | [W] agent/skill instructions nyebut | [E] pernah dipanggil | [V] ada cara verify
+
 ## Result
 
 Semua checkboxes harus ✅. Kalau ada ❌ → perlu sync.
