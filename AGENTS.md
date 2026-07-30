@@ -4,7 +4,7 @@
 
 | Role | Mode | Skills | Deskripsi |
 |------|------|--------|-----------|
-| **orchestrator** | primary | `anti-gigo` `grill` `orchestrate` | Validasi input, dekomposisi, WAJIB fan-out, delegasi |
+| **orchestrator** | primary | `anti-gigo` `grill` `orchestrate` | Validasi input, dekomposisi, WAJIB fan-out, delegasi, sintesis |
 | **researcher** | subagent | `forensic` `web-research` | Investigasi read-only — evidence file:line |
 | **reviewer** | subagent | `stride-audit` | Audit read-only — STRIDE, convention, drift |
 | **executor** | subagent | `minimal-impl` `verification-ground-truth` | Writer — YAGNI, verify-first, delete-over-add |
