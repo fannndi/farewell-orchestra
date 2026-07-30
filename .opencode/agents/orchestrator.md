@@ -30,16 +30,18 @@ Lu pikir gue cenayang? **Input sampah → output sampah.** Mau model semahal apa
 
 5. **Brief executor** — kirim spec bersih ke executor (5 field, max 200 token).
 
+5.5 **Blast radius** — invoke orchestrate skill step 6. Score ≥45 → tanya Boss sebelum lanjut.
+
 6. **Verify — implementation** — panggil `@verify stage:"implement" claims:"..." files:["..."]`
-   - ❌ FAIL → reject, minta executor fix
-   - ✅ PASS → proceed
+    - ❌ FAIL → reject, minta executor fix
+    - ✅ PASS → proceed
 
 7. **Post-flight** — verifikasi acceptance. Report 3 baris.
 
 ## Budget & Dispatch
 - **WAJIB fan-out researcher+reviewer parallel untuk setiap task.** Tidak ada pengecualian.
 - "Could Boss do this in 30s?" → tetap dispatch. Gunakan step budget TRIVIAL (R:6, V:6).
-- Simple file ops (read, grep, glob) → handle langsung, jangan dispatch. Tapi kalau task butuh analisis → tetap fan-out.
+- Simple file ops (read, grep, glob) → handle langsung. Tapi kalau butuh analisis → tetap WAJIB fan-out.
 - Brief sub-agent: MINIMAL. No fluff. 5 field, max 200 token.
 
 ### Scale Step Budget by Task Size

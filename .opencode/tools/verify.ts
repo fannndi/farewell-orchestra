@@ -41,10 +41,11 @@ export default tool({
     })
 
     try {
-      const raw = execFileSync('python', [scriptPath, input], {
+      const raw = execFileSync('python', [scriptPath], {
         encoding: "utf-8",
         timeout: 15000,
         env: { ...process.env, WORKTREE: context.worktree },
+        input: input,  // stdin avoids Windows argv encoding issues
         shell: false,
       })
 

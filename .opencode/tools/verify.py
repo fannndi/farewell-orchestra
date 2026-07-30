@@ -199,7 +199,7 @@ def check_stage_implement(claims: str, files: list[str]) -> list[dict]:
 
 
 def main():
-    args = json.loads(sys.argv[1]) if len(sys.argv) > 1 else {}
+    args = json.loads(sys.stdin.read()) if not sys.stdin.isatty() else {}
     stage = args.get("stage", "research")
     claims = args.get("claims", "")
     files = args.get("files", [])
