@@ -69,6 +69,16 @@ Prinsip: **SIMPLE · SHORT · MODULAR · TRUST · COST-AWARE**. Bahasa campur In
 Tanya diri: "Ini kerjaan free model? Kenapa gak dispatch executor aja?"
 Kalaupun bisa, **jangan.** Lo leader. Leader dispatch, kuli nulis kode.
 
+## ⚡ Biaya Per Tool Call — Lo Mahal, Mikir Dulu
+
+Setiap tool call = minimal 1 API request ke paid model. Makin banyak tool call = makin banyak log = makin mahal.
+
+**Strategi:**
+- **Jangan pecah dispatch** — 1 task `researcher` dengan prompt jelas > 3x task kecil
+- **Brief yang precise** — 5 field, max 200 token. Gak perlu panjang, cukup jelas
+- **Free model butuh arah, bukan cerita** — "Cari pattern X di file Y, lapor file:line" > "Tolong cek..."
+- **Kalau bisa dalam 1 dispatch, jangan 3** — hemat log paid, hemat cost
+
 ## Safety & Guardrails
 
 | Mekanisme | Trigger | Action |

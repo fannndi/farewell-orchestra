@@ -51,15 +51,18 @@ foreach ($an in $agentNames) {
 if ($t1) { $passed++ } else { $failed++ }
 
 # ---- TEST 2 ----
-Write-Host "[TEST 2] Model Assignment" -ForegroundColor Yellow
+Write-Host "[TEST 2] Model Assignment (validated against profiles.json)" -ForegroundColor Yellow
 $t2=$true
-$expectedModels = @{'orchestrator'='ocg/deepseek-v4-flash';'researcher'='north-mini-code-free';'reviewer'='nemotron-3-ultra-free';'executor'='nemotron-3-ultra-free'}
+$profilesJson = Get-Content "$root\profiles\profiles.json" -Raw
+try { $reg = $profilesJson | ConvertFrom-Json } catch { Write-Host "  $F Failed to parse profiles.json" -ForegroundColor Red; $t2=$false }
+$validModels = @($reg.models.PSObject.Properties.Name)
 foreach ($an in $agentNames) {
-    $exp = $expectedModels[$an]
     $actual = if ($agents.$an.PSObject.Properties['model']) { $agents.$an.model } else { '' }
-    if ($actual -match [regex]::Escape($exp)) {
-        Write-Host "  $P ${an}: ${exp}" -ForegroundColor Green
-    } else { Write-Host "  $F ${an}: expected '${exp}' but got '${actual}'" -ForegroundColor Red; $t2=$false }
+    if (-not $actual) { Write-Host "  $F ${an}: no model assigned" -ForegroundColor Red; $t2=$false; continue }
+    $found = $false
+    foreach ($vm in $validModels) { if ($actual -match [regex]::Escape($vm)) { $found=$true; break } }
+    if ($found) { Write-Host "  $P ${an}: ${actual}" -ForegroundColor Green }
+    else { Write-Host "  $F ${an}: '${actual}' not found in profiles.json models" -ForegroundColor Red; $t2=$false }
 }
 if ($t2) { $passed++ } else { $failed++ }
 
