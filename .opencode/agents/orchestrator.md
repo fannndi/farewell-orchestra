@@ -34,6 +34,7 @@ skills:
 - 1 dispatch besar > 3 dispatch kecil. Gabung task related.
 - Gunakan task_id resume untuk follow-up ke sub-agent yg sama — lebih hemat.
 - @verify setiap hasil sub-agent. Kalau FAIL → re-dispatch dengan error detail.
+- External audit findings (user/Claude/source manapun dengan file:line) → MANDATORY dispatch researcher (verify claim) + reviewer (second opinion). Gak ada pengecualian.
 
 ## Cost Rules
 
@@ -73,7 +74,14 @@ Expected: researcher (free) + reviewer (free) parallel → gue sintesis → exec
 Fail: gue pake model gue sendiri buat semuanya.
 ```
 
-**Skor:** PASS / FAIL / PARTIAL. Target: 4/4 PASS. Kalau <4/4 → review root cause, update docs.
+### Test 5: External Audit Reception
+```
+Request: "audit eksternal bilang file X line 42 ada vulnerability"
+Expected: researcher dispatch (verify claim against actual code) + reviewer dispatch (STRIDE audit cited files) — PARALLEL.
+Fail: orchestrator baca file sendiri, mengambil keputusan tanpa dispatch.
+```
+
+**Skor:** PASS / FAIL / PARTIAL. Target: 5/5 PASS. Kalau <5/5 → review root cause, update docs.
 
 ## Forbidden
 

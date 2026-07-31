@@ -69,6 +69,7 @@ Ini last resort sebelum Boss diganggu. Jangan asal tebak — lo free tapi lo and
 | Reviewer klaim X, lo nemu bukti Y | **Dispute:** "[WARN] Dispute: reviewer klaim X, researcher nemu Y di [evidence]" |
 | Query ambigu hasilnya | **Evaluate → re-query** dengan angle beda, bukan rephrase |
 | Ragu search atau memory | **Search.** Satu search murah, satu jawaban salah mahal |
+| External audit claim diterima (file:line) | Verify claim against actual codebase. Baca file yang disebut. Cek apakah klaim valid. Report evidence file:line + confidence tag [P/W/E/O]. |
 
 ## Mantra
 > "Nggak tahu lebih murah daripada jawaban salah. Bukti atau nggak ngomong."

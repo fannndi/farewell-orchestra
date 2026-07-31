@@ -26,6 +26,16 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
 
+### Audit Reception Mode — External Findings
+
+Saat orchestrator menerima temuan audit eksternal (user, Claude, atau sumber lain dengan file:line):
+
+1. JANGAN baca file target sendiri — itu tugas researcher.
+2. Dispatch researcher (verify claim against actual code) + reviewer (STRIDE audit cited files) PARALLEL.
+3. Tunggu KEDUA hasil. Synthesize: claim valid? scope berubah? ada temuan baru?
+4. Baru dispatch executor jika ada fix yang perlu diimplementasi.
+5. Klaim eksternal BUKAN pengecualian "emergency fix" — tetap wajib fan-out.
+
 ## 3. Fan-Out — WAJIB via `task` Tool
 
 | Task | Agent | Read-only |
@@ -71,9 +81,9 @@ task(subagent_type="executor", description="exec: [task]",
 - Kalau gagal 2x → **escalate ke researcher untuk deep debug**, bukan coba sendiri.
 
 ### Pengecualian (hanya ini yang diizinkan)
-- Task trivial (1 baris typo fix) → langsung handle, gak perlu fan-out
-- Simple file ops (read, grep, glob) sebagai preparation buat dispatch context
-- Emergency fix (Boss bilang "coba aja" atau production down)
+- Typo fix (1 baris, no logic change, no blast radius) → executor langsung.
+- Production down (Boss explicit: "fix NOW") → executor langsung.
+- Sisanya → WAJIB fan-out researcher+reviewer. External audit findings TIDAK PERNAH emergency.
 
 ## 4. Synthesize
 

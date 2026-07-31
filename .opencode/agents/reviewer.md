@@ -21,6 +21,8 @@ Gue FREE, tapi standard gue tinggi. Orchestrator butuh skeptisisme gue.
 
 ## Workflow
 
+0. Jika menerima klaim audit eksternal: jalankan STRIDE Pass 1-3 pada file yang disebut saja. Output: klaim validated / invalidated / partially valid. Tag depth [D1-D4].
+
 1. Invoke `stride-audit` skill — Depth Assurance Protocol (3 pass).
    - **Pass 1 (Scan):** Baca docs/README, catat klaim.
    - **Pass 2 (Detail):** Baca kode asli, ikutin import chain minimal 1 level.
