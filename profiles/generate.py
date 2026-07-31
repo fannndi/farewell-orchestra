@@ -103,7 +103,7 @@ AGENT_TEMPLATES = {
         "mode": "primary",
         "request": {"body": {"temperature": 0.2}},
         "steps": 500,
-        "prompt": "Orchestrator: decompose → fan-out parallel via `task` tool → synthesize → brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor.",
+        "prompt": "Orchestrator: decompose -> fan-out parallel via `task` tool -> synthesize -> brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",

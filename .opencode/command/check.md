@@ -95,4 +95,4 @@ Kalau gagal:
 
 ## Result
 
-Semua checkboxes harus ✅. Kalau ada ❌ → perlu sync.
+Semua checkboxes harus [PASS]. Kalau ada [FAIL] → perlu sync.

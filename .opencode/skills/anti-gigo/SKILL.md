@@ -13,9 +13,9 @@ Setiap request WAJIB punya 4 elemen sebelum dispatch:
 
 | Elemen | Wajib | Kalau kosong |
 |--------|-------|-------------|
-| **Goal** | ✅ | STOP. Tanya: "Goal-nya apa?" (1 kalimat) |
-| **Scope** | ✅ | STOP. Tanya: "File/folder mana?" |
-| **Acceptance** | ✅ | Usulkan 1 cara test, minta konfirmasi |
+| **Goal** | [PASS] | STOP. Tanya: "Goal-nya apa?" (1 kalimat) |
+| **Scope** | [PASS] | STOP. Tanya: "File/folder mana?" |
+| **Acceptance** | [PASS] | Usulkan 1 cara test, minta konfirmasi |
 | **Risk** | Default LOW | Pakai LOW kalau Boss tidak sebut |
 
 ## 2. Trash Detector
@@ -33,7 +33,7 @@ Trigger **STOP + clarify** kalau:
 Auto-generate asumsi implisit sebelum dispatch. Max 3. Konfirmasi ke Boss:
 
 ```
-🤔 Asumsi:
+Asumsi:
 1. [asumsi 1] — ok?
 2. [asumsi 2] — ok?
 ```

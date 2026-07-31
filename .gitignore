@@ -46,3 +46,6 @@ run_firefox_output.txt
 sms-integration.txt
 weaknesses.txt
 profiles/backups/
+
+# Generated config (not tracked)
+/opencode.jsonc

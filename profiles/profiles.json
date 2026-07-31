@@ -43,7 +43,7 @@
         "orchestrator": "9router/ocg/deepseek-v4-pro",
         "researcher": "9router/oc/north-mini-code-free",
         "reviewer": "9router/oc/nemotron-3-ultra-free",
-        "executor": "9router/oc/nemotron-3-ultra-free"
+        "executor": "9router/ocg/deepseek-v4-pro"
       }
     },
     {
@@ -67,7 +67,7 @@
         "orchestrator": "9router/cx/gpt-5.6-luna",
         "researcher": "9router/oc/north-mini-code-free",
         "reviewer": "9router/oc/nemotron-3-ultra-free",
-        "executor": "9router/oc/nemotron-3-ultra-free"
+        "executor": "9router/cx/gpt-5.6-luna"
       }
     },
     {
@@ -79,7 +79,7 @@
         "orchestrator": "9router/cx/gpt-5.6-luna",
         "researcher": "9router/openrouter/cohere/north-mini-code:free",
         "reviewer": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
-        "executor": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+        "executor": "9router/cx/gpt-5.6-luna"
       }
     },
     {
@@ -91,7 +91,7 @@
         "orchestrator": "9router/ollama/minimax-m3",
         "researcher": "9router/oc/north-mini-code-free",
         "reviewer": "9router/oc/nemotron-3-ultra-free",
-        "executor": "9router/oc/nemotron-3-ultra-free"
+        "executor": "9router/ollama/minimax-m3"
       }
     },
     {
@@ -103,7 +103,7 @@
         "orchestrator": "9router/ollama/minimax-m3",
         "researcher": "9router/openrouter/cohere/north-mini-code:free",
         "reviewer": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
-        "executor": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+        "executor": "9router/ollama/minimax-m3"
       }
     }
   ]

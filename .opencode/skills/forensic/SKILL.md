@@ -61,10 +61,10 @@ Setiap dependency/rekomendasi library:
 ## Evidence Levels — dari better-harness (QoderAI)
 | Level | Label | Artinya |
 |-------|-------|---------|
-| 🟡 Present | `[P]` | Bukti ada (file:line ditemukan) |
-| 🟠 Wired | `[W]` | Cross-referenced (≥2 sumber independent setuju) |
-| 🟢 Exercised | `[E]` | Terverifikasi via command/tool output |
-| 🔵 Outcome | `[O]` | Acceptance criteria terpenuhi |
+| [P] Present | `[P]` | Bukti ada (file:line ditemukan) |
+| [W] Wired | `[W]` | Cross-referenced (≥2 sumber independent setuju) |
+| [E] Exercised | `[E]` | Terverifikasi via command/tool output |
+| [O] Outcome | `[O]` | Acceptance criteria terpenuhi |
 
 **Format laporan:** tiap finding WAJIB dikasih level. Contoh: `path:42 — [P] deskripsi`
 - Confidence <90% → tetap tag "(butuh verifikasi)" di belakang level.

@@ -7,7 +7,7 @@ description: Use after anti-gigo passes — decompose request, fan-out sequentia
 
 Input sudah CLEAN. **WAJIB dispatch sequential. Jangan kerjain sendiri.**
 
-💰 **Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (paid, model sama kayak orchestrator). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
+**Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (paid, model sama kayak orchestrator). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
 
 ## 1. Decompose
 
@@ -117,9 +117,9 @@ Executor gagal 2x → STOP dispatch executor. Dispatch researcher: "Deep debug [
 
 Format output:
 ```
-✅ AGREED: [poin sepakat]
-⚠️ DEBAT: researcher klaim X vs reviewer counter Y — [resolusi]
-📋 FINAL: [kesimpulan final]
+[PASS] AGREED: [poin sepakat]
+[WARN] DEBAT: researcher klaim X vs reviewer counter Y — [resolusi]
+FINAL: [kesimpulan final]
 ```
 
 **Token efficiency:** Rebuttal pake `task_id` resume subagent, jangan dispatch ulang.

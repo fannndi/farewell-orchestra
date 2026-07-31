@@ -122,9 +122,9 @@ JANGAN lapor "Done" SEBELUM 3 pass ini selesai:
 **Self-Check Sebelum Report:**
 | Pertanyaan | Ya/Tidak |
 |------------|----------|
-| Udah baca file kode asli (bukan cuma README)? | ❌ kalau belum → jangan report |
-| Udah ikutin minimal 1 import chain dari entry point? | ❌ kalau belum → jangan claim paham |
-| Ada klaim di docs yg belum diverifikasi ke kode? | ❌ kalau ada → catat sebagai "unverified" |
+| Udah baca file kode asli (bukan cuma README)? | [FAIL] kalau belum → jangan report |
+| Udah ikutin minimal 1 import chain dari entry point? | [FAIL] kalau belum → jangan claim paham |
+| Ada klaim di docs yg belum diverifikasi ke kode? | [FAIL] kalau ada → catat sebagai "unverified" |
 | Risiko ada yg terlewat? (skala 1-5) | ≥3 → tambah disclaimer |
 
 ## Skepticism Layer
@@ -153,9 +153,9 @@ Format temuan: `[TAG] [D2] path:42 — deskripsi`
 ## Audit Checklist (wajib tiap review)
 
 Sebelum kirim hasil audit, pastikan checklist ini terisi:
-- [ ] ✅ Pass 1 (Scan) selesai
-- [ ] ✅ Pass 2 (Detail) — minimal 1 import chain dilacak
-- [ ] ✅ Pass 3 (Cross-Reference) — docs claim vs reality
+- [ ] [PASS] Pass 1 (Scan) selesai
+- [ ] [PASS] Pass 2 (Detail) — minimal 1 import chain dilacak
+- [ ] [PASS] Pass 3 (Cross-Reference) — docs claim vs reality
 - [ ] ✅ Self-Check: gak ada "belum baca file" alias "cuma liat README"
 - [ ] ✅ Tiap finding ada depth tag [D1-D4]
 - [ ] ✅ Tiap BLOCKING ada evidence file:line

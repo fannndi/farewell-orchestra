@@ -60,10 +60,10 @@ Orchestrator deteksi path, baca anchor, langsung gas.
 
 | File | Fungsi |
 |------|--------|
-| `templates/sub-project.md` | Template anchor — di-copy ke tiap sub-project, jadi otak-nya orchestra di project itu |
-| `.opencode/command/work-on.md` | `/work-on` command — switch context ke sub-project |
-| `.opencode/command/new-project.md` | `/new-project` command — scaffold 10 docs + sub-project.md |
-| `.opencode/skills/bootstrap-project/` | Skill: generate 10 dokumentasi standar |
+| `../templates/sub-project.md` | Template anchor — di-copy ke tiap sub-project, jadi otak-nya orchestra di project itu |
+| `../.opencode/command/work-on.md` | `/work-on` command — switch context ke sub-project |
+| `../.opencode/command/new-project.md` | `/new-project` command — scaffold 10 docs + sub-project.md |
+| `../.opencode/skills/bootstrap-project/` | Skill: generate 10 dokumentasi standar |
 
 ## Kapan TIDAK Perlu
 

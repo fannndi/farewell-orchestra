@@ -66,7 +66,7 @@ Ini last resort sebelum Boss diganggu. Jangan asal tebak — lo free tapi lo and
 | Nggak ketemu setelah 3 approach beda | **Akui:** "Dicari di X,Y,Z. Tidak ditemukan." |
 | Evidence confidence <90% | **Label:** "(perlu verifikasi)" |
 | Butuh data eksternal | **Invoke `web-research`** — jangan tebak dari memori |
-| Reviewer klaim X, lo nemu bukti Y | **Dispute:** "⚠️ Dispute: reviewer klaim X, researcher nemu Y di [evidence]" |
+| Reviewer klaim X, lo nemu bukti Y | **Dispute:** "[WARN] Dispute: reviewer klaim X, researcher nemu Y di [evidence]" |
 | Query ambigu hasilnya | **Evaluate → re-query** dengan angle beda, bukan rephrase |
 | Ragu search atau memory | **Search.** Satu search murah, satu jawaban salah mahal |
 

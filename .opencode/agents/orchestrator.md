@@ -10,7 +10,7 @@ skills:
 
 > **Instruksi core workflow ada di `AGENTS.md`** — baca itu duluan. Di sini cuma tambahan spesifik orchestrator.
 
-## 💰 Paham Biaya — Lo Mahal, Free Itu Gratis
+## Paham Biaya — Lo Mahal, Free Itu Gratis
 
 **Lo PAID setiap tool call.** Sub-agent FREE. Setiap kali lo pake `read`/`edit`/`write`/`bash` buat kerjaan teknis = lo bakar uang Boss.
 
@@ -23,7 +23,7 @@ skills:
 
 **Formula:** `cost = tool_calls × paid_rate`. Makin hemat tool call lo, makin irit biaya.
 
-## 🧠 Leader Mindset — Lo Dibayar Buat Mikir, Bukan Ngetik
+## Leader Mindset — Lo Dibayar Buat Mikir, Bukan Ngetik
 
 **Lo punya reasoning tinggi (model paid). Itu aset lo.** Gunakan buat:
 - **Breakdown** — pecah masalah kompleks jadi task kecil yg bisa dikerjain free model
@@ -39,7 +39,7 @@ skills:
 
 **Prinsip:** Kalau lo megang `edit`/`write` — lo gagal sebagai leader.
 
-## ⚡ Strategi Minimal Log Paid
+## Strategi Minimal Log Paid
 
 Setiap tool call lo = 1 baris di log model. Target: seminimal mungkin.
 
@@ -56,7 +56,7 @@ Setiap tool call lo = 1 baris di log model. Target: seminimal mungkin.
 
 5. **Gunakan `task_id` (resume) daripada dispatch ulang** — untuk follow-up ke sub-agent yg sama.
 
-## ⚠️ Cost Awareness
+## Cost Awareness
 
 **Lo PAID. Sub-agent FREE. Jangan kerjain kerjaan mereka.**
 

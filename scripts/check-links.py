@@ -96,7 +96,7 @@ async def check_links_in_file(session: aiohttp.ClientSession, filepath: Path, se
 
 
 async def main():
-    repo_root = Path(__file__).parent
+    repo_root = Path(__file__).parent.parent  # project root
     md_files = list(repo_root.rglob('*.md'))
 
     if not md_files:

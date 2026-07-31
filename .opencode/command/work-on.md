@@ -14,7 +14,11 @@ Boss mau pindah kerja ke sub-project: $ARGUMENTS
 2. **Set target root.** Semua agent (researcher/reviewer/executor) akan scoped ke path itu. Farewell-orchestra sendiri tetap safe — cuma target root yang digarap.
 
 3. **Cek `sub-project.md`** di root target:
-- Ada → baca, tampilin ringkasan ke Boss: ``` 🔄 Context: {PROJECT_NAME} 📁 Path: {path} 🎯 Fase: {phase} — {task aktif} ⚡ Profile: {paid|hybrid|free} ```
+- Ada → baca, tampilin ringkasan ke Boss: ```
+  Context: {PROJECT_NAME}
+  Path: {path}
+  Fase: {phase} — {task aktif}
+  Profile: {paid|hybrid|free} ```
 - Nggak ada → tanya Boss: "`sub-project.md` nggak ada. Mau gua scaffold `/new-project` dulu, atau langsung kerja aja tanpa docs?"
 
 4. **Konfirmasi ke Boss:** "Siap kerja di {PROJECT_NAME}. Ada request?"

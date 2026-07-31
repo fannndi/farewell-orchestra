@@ -16,16 +16,16 @@
 
 | File | Status | Terakhir update |
 |------|--------|-----------------|
-| PRD.md | ⬜ | — |
-| Architecture.md | ⬜ | — |
-| Design.md | ⬜ | — |
-| Schema.md | ⬜ | — |
-| Rules.md | ⬜ | — |
-| API_Contract.md | ⬜ | — |
-| Tasks.md | ⬜ | — |
-| Tests.md | ⬜ | — |
-| Context.md | ⬜ | — |
-| debug.md | ⬜ | — |
+| PRD.md | [ ] | — |
+| Architecture.md | [ ] | — |
+| Design.md | [ ] | — |
+| Schema.md | [ ] | — |
+| Rules.md | [ ] | — |
+| API_Contract.md | [ ] | — |
+| Tasks.md | [ ] | — |
+| Tests.md | [ ] | — |
+| Context.md | [ ] | — |
+| debug.md | [ ] | — |
 
 ## Konteks Bisnis Singkat
 {{2-3 kalimat ringkasan dari Context.md — bukan copy paste, biar anchor ini tetep ringan}}

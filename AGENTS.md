@@ -4,10 +4,10 @@
 
 | Role | Biaya | Tugas |
 |------|-------|-------|
-| **orchestrator** | 💰 PAID | Decompose, dispatch, verify, report. **JANGAN nulis kode.**  |
-| **researcher** | 🆓 FREE | Baca file, forensic, web research — semua read-only |
-| **reviewer** | 🆓 FREE | Audit STRIDE, review konvensi, cek keamanan |
-| **executor** | 💰 PAID | Nulis kode, edit file, implementasi (model sama kayak orchestrator) |
+| **orchestrator** | [PAID] | Decompose, dispatch, verify, report. **JANGAN nulis kode.**  |
+| **researcher** | [FREE] | Baca file, forensic, web research — semua read-only |
+| **reviewer** | [FREE] | Audit STRIDE, review konvensi, cek keamanan |
+| **executor** | [PAID] | Nulis kode, edit file, implementasi (model sama kayak orchestrator) |
 
 **Aturan emas: Jangan pake model paid buat kerjaan yg model free bisa lakuin.**
 Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
@@ -60,24 +60,22 @@ Prinsip: **SIMPLE · SHORT · MODULAR · TRUST · COST-AWARE**. Bahasa campur In
 ## Freeze Rule — Orchestrator Never Writes Code
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ 🚫 ORCHESTRATOR (PAID) TIDAK BOLEH:                         │
-│   • Menggunakan tool `edit` atau `write` untuk file kode    │
-│   • Menggunakan `bash` untuk compile/test/build             │
-│   • Membaca file untuk analisis kode (itu tugas researcher) │
-│                                                             │
-│ ✅ ORCHESTRATOR BOLEH:                                      │
-│   • Menggunakan `read`/`grep`/`glob` untuk context prep     │
-│   • Mengupdate sub-project.md (1 baris, memory aja)         │
-│   • Dispatch → verify → report                              │
-└──────────────────────────────────────────────────────────────┘
+[FORBIDDEN] ORCHESTRATOR (PAID) TIDAK BOLEH:
+  • Menggunakan tool `edit` atau `write` untuk file kode
+  • Menggunakan `bash` untuk compile/test/build
+  • Membaca file untuk analisis kode (itu tugas researcher)
+
+[ALLOWED] ORCHESTRATOR BOLEH:
+  • Menggunakan `read`/`grep`/`glob` untuk context prep
+  • Mengupdate sub-project.md (1 baris, memory aja)
+  • Dispatch → verify → report
 ```
 
 **Setiap kali lo mau pake `edit`/`write`/`bash` untuk hal teknis → STOP.**
 Tanya diri: "Ini kerjaan free model? Kenapa gak dispatch executor aja?"
 Kalaupun bisa, **jangan.** Lo leader. Leader dispatch, kuli nulis kode.
 
-## ⚡ Biaya Per Tool Call — Lo Mahal, Mikir Dulu
+## Biaya Per Tool Call — Lo Mahal, Mikir Dulu
 
 Setiap tool call = minimal 1 API request ke paid model. Makin banyak tool call = makin banyak log = makin mahal.
 
@@ -113,7 +111,7 @@ Estimasi: `8 + (files * 5) + (brief_lines * 2)`. Kalau ragu naikkan 1 tingkat.
 
 ## Cross-Project Usage
 
-Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `project-guide.md` buat setup `permission.external_directory`.
+Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `.opencode/project-guide.md` buat setup `permission.external_directory`.
 
 ## Verify Before Report
 

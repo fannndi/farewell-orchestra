@@ -4,18 +4,14 @@
 
 Dibangun di atas [OpenCode](https://opencode.ai) via [9Router](http://127.0.0.1:20128). Foreground-only, deny-by-default. Input sampah ditolak di gerbang.
 
----
-
 ## Quick Start
 
 ```bash
-switch.bat              # double-click → menu → pilih profile
+profiles\switch.bat              # double-click → menu → pilih profile
 opencode
 ```
 
-Cross-project: `"kerjain project ini <path>"` — orchestra auto-detect dan kerja di folder target. Lihat `project-guide.md`.
-
----
+Cross-project: `"kerjain project ini <path>"` — orchestra auto-detect dan kerja di folder target. Lihat `.opencode/project-guide.md`.
 
 ## Agent Architecture
 
@@ -28,54 +24,59 @@ Cross-project: `"kerjain project ini <path>"` — orchestra auto-detect dan kerj
 
 Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (parallel read-only) → Orchestrator (synthesize) → Executor (implement). Executor gagal 2x → Researcher deep debug. Satu-satunya agent dengan izin edit/bash adalah Executor.
 
----
-
-## Profile System
-
-Model assignments dikelola via `profiles/profiles.json` — satu file, semua profile. Edit JSON itu untuk nambah/ubah profile.
-
-Generator Python (`profiles/generate.py`) membaca `profiles.json`, nulis ke `profiles/opencode.temp.jsonc`, validasi JSON, lalu copy ke `opencode.jsonc`. Aman — kalau proses putus di tengah, file asli nggak kena.
-
-| Profile | Orchestrator | Researcher | Reviewer | Executor |
-|---------|-------------|------------|----------|----------|
-| **default-oc** 🏆 | ocg/deepseek-v4-flash | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free |
-| **default-or** | ocg/deepseek-v4-flash | north-mini-code:free (OR) | nemotron-3-ultra-550b:free (OR) | nemotron-3-ultra-550b:free (OR) |
-| **ollama-oc** | ollama/minimax-m3 | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free |
-| **ollama-or** | ollama/minimax-m3 | north-mini-code:free (OR) | nemotron-3-ultra-550b:free (OR) | nemotron-3-ultra-550b:free (OR) |
-| **codex-oc** | cx/gpt-5.6-luna | north-mini-code-free | nemotron-3-ultra-free | nemotron-3-ultra-free |
-| **codex-or** | cx/gpt-5.6-luna | north-mini-code:free (OR) | nemotron-3-ultra-550b:free (OR) | nemotron-3-ultra-550b:free (OR) |
-
-```bash
-switch.bat                       # double-click → menu interaktif → pilih
-python profiles\generate.py --menu   # atau dari terminal
-python profiles\generate.py codex-or # langsung pake nama profile
-```
-
----
-
 ## Skills
 
-8 agent skills + 1 project scaffolding: `anti-gigo`, `grill`, `orchestrate`, `minimal-impl`, `verification-ground-truth`, `forensic`, `web-research`, `stride-audit`, `bootstrap-project`.
+Setiap agent punya skill spesifik yang auto-discovered oleh OpenCode dari `.opencode/skills/`.
 
----
+### Orchestrator Skills
+| Skill | Fungsi |
+|-------|--------|
+| `anti-gigo` | Validasi input — tolak request sampah sebelum diproses |
+| `grill` | Interview Boss — gali detail kalau input ambigu |
+| `orchestrate` | Decompose task → fan-out parallel → synthesize hasil |
+| `bootstrap-project` | Generate 10 dokumen project dari ide (PRD, Architecture, dll) |
 
-## Files
+### Researcher Skills
+| Skill | Fungsi |
+|-------|--------|
+| `forensic` | Cross-file tracing, deep debug, evidence-first file:line |
+| `web-research` | Cek docs, API status, library version, pricing — external fact-check |
 
-| File | Purpose |
-|------|---------|
-| `opencode.jsonc` | Active config — hasil generate dari profile terpilih |
-| `switch.bat` | Launcher — double-click untuk menu ganti profile |
-| `profiles/profiles.json` | **Registry profile + models** — edit manual buat nambah/ubah |
-| `profiles/generate.py` | Generator — baca profiles.json, tulis temp, copy ke root |
-| `profiles/opencode.temp.jsonc` | Temp file — di-write dulu, baru di-copy (auto gitignored) |
-| `profiles/opencode.example.jsonc` | Referensi — contoh hasil generate |
-| `.opencode/agents/` | Agent persona — siapa mereka, gimana mereka bersikap |
-| `.opencode/skills/` | Agent specialization skills (auto-discovered by OpenCode) |
-| `AGENTS.md` | Aturan orkestrasi — flow, rules, slash commands |
-| `LESSONS.md` | Log pembelajaran — tiap kali Boss koreksi |
-| `project-guide.md` | Cross-project access — cara pakai orchestra dari repo lain |
-| `templates/sub-project.md` | Template anchor untuk sub-project |
+### Reviewer Skills
+| Skill | Fungsi |
+|-------|--------|
+| `stride-audit` | STRIDE threat model, convention enforcement, [BLOCKING] gate |
 
----
+### Executor Skills
+| Skill | Fungsi |
+|-------|--------|
+| `minimal-impl` | YAGNI-first, verify-first, anti over-engineering |
+| `verification-ground-truth` | Verify claim vs actual tool output sebelum report done |
+
+## Structure
+
+.
+├── AGENTS.md                  — orchestrator rules & workflow
+├── .env.example               — env template
+├── .gitignore
+├── .opencode/
+│   ├── agents/                — agent persona definitions (4 agent)
+│   ├── command/               — slash commands (/work-on, /new-project, /check, /status)
+│   ├── hooks/                 — lifecycle hooks (pre/post generate)
+│   ├── LESSONS.md             — session lessons log
+│   ├── project-guide.md       — cross-project usage guide
+│   ├── scripts/               — utility scripts (link checker)
+│   ├── skills/                — 9 agent skills (auto-discovered)
+│   └── tools/                 — custom tools (harness_status, learn, verify)
+├── profiles/
+│   ├── generate.py            — profile generator
+│   ├── profiles.json          — model registry (6 profiles)
+│   └── switch.bat             — interactive profile switcher
+├── scripts/
+│   └── check-links.py         — HTTP link validator
+├── templates/
+│   └── sub-project.md         — sub-project anchor template
+└── tests/
+    └── test_generate.py       — profile generator test suite
 
 MIT

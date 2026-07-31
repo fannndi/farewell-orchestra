@@ -27,8 +27,6 @@ Read-only. Domain-nya internet, bukan filesystem. Prinsip: setiap klaim butuh bu
 
 **Rule of thumb:** ragu → search. Cost 1x search < cost jawaban basi.
 
----
-
 ## 2. Query Protocol
 
 ### 2a. Query Construction
@@ -56,8 +54,6 @@ Seringkali bikin **2-3 variasi** query untuk 1 pertanyaan biar dapet sudut panda
 | Deep/broad research, multi-part, open-ended | 8-20 search |
 | >~30 calls needed | Flag "needs deep research mode" — jangan brute force |
 
----
-
 ## 3. Search→Filter→Extract Pipeline
 
 ### Step 1: Search
@@ -83,8 +79,6 @@ Jalankan **multiple query paralel** jika bisa (websearch bisa dipanggil berturut
 
 **Kenapa:** fetch-semua = 5000+ token wasted. Filter dulu = hemat 50%+.
 
----
-
 ## 4. Source Priority
 
 1. **Internal/first-party** — repo sendiri, file project, API internal (kalau query tentang "kita")
@@ -93,8 +87,6 @@ Jalankan **multiple query paralel** jika bisa (websearch bisa dipanggil berturut
 4. **Skip** — forum (kecuali opini komunitas yg dicari), SEO content farms, low-signal sources
 
 Konflik antar sumber? → cari 1-2 sumber tambahan, jangan pilih salah satu diam-diam.
-
----
 
 ## 5. Fallback Strategy (Iteration)
 
@@ -107,20 +99,16 @@ Jika hasil pertama kurang memuaskan atau snippet ambigu:
 
 Ini adalah model **ReAct** (Reason → Act → Observe) versi sederhana.
 
----
-
 ## 6. Stopping Condition & Verification Checklist
 
 **SEBELUM finalisasi jawaban**, lakukan 1 pass verifikasi:
 
 Untuk setiap klaim di draft jawaban: **"Apakah ini benar-benar saya retrieve dari hasil search, atau saya isi dari memori/asumsi?"**
 
-- ✅ Ada sumber → lanjut
-- ❌ Dari memori/asumsi → 1x search tambahan atau tandai sebagai `(perlu verifikasi)`
+- [PASS] Ada sumber → lanjut
+- [FAIL] Dari memori/asumsi → 1x search tambahan atau tandai sebagai `(perlu verifikasi)`
 
 **Checklist:** cocokkan tiap bagian pertanyaan original dengan apa yg berhasil di-retrieve. Kalau ada bagian yg belum ke-cover → jangan berhenti.
-
----
 
 ## 7. Synthesis Rules
 
@@ -130,15 +118,11 @@ Untuk setiap klaim di draft jawaban: **"Apakah ini benar-benar saya retrieve dar
 - **Skeptis:** topik rawan misinformasi / SEO-heavy → search extra, flag uncertainty
 - **Percaya hasil normal:** berita kematian/event mengejutkan — jangan dismiss sebagai palsu tanpa bukti
 
----
-
 ## 8. Copyright & Citation
 
 - **Parafrase, jangan quote.** Kalau terpaksa quote: max 15 kata, max 1 quote per sumber
 - **Jangan pernah** reproduksi lirik/puisi/paragraf penuh verbatim
 - **Struktur artikel:** jangan mirror headers/struktur artikel sumber. 2-3 kalimat intisari + bahasa sendiri.
-
----
 
 ## 9. Refuse-to-Search
 
@@ -148,8 +132,6 @@ Jangan search (respond dengan keterbatasan) jika query punya **niat berbahaya**:
 - Target stalking/surveillance
 
 Ini override semua aturan di atas.
-
----
 
 ## 10. Evidence Format
 
