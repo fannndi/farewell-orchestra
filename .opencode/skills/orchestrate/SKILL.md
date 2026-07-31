@@ -1,13 +1,13 @@
 ---
 name: orchestrate
-description: Use after anti-gigo passes — decompose request, fan-out parallel, synthesize results, delegate to executor
+description: Use after anti-gigo passes — decompose request, fan-out sequential, synthesize results, delegate to executor
 ---
 
 # Orchestrate
 
-Input sudah CLEAN. **WAJIB fan-out. Jangan kerjain sendiri.**
+Input sudah CLEAN. **WAJIB dispatch sequential. Jangan kerjain sendiri.**
 
-💰 **Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (free). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
+💰 **Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (paid, model sama kayak orchestrator). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
 
 ## 1. Decompose
 
@@ -24,7 +24,7 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 | C: State | git status + grep | `[STATE] file [n] modified, [m] bersih` |
 | D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
 
-Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer.
+Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher dulu.
 
 ## 3. Fan-Out — WAJIB via `task` Tool
 
@@ -34,20 +34,21 @@ Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher +
 | Security/architecture audit | reviewer | ✅ |
 | Implementation | executor (tunggu sintesis) | ❌ |
 
-**ALWAYS dispatch researcher + reviewer in parallel via `task` tool. NEVER skip.**
+**ALWAYS dispatch researcher FIRST via `task` tool. Tunggu hasil. Lalu dispatch reviewer dengan context hasil researcher. NEVER skip.**
 
 ### Cara Dispatch yang Benar
 
 GUNAKAN `task` tool. BUKAN lakukan sendiri.
 
 ```python
-# ✅ BENAR — Parallel dispatch researcher + reviewer
+# ✅ BENAR — Sequential dispatch researcher dulu
 task(subagent_type="researcher", description="[deskripsi pendek]",
      prompt="[brief dengan context + file references + expected output]")
+# Tunggu hasil researcher, lalu dispatch reviewer dengan context hasil researcher
 task(subagent_type="reviewer", description="[deskripsi pendek]",
-     prompt="[brief dengan context + file references + expected output]")
+     prompt="[brief + hasil researcher sebagai context + expected output]")
 
-# ✅ BENAR — Dispatch executor setelah sintesis
+# ✅ BENAR — Dispatch executor setelah sintesis researcher+reviewer
 task(subagent_type="executor", description="exec: [task]",
      prompt="[5-field brief, max 200 token]")
 
@@ -61,7 +62,7 @@ task(subagent_type="executor", description="exec: [task]",
 |-------|-------|-----------|-------------|
 | researcher | free | forensic, web-research, read-only | Percaya dia baca file & lapor evidence |
 | reviewer | free | stride-audit, read-only | Percaya dia audit security & konvensi |
-| executor | free | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
+| executor | paid | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
 
 **Prinsip:** 
 - Sub-agent punya **model + skill + tool masing-masing**. Mereka specialized.

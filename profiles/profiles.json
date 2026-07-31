@@ -3,7 +3,7 @@
   "description": "Profile registry — single source of truth for all model assignments",
 
   "models": {
-    "9router/ocg/deepseek-v4-flash": {
+    "9router/ocg/deepseek-v4-pro": {
       "reasoning": true, "tool_call": true,
       "limit": { "context": 1000000, "output": 200000 }
     },
@@ -36,11 +36,11 @@
   "profiles": [
     {
       "name": "default-oc",
-      "label": "Default | ocg/deepseek-v4-flash + 9router free",
-      "model": "9router/ocg/deepseek-v4-flash",
+      "label": "Default | ocg/deepseek-v4-pro + 9router free",
+      "model": "9router/ocg/deepseek-v4-pro",
       "small_model": "9router/oc/north-mini-code-free",
       "agents": {
-        "orchestrator": "9router/ocg/deepseek-v4-flash",
+        "orchestrator": "9router/ocg/deepseek-v4-pro",
         "researcher": "9router/oc/north-mini-code-free",
         "reviewer": "9router/oc/nemotron-3-ultra-free",
         "executor": "9router/oc/nemotron-3-ultra-free"
@@ -48,14 +48,14 @@
     },
     {
       "name": "default-or",
-      "label": "Default | ocg/deepseek-v4-flash + OpenRouter free",
-      "model": "9router/ocg/deepseek-v4-flash",
+      "label": "Default | ocg/deepseek-v4-pro + OpenRouter free",
+      "model": "9router/ocg/deepseek-v4-pro",
       "small_model": "9router/openrouter/cohere/north-mini-code:free",
       "agents": {
-        "orchestrator": "9router/ocg/deepseek-v4-flash",
+        "orchestrator": "9router/ocg/deepseek-v4-pro",
         "researcher": "9router/openrouter/cohere/north-mini-code:free",
-        "reviewer": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
-        "executor": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+        "reviewer": "9router/openrouter/cohere/north-mini-code:free",
+        "executor": "9router/ocg/deepseek-v4-pro"
       }
     },
     {

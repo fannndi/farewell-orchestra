@@ -7,7 +7,7 @@
 | **orchestrator** | 💰 PAID | Decompose, dispatch, verify, report. **JANGAN nulis kode.**  |
 | **researcher** | 🆓 FREE | Baca file, forensic, web research — semua read-only |
 | **reviewer** | 🆓 FREE | Audit STRIDE, review konvensi, cek keamanan |
-| **executor** | 🆓 FREE | Nulis kode, edit file, implementasi |
+| **executor** | 💰 PAID | Nulis kode, edit file, implementasi (model sama kayak orchestrator) |
 
 **Aturan emas: Jangan pake model paid buat kerjaan yg model free bisa lakuin.**
 Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
@@ -18,6 +18,14 @@ Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
 | Review security + convention (reviewer) | Fan-out + dispatch (orchestrate) |
 | Nulis + edit semua kode (executor) | Sintesis + verify hasil |
 | Debug error dengan forensic (researcher) | Eskalasi + report ke Boss |
+
+## Cross-Project Hygiene
+
+| Aturan | Detail |
+|--------|--------|
+| **Temp output wajib ke temp dir** | Semua file hasil generate (report, analysis, download) WAJIB ke `C:\Users\FANNNDI\AppData\Local\Temp\opencode`, BUKAN project root |
+| **Bersihkan sebelum selesai** | Sub-agent wajib hapus file temp sebelum selesai |
+| **.gitignore terjaga** | File generate yg tertinggal otomatis ke-ignore |
 
 ## Trust & Dispatch — Prinsip Orkestrasi
 

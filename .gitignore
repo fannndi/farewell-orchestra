@@ -36,3 +36,13 @@ coverage/
 .opencode/agent-sessions/
 profiles/opencode.temp.jsonc
 /source
+
+# Cross-project artifacts
+dependencies.txt
+failure-hypotheses.txt
+features.txt
+report.txt
+run_firefox_output.txt
+sms-integration.txt
+weaknesses.txt
+profiles/backups/
