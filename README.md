@@ -1,80 +1,96 @@
 # Farewell Orchestra
 
-**4-agent AI orchestration system** — Tech Lead, Developer, Detective, Auditor. Satu tim, satu suara.
+Satu orchestrator berpikir. Tiga agent gratis mengeksekusi. Empat model AI dalam satu tim.
 
-Dibangun di atas [OpenCode](https://opencode.ai) via [9Router](http://127.0.0.1:20128). Foreground-only, deny-by-default. Input sampah ditolak di gerbang.
+## Kenapa project ini ada
+
+Model AI mahal bagus buat mikir, bukan buat ngetik kode yang model gratisan juga bisa. Tapi kebanyakan tool AI memperlakukan semua task sama — satu model ngerjain semuanya: riset, review, coding, debugging. Boros. Gak scalable.
+
+Farewell Orchestra membalik logika itu. Orchestrator (model mahal) cuma berpikir — decompose, arahkan, verifikasi. Researcher, reviewer, dan executor (model gratis) yang baca file, audit keamanan, dan nulis kode. Hasilnya: output lebih baik, biaya lebih rendah, bug lebih sedikit.
+
+## Cara kerja
+
+```
+Boss kirim request
+    │
+    ▼
+Orchestrator [PAID]       ← validasi input, decompose task, arahkan tim
+    │
+    ├── Researcher [FREE]  ← baca file, trace code, verifikasi klaim
+    └── Reviewer [FREE]    ← audit STRIDE, cek konvensi, second opinion
+    │       (parallel — barengan)
+    ▼
+Orchestrator [PAID]       ← synthesize temuan, brief executor
+    │
+    ▼
+Executor [PAID]            ← nulis kode, edit file, implementasi
+    │
+    ▼
+Boss terima report        ← 3 baris: what, result, residual risk
+```
+
+## Kenapa ini bekerja
+
+**Cost-aware by design.** Orchestrator PAID, sub-agent FREE. Setiap kali orchestrator pegang `edit` atau `write` = uang kebakar. Arsitektur ini memaksa orchestrator dispatch, bukan ngerjain sendiri.
+
+**Evidence-first, bukan opini.** Researcher wajib return file:line. Reviewer wajib tag [BLOCKING]/[SHOULD]/[NICE] dengan bukti. verify.py enforce format ini — klaim tanpa bukti = FAIL. Gak ada "kayaknya" atau "mungkin".
+
+**Self-critical.** `.opencode/LESSONS.md` nyimpen log tiap kali sistem gagal — termasuk reviewer halusinasi dan orchestrator bypass sub-agent. Project ini audit diri sendiri, persis seperti yang dia minta dari codebase lain.
+
+**Technical enforcement, bukan imbauan.** Permission researcher/reviewer read-only (gak bisa edit/bash). Orchestrator read dibatasi *.md doang — baca source code kena ask gate. Hook pre-generate validasi profiles.json. Bukan cuma instruksi di prompt.
+
+**Satu otak, banyak project.** Buka opencode di repo ini, arahkan ke project target — orchestra kerja di sana. sub-project.md jadi anchor buat context antar sesi. Gak perlu setup ulang tiap project.
+
+**KISS dari akar.** Root cuma 5 file. YAGNI di-enforce oleh minimal-impl skill. Anti-gigo tolak input sampah di gerbang. "Hapus lebih baik dari tambah" — prinsip yang dipake buat diri sendiri.
 
 ## Quick Start
 
 ```bash
-profiles\switch.bat              # double-click → menu → pilih profile
-opencode
+profiles\switch.bat     # pilih profile → generate config
+opencode                # mulai sesi
 ```
 
-Cross-project: `"kerjain project ini <path>"` — orchestra auto-detect dan kerja di folder target. Lihat `.opencode/project-guide.md`.
-
-## Agent Architecture
-
-| Agent | Persona | Skills | Role |
-|-------|---------|--------|------|
-| **Orchestrator** | Tech Lead galak | `anti-gigo` `grill` `orchestrate` | Validasi input, dekomposisi, fan-out, delegasi |
-| **Researcher** | Detektif eksploratif | `forensic` `web-research` | Cross-file tracing, deep debugging, web research |
-| **Reviewer** | Auditor kejam | `stride-audit` | STRIDE threat model, convention enforcement |
-| **Executor** | Developer minimalis | `minimal-impl` `verification-ground-truth` | Satu-satunya writer — YAGNI-first, verify-first |
-
-Flow: Boss → Orchestrator (validate + decompose) → Researcher + Reviewer (parallel read-only) → Orchestrator (synthesize) → Executor (implement). Executor gagal 2x → Researcher deep debug. Satu-satunya agent dengan izin edit/bash adalah Executor.
+Cross-project: `"kerjain project ini <path>"` — orchestra auto-detect dan kerja di folder target.
 
 ## Skills
 
-Setiap agent punya skill spesifik yang auto-discovered oleh OpenCode dari `.opencode/skills/`.
+Setiap agent punya skill spesifik — auto-discovered dari `.opencode/skills/`.
 
-### Orchestrator Skills
-| Skill | Fungsi |
-|-------|--------|
-| `anti-gigo` | Validasi input — tolak request sampah sebelum diproses |
-| `grill` | Interview Boss — gali detail kalau input ambigu |
-| `orchestrate` | Decompose task → fan-out parallel → synthesize hasil |
-| `bootstrap-project` | Generate 10 dokumen project dari ide (PRD, Architecture, dll) |
-
-### Researcher Skills
-| Skill | Fungsi |
-|-------|--------|
-| `forensic` | Cross-file tracing, deep debug, evidence-first file:line |
-| `web-research` | Cek docs, API status, library version, pricing — external fact-check |
-
-### Reviewer Skills
-| Skill | Fungsi |
-|-------|--------|
-| `stride-audit` | STRIDE threat model, convention enforcement, [BLOCKING] gate |
-
-### Executor Skills
-| Skill | Fungsi |
-|-------|--------|
-| `minimal-impl` | YAGNI-first, verify-first, anti over-engineering |
-| `verification-ground-truth` | Verify claim vs actual tool output sebelum report done |
+| Agent | Skill | Fungsi |
+|-------|-------|--------|
+| Orchestrator | `anti-gigo` | Validasi input — tolak sampah sebelum diproses |
+| Orchestrator | `grill` | Interview Boss — gali detail kalau input ambigu |
+| Orchestrator | `orchestrate` | Decompose → fan-out → synthesize → delegate |
+| Orchestrator | `bootstrap-project` | Generate 10 dokumen project dari ide |
+| Researcher | `forensic` | Cross-file tracing, deep debug, evidence file:line |
+| Researcher | `web-research` | External fact-check — docs, API, library status |
+| Reviewer | `stride-audit` | STRIDE threat model, convention enforcement |
+| Executor | `minimal-impl` | YAGNI-first, verify-first, anti over-engineering |
+| Executor | `verification-ground-truth` | Verify claim vs tool output — gak asumsi |
 
 ## Structure
 
+```
 .
-├── AGENTS.md                  — orchestrator rules & workflow
-├── .env.example               — env template
+├── AGENTS.md                  — orchestrator rules
+├── .env.example
 ├── .gitignore
 ├── .opencode/
-│   ├── agents/                — agent persona definitions (4 agent)
-│   ├── command/               — slash commands (/work-on, /new-project, /check, /status)
-│   ├── hooks/                 — lifecycle hooks (pre/post generate)
-│   ├── .opencode/LESSONS.md             — session lessons log
-│   ├── .opencode/project-guide.md       — cross-project usage guide
-│   ├── scripts/               — utility scripts (link checker)
-│   ├── skills/                — 9 agent skills (auto-discovered)
-│   └── tools/                 — custom tools (harness_status, learn, verify)
+│   ├── agents/                — persona 4 agent
+│   ├── command/               — slash commands
+│   ├── hooks/                 — lifecycle enforcement
+│   ├── LESSONS                 — self-audit log (.md)
+│   ├── project-guide           — cross-project usage (.md)
+│   ├── skills/                — 9 agent skills
+│   └── tools/                 — verify, harness_status, learn
 ├── profiles/
 │   ├── generate.py            — profile generator
-│   ├── profiles.json          — model registry (6 profiles)
-│   └── switch.bat             — interactive profile switcher
+│   ├── profiles.json          — 6 model profiles
+│   └── switch.bat             — interactive switcher
 ├── templates/
-│   └── sub-project.md         — sub-project anchor template
+│   └── sub-project.md         — project anchor template
 └── tests/
-    └── test_generate.py       — profile generator test suite
+    └── test_generate.py       — 18 tests, 0 gagal
+```
 
 MIT
