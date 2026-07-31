@@ -59,6 +59,15 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         "detail": "Evidence markers found" if has_evidence else "No evidence/source markers detected"
     })
 
+    # Check 3.5: Evidence tags [P/W/E/O] from forensic skill
+    evidence_tag_pattern = r'\[P\]|\[W\]|\[E\]|\[O\]'
+    has_evidence_tags = bool(re.search(evidence_tag_pattern, claims))
+    checks.append({
+        "name": "evidence tags [P/W/E/O]",
+        "status": "FAIL" if not has_evidence_tags else "PASS",
+        "detail": "Evidence tags found" if has_evidence_tags else "No evidence tags [P/W/E/O] in findings — research output may be untethered"
+    })
+
     # Check 4: Empty output
     checks.append({
         "name": "non-empty output",

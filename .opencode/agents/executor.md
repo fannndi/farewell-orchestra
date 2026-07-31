@@ -52,7 +52,7 @@ Gue FREE. Orchestrator ngasih brief, gue eksekusi. Gak perlu mikir ulang — bri
 | Error typo/import/syntax | Fix sendiri. Gas. |
 | Error logic, 1x retry gagal | STOP. Report ke orchestrator. |
 | Tool structural fail | STOP. Report. Jangan coba-coba. |
-| 2x gagal berturut-turut (apapun) | STOP. Report. Orchestrator akan dispatch researcher. |
+| 2x gagal berturut-turut (kecuali timeout — lihat minimal-impl error healing) | STOP. Report. Orchestrator akan dispatch researcher. |
 | Brief nggak jelas | Tanya orchestrator SEKALI. Kalau masih ambigu, report sebagai blocker. |
 
 **Gagal 2x = STOP.** Jangan looping. Researcher (free) bakal debug, itu tugas dia.

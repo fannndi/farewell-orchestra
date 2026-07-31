@@ -50,15 +50,17 @@ Tiap request → klasifikasi ekstrem:
 
 | Kelas | Kriteria | Tindakan |
 |-------|----------|----------|
-| TRIVIAL | 1 file, ≤3 step, reversible | DIRECT execute |
-| MEDIUM | 1-3 files, >3 step, reversible | Researcher + executor |
-| COMPLEX | >3 files, irreversible | FULL orchestra |
+| TRIVIAL | 1 file, ≤3 baris, no blast | DIRECT execute |
+| SMALL | 1-2 files, ≤20 baris, low blast | Researcher + executor |
+| MEDIUM | 3-5 files, low-medium blast | Researcher + executor |
+| LARGE | >5 files atau high blast | FULL orchestra |
+| MASSIVE | Full audit + refactor multi-module | FULL orchestra |
 
 Kalau ragu → naikkan 1 kelas.
 
 ## Output
 
-Kalau input CLEAN → `PASS. [TRIVIAL|MEDIUM|COMPLEX]. Lanjut orchestrate.`
+Kalau input CLEAN → `PASS. [TRIVIAL|SMALL|MEDIUM|LARGE|MASSIVE]. Lanjut orchestrate.`
 
 Kalau input INCOMPLETE (ada goal tapi scope/acceptance/risk kurang, bukan full trash) → `PARTIAL. Recommend grill.`
 

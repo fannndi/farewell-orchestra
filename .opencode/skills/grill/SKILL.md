@@ -24,7 +24,7 @@ description: Use when anti-GIGO finds input incomplete or ambiguous — Socratic
 Jangan skip cabang. Tiap jawaban bisa buka cabang baru → gali terus sampai semua clear.
 
 ## Workflow
-1. Orchestrator invoke grill setelah anti-GIGO deteksi input <70% lengkap.
+1. Orchestrator invoke grill setelah anti-gigo return PARTIAL (input punya goal tapi scope/acceptance/risk kurang).
 2. Interview Boss — satu pertanyaan per waktu, tiap level decision tree, sampai semua clear.
 3. **Sign-off** — summary decisions (≤5 bullets) + "Go / adjust?" prompt. Jangan fan-out sebelum sign-off.
 

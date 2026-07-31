@@ -62,13 +62,4 @@ Keputusan berdasarkan evidence + runtime-fit:
 
 > **Runtime loop = STOP + design gate.** Setiap 3x trigger otomatis invoke Loop Discovery Gate (§12) untuk decide: skip, hook, script, atau skill?
 
-## §14. Loop Guard (Legacy — kept for reference)
 
-| Sinyal | Action |
-|--------|--------|
-| Agent+tool+intent sama 3x berturut-turut | STOP, tanya Boss |
-| Executor gagal error identik 2x | Escalate ke researcher |
-| Researcher balik hasil sama 2x | Udah cukup — jangan research lagi |
-| Conversation muter tanpa progress | Report: "Stuck di [topik]. Perlu arahan." |
-
-**Prinsip:** 3x sama = loop. Token lebih baik buat nanya Boss.
