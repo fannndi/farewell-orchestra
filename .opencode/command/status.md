@@ -22,7 +22,7 @@ Panggil via orchestrator: `@harness_status check:"all" format:"json"`
     "orchestrator": { "model": "<paid-model>", "steps_limit": 500 },
     "researcher":  { "model": "<free-model>",  "steps_limit": 400 },
     "reviewer":    { "model": "<free-model>",  "steps_limit": 400 },
-    "executor":    { "model": "<free-model>",  "steps_limit": 500 }
+    "executor":    { "model": "[PAID]",  "steps_limit": 500 }
   },
   "profiles": {
     "total": 6,
@@ -48,15 +48,11 @@ Panggil via orchestrator: `@harness_status check:"all" format:"json"`
 | `agents.*.model` | opencode.jsonc `agent.*.model` | Short model ID (no provider prefix) |
 | `agents.*.steps_limit` | opencode.jsonc `agent.*.steps` | Declared step budget |
 | `profiles.valid` | `generate.py --validate` exit code | |
-| `sensors.*` | LESSONS.md ## Sensor Coverage | Count of [PASS][FAIL][WARN] |
+| `sensors.*` | `.opencode/LESSONS.md` ## Sensor Coverage | Count of [PASS][FAIL][WARN] |
 
 ## Health
 
 - `healthy: true` — no errors
 - `healthy: false` + `errors: [...]` — something wrong
 
-## Exit Codes (CLI)
 
-- `0` — Healthy
-- `1` — Warning
-- `2` — Critical

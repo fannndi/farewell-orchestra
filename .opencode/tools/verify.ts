@@ -1,5 +1,10 @@
 import { tool } from "@opencode-ai/plugin"
 import { execFileSync } from "child_process"
+
+const pythonCmd = (() => {
+  try { execFileSync('python3', ['--version'], { stdio: 'ignore' }); return 'python3'; }
+  catch { return 'python'; }
+})();
 import path from "path"
 
 export default tool({
@@ -41,7 +46,7 @@ export default tool({
     })
 
     try {
-      const raw = execFileSync('python', [scriptPath], {
+      const raw = execFileSync(pythonCmd, [scriptPath], {
         encoding: "utf-8",
         timeout: 15000,
         env: { ...process.env, WORKTREE: context.worktree },

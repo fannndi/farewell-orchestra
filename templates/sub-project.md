@@ -8,7 +8,7 @@
 - **Satu kalimat:** {{ONE_LINER}}
 - **Path absolut:** {{PROJECT_PATH}}
 - **Repo:** {{REPO_URL}}
-- **Profile:** {{PROFILE}} (V1 | Limited)
+- **Profile:** {{PROFILE}} (e.g. default-oc, default-or, codex-oc, codex-or, ollama-oc, ollama-or)
 - **Fase:** {{CURRENT_PHASE}} — detail di `docs/Tasks.md`
 - **Task aktif:** {{ACTIVE_TASK}}
 

@@ -1,5 +1,10 @@
 import { tool } from "@opencode-ai/plugin"
 import { execFileSync } from "child_process"
+
+const pythonCmd = (() => {
+  try { execFileSync('python3', ['--version'], { stdio: 'ignore' }); return 'python3'; }
+  catch { return 'python'; }
+})();
 import * as fs from "fs"
 import * as path from "path"
 
@@ -65,7 +70,7 @@ export default tool({
     let profilesTotal = 0
     if (args.check === "all" || args.check === "profiles") {
       try {
-        const valOut = execFileSync('python', ['profiles/generate.py', '--validate'], {
+        const valOut = execFileSync(pythonCmd, ['profiles/generate.py', '--validate'], {
           cwd: worktree,
           encoding: "utf-8",
           timeout: 10000,

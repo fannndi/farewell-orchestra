@@ -23,7 +23,7 @@ Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
 
 | Aturan | Detail |
 |--------|--------|
-| **Temp output wajib ke temp dir** | Semua file hasil generate (report, analysis, download) WAJIB ke `C:\Users\FANNNDI\AppData\Local\Temp\opencode`, BUKAN project root |
+| **Temp output wajib ke temp dir** | Semua file hasil generate (report, analysis, download) WAJIB ke `%TEMP%\opencode` (Windows) atau `$TEMP/opencode` (Unix), BUKAN project root |
 | **Bersihkan sebelum selesai** | Sub-agent wajib hapus file temp sebelum selesai |
 | **.gitignore terjaga** | File generate yg tertinggal otomatis ke-ignore |
 

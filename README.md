@@ -63,8 +63,8 @@ Setiap agent punya skill spesifik yang auto-discovered oleh OpenCode dari `.open
 │   ├── agents/                — agent persona definitions (4 agent)
 │   ├── command/               — slash commands (/work-on, /new-project, /check, /status)
 │   ├── hooks/                 — lifecycle hooks (pre/post generate)
-│   ├── LESSONS.md             — session lessons log
-│   ├── project-guide.md       — cross-project usage guide
+│   ├── .opencode/LESSONS.md             — session lessons log
+│   ├── .opencode/project-guide.md       — cross-project usage guide
 │   ├── scripts/               — utility scripts (link checker)
 │   ├── skills/                — 9 agent skills (auto-discovered)
 │   └── tools/                 — custom tools (harness_status, learn, verify)
@@ -72,8 +72,6 @@ Setiap agent punya skill spesifik yang auto-discovered oleh OpenCode dari `.open
 │   ├── generate.py            — profile generator
 │   ├── profiles.json          — model registry (6 profiles)
 │   └── switch.bat             — interactive profile switcher
-├── scripts/
-│   └── check-links.py         — HTTP link validator
 ├── templates/
 │   └── sub-project.md         — sub-project anchor template
 └── tests/

@@ -105,7 +105,7 @@ AGENT_TEMPLATES = {
         "steps": 500,
         "prompt": "Orchestrator: decompose -> fan-out parallel via `task` tool -> synthesize -> brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor.",
         "permission": {
-            "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
+            "read": {"*.md": "allow", "*": "ask"}, "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
             "todowrite": "allow", "lsp": "allow",
             "external_directory": {"*": "allow"},
@@ -335,6 +335,41 @@ def generate(profile_name, to_stdout=False):
     # ───────────────────────────────────────────────────────────────────
     import subprocess
 
+    def _run_hooks_python(event, payload_extra=None):
+        """Python fallback when PowerShell is not available."""
+        if event == "beforeGenerate":
+            registry = load_profiles()
+            errors = validate_registry(registry)
+            critical = [e for e in errors if e.startswith("[ERROR]")]
+            if critical:
+                for e in critical:
+                    print(f"  [HOOK-PYTHON] {e}")
+                print(f"[ERROR] Hook 'beforeGenerate' blocked: registry validation failed")
+                return False
+            for e in errors:
+                if e.startswith("[WARN]"):
+                    print(f"  [HOOK-PYTHON] {e}")
+            return True
+        elif event == "afterGenerate":
+            # Check generated config for permission violations
+            root_path = os.path.abspath(ROOT_FILE)
+            if os.path.isfile(root_path):
+                try:
+                    with open(root_path, 'r', encoding='utf-8') as f:
+                        raw = f.read()
+                    config = json.loads(raw[raw.index('{'):])
+                    for agent_name in ['researcher', 'reviewer']:
+                        agent = config.get('agent', {}).get(agent_name, {})
+                        perms = agent.get('permission', {})
+                        if perms.get('edit') == 'allow':
+                            print(f"  [HOOK-PYTHON] [WARN] {agent_name} has edit permission (should be read-only)")
+                        if perms.get('bash') == 'allow':
+                            print(f"  [HOOK-PYTHON] [WARN] {agent_name} has bash permission (should be read-only)")
+                except Exception as e:
+                    print(f"  [HOOK-PYTHON] [WARN] Could not check permissions: {e}")
+            return True
+        return True  # unknown event, pass through
+
     def _run_hooks(event, payload_extra=None):
         """Run hooks for given event via dispatch.ps1. Return True if OK, False if blocked."""
         dispatcher_script = os.path.join(os.path.dirname(PROFILES_DIR), ".opencode", "hooks", "dispatch.ps1")
@@ -364,6 +399,9 @@ def generate(profile_name, to_stdout=False):
                 print(f"[ERROR] Hook '{event}' blocked: {result.stderr.strip()}", file=sys.stderr)
                 return False
             return True
+        except FileNotFoundError:
+            # PowerShell not available — fallback to Python
+            return _run_hooks_python(event, payload_extra)
         except subprocess.TimeoutExpired:
             print(f"[WARN] Hook '{event}' timed out (60s), continuing", file=sys.stderr)
             return True

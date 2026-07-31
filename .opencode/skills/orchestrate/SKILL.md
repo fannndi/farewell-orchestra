@@ -20,7 +20,7 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 | Lane | Sumber | Output |
 |------|--------|--------|
 | A: Memory | sub-project.md | `[MEMORY] agent terakhir kerja apa` |
-| B: Lessons | LESSONS.md | `[LESSONS] error pattern: n kejadian` |
+| B: Lessons | `.opencode/LESSONS.md` | `[LESSONS] error pattern: n kejadian` |
 | C: State | git status + grep | `[STATE] file [n] modified, [m] bersih` |
 | D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
 
@@ -132,7 +132,7 @@ Tiap task lewati ini sebelum report:
 2. **Tool available?** — File di workspace, permission cukup
 3. **Verify done?** — Ada verification command, error di-identifikasi
 4. **Delivery match?** — Output sesuai acceptance criteria, risk dilapor
-5. **Memory updated?** — sub-project.md 1 baris, LESSONS.md kalau perlu
+5. **Memory updated?** — sub-project.md 1 baris, `.opencode/LESSONS.md` kalau perlu
 
 Gagal 1 → STOP, report ke Boss. Gagal 3x gate sama → eskalasi.
 
