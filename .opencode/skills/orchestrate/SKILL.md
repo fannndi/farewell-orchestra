@@ -1,11 +1,11 @@
 ---
 name: orchestrate
-description: Use after anti-gigo passes — decompose request, fan-out sequential, synthesize results, delegate to executor
+description: Use after anti-gigo passes — decompose request, fan-out parallel, synthesize results, delegate to executor
 ---
 
 # Orchestrate
 
-Input sudah CLEAN. **WAJIB dispatch sequential. Jangan kerjain sendiri.**
+Input sudah CLEAN. **WAJIB dispatch parallel: researcher + reviewer. Jangan kerjain sendiri.**
 
 **Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (paid, model sama kayak orchestrator). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
 
@@ -24,7 +24,7 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 | C: State | git status + grep | `[STATE] file [n] modified, [m] bersih` |
 | D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
 
-Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher dulu.
+Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
 
 ## 3. Fan-Out — WAJIB via `task` Tool
 
@@ -34,26 +34,26 @@ Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher d
 | Security/architecture audit | reviewer | ✅ |
 | Implementation | executor (tunggu sintesis) | ❌ |
 
-**ALWAYS dispatch researcher FIRST via `task` tool. Tunggu hasil. Lalu dispatch reviewer dengan context hasil researcher. NEVER skip.**
+**ALWAYS dispatch researcher + reviewer PARALLEL via `task` tool. Baca kedua hasil, baru dispatch executor. NEVER skip.**
 
 ### Cara Dispatch yang Benar
 
 GUNAKAN `task` tool. BUKAN lakukan sendiri.
 
 ```python
-# ✅ BENAR — Sequential dispatch researcher dulu
+# ✅ BENAR — Parallel dispatch researcher + reviewer
 task(subagent_type="researcher", description="[deskripsi pendek]",
      prompt="[brief dengan context + file references + expected output]")
-# Tunggu hasil researcher, lalu dispatch reviewer dengan context hasil researcher
 task(subagent_type="reviewer", description="[deskripsi pendek]",
-     prompt="[brief + hasil researcher sebagai context + expected output]")
+     prompt="[brief + context + expected output]")
+# Tunggu KEDUA hasil, synthesize, baru dispatch executor
 
-# ✅ BENAR — Dispatch executor setelah sintesis researcher+reviewer
+# ✅ BENAR — Dispatch executor setelah sintesis
 task(subagent_type="executor", description="exec: [task]",
      prompt="[5-field brief, max 200 token]")
 
-# ❌ SALAH — Jangan lakukan ini:
-# baca file sendiri → review sendiri → implement sendiri
+# ❌ SALAH — Sequential dispatch (nunggu satu selesai baru yg lain)
+# task(researcher) → tunggu → task(reviewer) → tunggu → task(executor)
 ```
 
 ### Trust Your Sub-Agents
