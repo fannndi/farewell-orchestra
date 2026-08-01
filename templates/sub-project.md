@@ -2,6 +2,7 @@
 
 > Anchor file. Orchestrator baca ini DULUAN di awal tiap sesi sebelum kerja apapun.
 > Auto-generated oleh skill `bootstrap-project`, di-update executor tiap ada perubahan fase/docs.
+> Template ini milik farewell-orchestra (bootstrap-project skill). Jangan edit isi template — kalau project butuh penyesuaian, edit sub-project.md project-nya langsung.
 
 ## Ringkasan
 - **Nama:** {{PROJECT_NAME}}

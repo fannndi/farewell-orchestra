@@ -1,6 +1,6 @@
 # Project Guide — Farewell Orchestra sebagai Cross-Project Assistant
 
-Repo ini adalah **otak orkestrasi Boss** — satu tempat, semua project. Buka opencode di sini, arahkan ke project target, orchestra yg kerja.
+Repo ini adalah **otak orkestrasi Boss** — satu tempat, semua project. Buka opencode di sini (farewell-orchestra), arahkan ke project target via /work-on atau /new-project. Project target tidak perlu setup orkestra sendiri — persona + skill + cost model TETAP dari sini. Orchestra yg kerja.
 
 ## Setup Sekali Jalan
 

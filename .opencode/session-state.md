@@ -3,10 +3,17 @@
 ## Last Session
 - Date: 2026-08-01
 - Profile: default-oc
-- Task: audit hardening + permission lockdown + workflow efficiency
-- Done: external_directory scoped, example.jsonc auto-regen, task chunking, pre-edit self-check, dispatch templates
+- Active project: farewell-orchestra
+- Last task: mission control development (project-registry + work-on auto-inject + session continuity)
+- Done: mission control: registry, auto-inject, session continuity, onboarding pipeline, persona universal
 - Pending: none
 - Blocked: none
+
+## Project History
+| Project | Last active | Status | Last task |
+|---------|-------------|--------|-----------|
+| (sync dari project-registry.md) | | | |
+| farewell-orchestra | 2026-08-01 | aktif | mission control development |
 
 ## Active Decisions
 - edit orchestrator: sub-project.md:allow, LESSONS.md:ask, *.md:deny
