@@ -7,7 +7,7 @@ Run on every new session. Validasi struktur workspace + profile.
 - [ ] opencode.jsonc — valid JSON, ada `agent.orchestrator`
 - [ ] AGENTS.md — ada, tidak kosong
 - [ ] project-guide.md — ada
-- [ ] LESSONS.md — ada
+- [ ] Farewell-Knowlage/Lessons.md — ada (Obsidian vault)
 - [ ] .opencode/agents/orchestrator.md — ada
 - [ ] .opencode/agents/researcher.md — ada
 - [ ] .opencode/agents/reviewer.md — ada
@@ -55,7 +55,7 @@ Checklist for every custom tool / mechanism:
 |------|:---:|:---:|:---:|:---:|
 | verify.ts | check.md | `.opencode/agents/orchestrator.md`:22-30 | sesi real | generate.py --validate |
 | harness_status.ts | check.md | `.opencode/agents/orchestrator.md`:62-64 | sesi real | `@harness_status` |
-| learn.ts | check.md | `.opencode/agents/orchestrator.md`:69 | sesi real | cek LESSONS.md row |
+| learn.ts | check.md | `.opencode/agents/orchestrator.md`:69 | sesi real | cek Farewell-Knowlage/Lessons.md row |
 | bash_denylist | generate.py | `.opencode/hooks/post-generate.ps1`:29-30 | generate.py hook | `python generate.py default-oc` |
 | step budget scaling | `.opencode/agents/orchestrator.md`:38-48 | `.opencode/agents/orchestrator.md`:48 | dispatch tiap task | bandingkan actual vs budget |
 

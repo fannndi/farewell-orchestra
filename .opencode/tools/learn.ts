@@ -4,7 +4,7 @@ import * as path from "path"
 
 export default tool({
   description:
-    "Log a lesson to LESSONS.md. Call this when orchestrator corrects an agent (non-trivial), when a pattern repeats 3x, or when a systemic fix is applied. Skip for typos/trivial.",
+    "Log a lesson to Farewell-Knowlage/Lessons.md (Obsidian vault). Call this when orchestrator corrects an agent (non-trivial), when a pattern repeats 3x, or when a systemic fix is applied. Skip for typos/trivial.",
   args: {
     trigger: tool.schema.string().describe("What triggered this? e.g. 'executor failed 2x on --diff'"),
     error: tool.schema.string().describe("What error/bug happened?"),
@@ -16,7 +16,7 @@ export default tool({
 
   async execute(args, context) {
     const worktree = context.worktree
-    const lessonsPath = path.join(worktree, "LESSONS.md")
+    const lessonsPath = "C:\\Users\\FANNNDI\\Documents\\Farewell-Knowlage\\Lessons.md"
     const date = new Date().toISOString().slice(0, 10)
 
     // Escape pipe characters for markdown table
@@ -31,7 +31,7 @@ export default tool({
     try {
       content = fs.readFileSync(lessonsPath, "utf-8")
     } catch (e: any) {
-      return `## Learn Tool — ERROR\n\nCannot read LESSONS.md: ${e.message}\n\nPath: ${lessonsPath}`
+      return `## Learn Tool — ERROR\n\nCannot read Farewell-Knowlage/Lessons.md: ${e.message}\n\nPath: ${lessonsPath}`
     }
 
     const lines = content.split("\n")
@@ -77,9 +77,9 @@ export default tool({
     try {
       fs.writeFileSync(lessonsPath, newContent, "utf-8")
     } catch (e: any) {
-      return `## Learn Tool — ERROR\n\nCannot write LESSONS.md: ${e.message}`
+      return `## Learn Tool — ERROR\n\nCannot write Farewell-Knowlage/Lessons.md: ${e.message}`
     }
 
-    return `Logged to LESSONS.md:\n  ${row.trim()}`
+    return `Logged to Farewell-Knowlage/Lessons.md:\n  ${row.trim()}`
   },
 })

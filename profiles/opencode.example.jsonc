@@ -263,7 +263,8 @@
         "lsp": "allow",
         "skill": "allow",
         "external_directory": {
-          "~/projects/**": "allow"
+          "~/projects/**": "allow",
+          "~/Documents/Farewell-Knowlage/**": "allow"
         },
         "task": "deny"
       },

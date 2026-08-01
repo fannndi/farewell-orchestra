@@ -105,7 +105,7 @@ AGENT_TEMPLATES = {
         "steps": 500,
         "prompt": "Orchestrator: decompose -> fan-out parallel via `task` tool -> synthesize -> brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor. WAJIB: load skill tool via `skill` — anti-gigo + orchestrate di awal session/request.",
         "permission": {
-            "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "LESSONS.md": "ask", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
+            "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "Farewell-Knowlage/Lessons.md": "ask", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
             "todowrite": "allow", "lsp": "allow",
             "external_directory": {"~/projects/**": "allow"},
@@ -154,7 +154,7 @@ AGENT_TEMPLATES = {
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",
-            "external_directory": {"~/projects/**": "allow"},
+            "external_directory": {"~/projects/**": "allow", "~/Documents/Farewell-Knowlage/**": "allow"},
             "task": "deny"
         }
     }

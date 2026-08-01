@@ -35,7 +35,7 @@ Boss terima report        ← 3 baris: what, result, residual risk
 
 **Evidence-first, bukan opini.** Researcher wajib return file:line. Reviewer wajib tag [BLOCKING]/[SHOULD]/[NICE] dengan bukti. verify.py enforce format ini — klaim tanpa bukti = FAIL. Gak ada "kayaknya" atau "mungkin".
 
-**Self-critical.** `.opencode/LESSONS.md` nyimpen log tiap kali sistem gagal — termasuk reviewer halusinasi dan orchestrator bypass sub-agent. Project ini audit diri sendiri, persis seperti yang dia minta dari codebase lain.
+**Self-critical.** `Farewell-Knowlage/Lessons.md` (Obsidian vault) nyimpen log tiap kali sistem gagal — termasuk reviewer halusinasi dan orchestrator bypass sub-agent. Project ini audit diri sendiri, persis seperti yang dia minta dari codebase lain.
 
 **Technical enforcement, bukan imbauan.** Permission researcher/reviewer read-only (gak bisa edit/bash). Orchestrator read dibatasi *.md doang, edit cuma sub-project.md — baca source code kena ask gate. Hook pre-generate validasi profiles.json. Bukan cuma instruksi di prompt.
 
@@ -71,9 +71,9 @@ Merge skill = hilang **phase separation** (input gate vs execution vs verificati
 
 **Prinsip di balik semua:** complexity is justified when each component guards a distinct failure mode. Komponen di-prune cuma kalau duplikat NYATA — bukan karena "kelihatan banyak".
 
-**Keputusan tercatat.** Referensi ADR di `.opencode/reference/decisions.md` — ADR-001 (jangan merge skill/hook/tool — tiap komponen guardrail unik), ADR-002 (chunking proactive bertahap — presisi di atas kecepatan).
+**Keputusan tercatat.** Referensi ADR di `Farewell-Knowlage/Decisions.md` (Obsidian vault) — ADR-001 (jangan merge skill/hook/tool — tiap komponen guardrail unik), ADR-002 (chunking proactive bertahap — presisi di atas kecepatan).
 
-**Emergency protocol.** Orchestrator failure → degrade: dispatch researcher (free) untuk debug atau switch profile via `profiles\switch.bat`. Fallback arah PAID → FREE (dilarang FREE → PAID — cost spike). Re-inject context setelah switch (sub-project.md + LESSONS.md).
+**Emergency protocol.** Orchestrator failure → degrade: dispatch researcher (free) untuk debug atau switch profile via `profiles\switch.bat`. Fallback arah PAID → FREE (dilarang FREE → PAID — cost spike). Re-inject context setelah switch (sub-project.md + Farewell-Knowlage/Lessons.md).
 
 ## Task Chunking — presisi lewat unit kecil
 
@@ -121,7 +121,6 @@ Skill auto-load: setiap agent WAJIB load skill tool via `skill` di awal task (or
 │   ├── agents/                — persona 4 agent
 │   ├── command/               — slash commands
 │   ├── hooks/                 — lifecycle enforcement
-│   ├── LESSONS                 — self-audit log (.md)
 │   ├── project-guide           — cross-project usage (.md)
 │   ├── skills/                — 9 agent skills
 │   └── tools/                 — verify, harness_status, learn

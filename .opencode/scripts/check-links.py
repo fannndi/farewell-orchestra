@@ -30,7 +30,7 @@ FORWARD_REFS = {
 }
 
 # Files where reference-like patterns are narrative prose, not file refs
-NARRATIVE_FILES = {"LESSONS.md", "check.md"}
+NARRATIVE_FILES = {"check.md"}
 
 # Patterns
 LINK_RE = re.compile(r'(?<!!)\[([^\]]*)\]\(([^)]+)\)')           # [text](path)
@@ -100,7 +100,7 @@ def main():
                 broken.append(f"  BROKEN {rel}:{line_no} — link '{link_target}' -> NOT FOUND")
 
         # === Check 2: Informal file.md references ===
-        # Skip narrative files (LESSONS.md has historical prose refs)
+        # Skip narrative files (check.md has historical prose refs)
         if filepath.name in NARRATIVE_FILES:
             continue
         # Filter to avoid matching code blocks, URLs, and false positives

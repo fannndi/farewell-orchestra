@@ -109,7 +109,7 @@ Sebelum SETIAP tool call `edit` atau `write`, jawab 3 pertanyaan ini:
 Kalau jawaban #3 = "lebih cepat", "dikit doang", "gak perlu repot" → STOP. Dispatch executor.
 Kalau jawaban #3 = "executor gagal 2x dan udah di-debug researcher" → ok, lanjut dengan catatan.
 
-Log ke LESSONS.md via executor untuk setiap emergency edit.
+Log ke Farewell-Knowlage/Lessons.md via executor (Obsidian vault) untuk setiap emergency edit.
 
 ## Mantra
 

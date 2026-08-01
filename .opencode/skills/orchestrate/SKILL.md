@@ -20,7 +20,7 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 | Lane | Sumber | Output |
 |------|--------|--------|
 | A: Memory | sub-project.md | `[MEMORY] agent terakhir kerja apa` |
-| B: Lessons | `.opencode/LESSONS.md` | `[LESSONS] error pattern: n kejadian` |
+| B: Lessons | Farewell-Knowlage/Lessons.md (Obsidian vault) | `[LESSONS] error pattern: n kejadian` |
 | C: State | git status + grep | `[STATE] file [n] modified, [m] bersih` |
 | D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
 
@@ -122,7 +122,7 @@ task(subagent_type="executor", description="exec: [task]",
 ### Pengecualian Dispatch (hanya ini yang diizinkan orchestrator handle sendiri)
 
 - sub-project.md update (1 baris memory) → orchestrator direct edit (allow by permission).
-- LESSONS.md emergency log → orchestrator dengan konfirmasi (ask gate). Normal-nya via executor.
+- Farewell-Knowlage/Lessons.md emergency log (Obsidian vault) → orchestrator dengan konfirmasi (ask gate). Normal-nya via executor.
 - Typo fix (1 baris, no logic) → TETAP via executor dispatch. BUKAN orchestrator direct edit.
 - Production down (Boss explicit: "fix NOW") → executor langsung, skip fan-out.
 - Semua .md lain (AGENTS.md, README.md, SKILL.md, persona files) → WAJIB executor.
@@ -137,7 +137,7 @@ Kalau `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada cont
 3. **Kalau masih kosong:** eskalasi. Untuk researcher/reviewer → orchestrator handle sendiri (last resort). Untuk executor → dispatch researcher debug.
 4. **JANGAN loop tak terbatas.** Max 2 retry. Setelah itu STOP dan laporkan ke Boss.
 
-Log setiap retry ke `.opencode/LESSONS.md` via `learn` tool.
+Log setiap retry ke Farewell-Knowlage/Lessons.md (Obsidian vault) via `learn` tool.
 
 ## 4. Synthesize
 
@@ -205,7 +205,7 @@ Tiap task lewati ini sebelum report:
 2. **Tool available?** — File di workspace, permission cukup
 3. **Verify done?** — Ada verification command, error di-identifikasi
 4. **Delivery match?** — Output sesuai acceptance criteria, risk dilapor
-5. **Memory updated?** — sub-project.md 1 baris, `.opencode/LESSONS.md` kalau perlu
+5. **Memory updated?** — sub-project.md 1 baris, Farewell-Knowlage/Lessons.md (Obsidian vault) kalau perlu
 
 Gagal 1 → STOP, report ke Boss. Gagal 3x gate sama → eskalasi.
 

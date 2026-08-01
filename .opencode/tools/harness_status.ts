@@ -97,11 +97,11 @@ export default tool({
       }
     }
 
-    // 4. Sensor coverage (from LESSONS.md) — pure Node.js
+    // 4. Sensor coverage (from Farewell-Knowlage/Lessons.md) — pure Node.js
     let sensorOk = 0, sensorMissing = 0, sensorPartial = 0
     if (args.check === "all" || args.check === "sensors") {
       try {
-        const lessonsPath = path.join(worktree, "LESSONS.md")
+        const lessonsPath = "C:\\Users\\FANNNDI\\Documents\\Farewell-Knowlage\\Lessons.md"
         const lessonsContent = fs.readFileSync(lessonsPath, "utf-8")
         const sensorSection = lessonsContent.match(/## Sensor Coverage[\s\S]*?(?=## |$)/)
         if (sensorSection) {
@@ -111,7 +111,7 @@ export default tool({
           sensorPartial = (section.match(/⚠️/g) || []).length
           results.push(`Sensor coverage: ${sensorOk} OK, ${sensorMissing} MISSING, ${sensorPartial} PARTIAL`)
         } else {
-          errors.push("Sensor coverage section not found in LESSONS.md")
+          errors.push("Sensor coverage section not found in Farewell-Knowlage/Lessons.md")
         }
       } catch {
         errors.push("Cannot read sensor coverage")
