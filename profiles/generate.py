@@ -91,7 +91,13 @@ BOILERPLATE = {
         }
     },
     "lsp": True,
-    "formatter": True
+    "formatter": True,
+    "mcp": {
+        "codebase-memory-mcp": {
+            "type": "stdio",
+            "command": "C:/Users/FANNNDI/.local/bin/codebase-memory-mcp.exe"
+        }
+    }
 }
 
 # Agent config template — only `model` changes per profile
@@ -154,7 +160,7 @@ AGENT_TEMPLATES = {
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",
-            "external_directory": {"~/projects/**": "allow", "~/Documents/Farewell-Knowlage/**": "allow"},
+            "external_directory": {"~/projects/**": "allow", "~/Documents/Farewell-Knowlage/**": "allow", "~/Documents/Source Code/**": "allow"},
             "task": "deny"
         }
     }

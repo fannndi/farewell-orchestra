@@ -139,6 +139,12 @@
   },
   "lsp": true,
   "formatter": true,
+  "mcp": {
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "C:/Users/FANNNDI/.local/bin/codebase-memory-mcp.exe"
+    }
+  },
   "model": "9router/ocg/deepseek-v4-pro",
   "small_model": "9router/oc/north-mini-code-free",
   "agent": {
@@ -160,7 +166,7 @@
         },
         "edit": {
           "sub-project.md": "allow",
-          "LESSONS.md": "ask",
+          "Farewell-Knowlage/Lessons.md": "ask",
           "*.md": "deny",
           "*": "deny"
         },
@@ -264,7 +270,8 @@
         "skill": "allow",
         "external_directory": {
           "~/projects/**": "allow",
-          "~/Documents/Farewell-Knowlage/**": "allow"
+          "~/Documents/Farewell-Knowlage/**": "allow",
+          "~/Documents/Source Code/**": "allow"
         },
         "task": "deny"
       },
