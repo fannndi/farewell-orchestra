@@ -1,6 +1,6 @@
 # Loop Discovery — Reference
 
-> Referensi lengkap untuk §12 Loop Discovery Gate, §13 Runtime Loop Guard, dan §14 Legacy Loop Guard.
+> Referensi lengkap untuk §12 Loop Discovery Gate dan §13 Runtime Loop Guard.
 > Digunakan oleh orchestrator skill — dipisahkan agar `../SKILL.md` tetap ringkas.
 
 ## §12. Loop Discovery Gate
