@@ -32,8 +32,7 @@ BOILERPLATE = {
         "list": "allow", "bash": "allow", "task": "allow", "webfetch": "allow",
         "websearch": "allow", "question": "allow", "todowrite": "allow",
         "lsp": "allow", "skill": "allow",
-        "doom_loop": "deny",
-        "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"}
+        "doom_loop": "deny"
     },
     "references": {
         "projects": {"path": "~/projects", "description": "Folder project Boss"},
@@ -96,6 +95,7 @@ BOILERPLATE = {
 }
 
 # Agent config template — only `model` changes per profile
+# external_directory scoped ke ~/projects/** — least privilege. JANGAN tambah ~/Documents/** (private files).
 AGENT_TEMPLATES = {
     "orchestrator": {
         "color": "#7c3aed",
@@ -108,7 +108,7 @@ AGENT_TEMPLATES = {
             "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "LESSONS.md": "ask", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
             "todowrite": "allow", "lsp": "allow",
-            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
+            "external_directory": {"~/projects/**": "allow"},
             "task": {"*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow"}
         }
     },
@@ -124,7 +124,7 @@ AGENT_TEMPLATES = {
             "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
             "edit": "deny", "bash": "deny",
-            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
+            "external_directory": {"~/projects/**": "allow"},
             "task": "deny"
         }
     },
@@ -140,7 +140,7 @@ AGENT_TEMPLATES = {
             "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
             "edit": "deny", "bash": "deny",
-            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
+            "external_directory": {"~/projects/**": "allow"},
             "task": "deny"
         }
     },
@@ -154,7 +154,7 @@ AGENT_TEMPLATES = {
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",
-            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
+            "external_directory": {"~/projects/**": "allow"},
             "task": "deny"
         }
     }

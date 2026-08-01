@@ -24,11 +24,7 @@
     "todowrite": "allow",
     "lsp": "allow",
     "skill": "allow",
-    "doom_loop": "deny",
-    "external_directory": {
-      "~/projects/**": "allow",
-      "~/Documents/**": "allow"
-    }
+    "doom_loop": "deny"
   },
   "references": {
     "projects": {
@@ -177,8 +173,7 @@
         "todowrite": "allow",
         "lsp": "allow",
         "external_directory": {
-          "~/projects/**": "allow",
-          "~/Documents/**": "allow"
+          "~/projects/**": "allow"
         },
         "task": {
           "*": "deny",
@@ -212,8 +207,7 @@
         "edit": "deny",
         "bash": "deny",
         "external_directory": {
-          "~/projects/**": "allow",
-          "~/Documents/**": "allow"
+          "~/projects/**": "allow"
         },
         "task": "deny"
       },
@@ -242,8 +236,7 @@
         "edit": "deny",
         "bash": "deny",
         "external_directory": {
-          "~/projects/**": "allow",
-          "~/Documents/**": "allow"
+          "~/projects/**": "allow"
         },
         "task": "deny"
       },
@@ -270,8 +263,7 @@
         "lsp": "allow",
         "skill": "allow",
         "external_directory": {
-          "~/projects/**": "allow",
-          "~/Documents/**": "allow"
+          "~/projects/**": "allow"
         },
         "task": "deny"
       },

@@ -11,14 +11,15 @@ Tambahin SEKALI di `~/.config/opencode/opencode.json`:
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "external_directory": {
-      "~/projects/**": "allow",
-      "~/Documents/**": "allow"
+      "~/projects/**": "allow"
     }
   }
 }
 ```
 
 Ganti path sesuai folder tempat Boss biasa clone repo.
+
+> **Catatan:** Hanya `~/projects/**` yang di-allow — least privilege. Jangan tambah Documents (private files).
 
 ## Cara Pakai
 

@@ -10,7 +10,7 @@
 
 ## Active Decisions
 - edit orchestrator: sub-project.md:allow, LESSONS.md:ask, *.md:deny
-- external_directory: ~/projects/**:allow, ~/Documents/**:allow
+- external_directory: ~/projects/**:allow (Documents dihapus — least privilege)
 - task >3 questions: chunk into 2-4 small dispatches
 
 ## Quick Context
