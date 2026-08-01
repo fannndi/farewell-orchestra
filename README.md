@@ -43,6 +43,14 @@ Boss terima report        ← 3 baris: what, result, residual risk
 
 **KISS dari akar.** Root cuma 5 file. YAGNI di-enforce oleh minimal-impl skill. Anti-gigo tolak input sampah di gerbang. "Hapus lebih baik dari tambah" — prinsip yang dipake buat diri sendiri.
 
+## Task Chunking — presisi lewat unit kecil
+
+Free model (researcher/reviewer) punya kapasitas reasoning terbatas. Satu prompt raksasa = timeout atau output kosong. Orchestrator memecah tugas besar jadi 2-4 dispatch kecil yang fokus pada satu pertanyaan, satu file, satu output.
+
+Hasilnya: researcher gak overwhelmed, reviewer gak nge-blank. Tiap chunk dikerjain dengan fokus penuh — output lebih presisi, evidence lebih tajam.
+
+Kalau orchestrator kasih tugas terlalu besar, researcher/reviewer bisa push back: `[CHUNK_REQUIRED]` — minta dipecah. Bukan cuma orchestrator yang atur tempo, free agent juga punya suara.
+
 ## Quick Start
 
 ```bash
