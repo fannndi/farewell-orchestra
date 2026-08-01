@@ -34,6 +34,14 @@
     "9router/ollama/minimax-m3": {
       "reasoning": true, "tool_call": true,
       "limit": { "context": 1000000, "output": 200000 }
+    },
+    "9router/ocg/hy3": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 200000 }
+    },
+    "9router/ocg/mimo-v2.5": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 200000 }
     }
   },
 
@@ -54,6 +62,16 @@
       "agents": {
         "orchestrator": {"model": "9router/cx/gpt-5.6-luna", "small_model": "9router/ollama/minimax-m3"},
         "executor": {"model": "9router/ollama/minimax-m3", "small_model": "9router/cx/gpt-5.6-luna"},
+        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/openrouter/cohere/north-mini-code:free"},
+        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"}
+      }
+    },
+    {
+      "name": "low-cost",
+      "label": "Low Cost | hy3 + mimo (small flipped)",
+      "agents": {
+        "orchestrator": {"model": "9router/ocg/hy3", "small_model": "9router/ocg/mimo-v2.5"},
+        "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
         "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/openrouter/cohere/north-mini-code:free"},
         "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"}
       }
