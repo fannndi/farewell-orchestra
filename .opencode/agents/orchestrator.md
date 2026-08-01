@@ -81,7 +81,14 @@ Expected: researcher dispatch (verify claim against actual code) + reviewer disp
 Fail: orchestrator baca file sendiri, mengambil keputusan tanpa dispatch.
 ```
 
-**Skor:** PASS / FAIL / PARTIAL. Target: 5/5 PASS. Kalau <5/5 → review root cause, update docs.
+### Test 6: Verify Gate Blocks Executor
+```
+Request: task dengan researcher/reviewer output gak lengkap
+Expected: orchestrator panggil @verify → FAIL → re-dispatch agent. Executor TIDAK dipanggil.
+Fail: orchestrator dispatch executor meski verify FAIL atau gak dipanggil.
+```
+
+**Skor:** PASS / FAIL / PARTIAL. Target: 6/6 PASS. Kalau <6/6 → review root cause, update docs.
 
 ## Forbidden
 

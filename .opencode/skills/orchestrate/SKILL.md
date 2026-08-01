@@ -85,6 +85,17 @@ task(subagent_type="executor", description="exec: [task]",
 - Production down (Boss explicit: "fix NOW") → executor langsung.
 - Sisanya → WAJIB fan-out researcher+reviewer. External audit findings TIDAK PERNAH emergency.
 
+### Sub-Agent Failure Recovery
+
+Kalau `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada content):
+
+1. **Resume dulu:** dispatch ulang dengan `task_id` yg sama — "Lanjutkan tugas sebelumnya. Output kamu kosong. Coba lagi."
+2. **Kalau masih kosong:** dispatch FRESH (tanpa task_id) dengan prompt lebih detail + ground truth struktur project.
+3. **Kalau masih kosong:** eskalasi. Untuk researcher/reviewer → orchestrator handle sendiri (last resort). Untuk executor → dispatch researcher debug.
+4. **JANGAN loop tak terbatas.** Max 2 retry. Setelah itu STOP dan laporkan ke Boss.
+
+Log setiap retry ke `.opencode/LESSONS.md` via `learn` tool.
+
 ## 4. Synthesize
 
 Gabung hasil researcher + reviewer → max 3 bullet. Konflik? reviewer (security) > researcher (facts). Tapi researcher punya bukti file:line sanggah reviewer → catat "dispute" ke Boss.
@@ -103,7 +114,16 @@ VERIFY: [command — cara test bahwa task selesai]
 
 Grep import chain dari file yg disentuh. Core files (auth/security/db/deploy/middleware) langsung tanya Boss. Selainnya silent lanjut.
 
-## 7. Verify Gate
+## 7. Verify Gate — WAJIB Sebelum Executor
+
+Sebelum dispatch executor, orchestrator WAJIB:
+1. Panggil `@verify stage:"research"` pada output researcher
+2. Panggil `@verify stage:"review"` pada output reviewer
+3. Kalau KEDUANYA PASS → boleh dispatch executor
+4. Kalau salah satu FAIL → REJECT. Re-dispatch agent yg fail dengan detail error.
+5. Kalau PARTIAL → orchestrator putuskan (boleh lanjut dengan caution)
+
+Violation: dispatch executor tanpa verify = orchestrator MELANGGAR aturan sendiri.
 
 - **Research & Review:** Panggil `@verify stage:"research/review" claims:"..." files:["..."]`
 - **Implement:** Panggil `@verify stage:"implement" claims:"..." files:["..."]`
@@ -169,3 +189,12 @@ Detail lengkap: `references/loop-discovery.md`
 - Background tasks = FORBIDDEN. Semua foreground.
 - Verify-first: jangan report "done" sebelum verify.
 - **Trust > Control.** Lo hired sub-agent karena mereka capable. Percaya. Dispatch. Verify. Move on.
+
+### Cost Logging
+
+Setelah task selesai, orchestrator OPSIONAL catat ke `%TEMP%\opencode\cost-log.json`:
+- Model yg dipakai tiap agent
+- Steps used vs budget  
+- Task type + brief description
+- Format JSONL (append 1 line per session)
+- JANGAN simpan di project root — PAKAI TEMP DIR

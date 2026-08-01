@@ -59,13 +59,18 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         "detail": "Evidence markers found" if has_evidence else "No evidence/source markers detected"
     })
 
-    # Check 3.5: Evidence tags [P/W/E/O] from forensic skill
-    evidence_tag_pattern = r'\[P\]|\[W\]|\[E\]|\[O\]'
-    has_evidence_tags = bool(re.search(evidence_tag_pattern, claims))
+    # Check 3.5: Evidence/depth tags — [P/W/E/O] from forensic, [D1-D4] from reviewer
+    maturity_tag_pattern = r'\[P\]|\[W\]|\[E\]|\[O\]'
+    depth_tag_pattern = r'\[D1\]|\[D2\]|\[D3\]|\[D4\]'
+    all_tags_pattern = r'\[P\]|\[W\]|\[E\]|\[O\]|\[D1\]|\[D2\]|\[D3\]|\[D4\]'
+    has_maturity_tags = bool(re.search(maturity_tag_pattern, claims))
+    has_depth_tags = bool(re.search(depth_tag_pattern, claims))
+    has_any_tags = bool(re.search(all_tags_pattern, claims))
     checks.append({
-        "name": "evidence tags [P/W/E/O]",
-        "status": "FAIL" if not has_evidence_tags else "PASS",
-        "detail": "Evidence tags found" if has_evidence_tags else "No evidence tags [P/W/E/O] in findings — research output may be untethered"
+        "name": "evidence tags [P/W/E/O] + depth [D1-D4]",
+        "status": "FAIL" if not has_maturity_tags else "PASS",
+        "detail": f"Evidence tags found: maturity={has_maturity_tags}, depth={has_depth_tags}" 
+                  if has_any_tags else "No evidence tags [P/W/E/O] or depth tags [D1-D4] in findings — output may be untethered"
     })
 
     # Check 4: Empty output

@@ -38,6 +38,8 @@ profiles/opencode.temp.jsonc
 /source
 
 # Cross-project artifacts
+TEMP_REPORT.txt
+TEMP_*.txt
 dependencies.txt
 failure-hypotheses.txt
 features.txt

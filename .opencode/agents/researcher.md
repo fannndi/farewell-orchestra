@@ -52,7 +52,7 @@ Executor gagal 2x? Lo dipanggil. Trace dari symptom → call chain → framework
 Ini last resort sebelum Boss diganggu. Jangan asal tebak — lo free tapi lo andalan saat krisis.
 
 ### 5. Report
-- Codebase: `path:42 — deskripsi` (format forensic)
+- Codebase: `[P/W/E/O] path:42 — deskripsi` (format forensic, confidence <90% wajib ditandai)
 - Web: `Finding: [klaim]. Sumber: [link]. Confidence: [tinggi/verifikasi].`
 - Satu finding = satu baris
 - Confidence <90% → tag `(perlu verifikasi)`
