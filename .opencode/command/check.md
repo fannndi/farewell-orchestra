@@ -34,6 +34,7 @@ Run on every new session. Validasi struktur workspace + profile.
 - [ ] Step budget — BACA dari `opencode.jsonc.agent.<name>.steps` (jangan hardcode)
   - Minimum sanity floor = 20 (atau 80% dari declared, mana yang lebih tinggi)
 - [ ] Cek `instructions` — cuma AGENTS.md (gak load *.md semua)
+- [ ] Usage report footer — pastikan report akhir menyertakan blok Usage Report (total + delta per role); safety net: `%TEMP%\opencode\last-usage-report.{json,md}` ter-capture otomatis di sessionEnd
 - [ ] Skill-load prompts — 3 sub-agent (researcher/reviewer/executor) harus ada instruksi skill-load: grep "WAJIB: di awal task" di opencode.jsonc (atau generate.py) → minimal 3 match. Kalau kurang → warning
 - [ ] Cek `compaction.prune_rules` — ada kalau `prune: true`
 
