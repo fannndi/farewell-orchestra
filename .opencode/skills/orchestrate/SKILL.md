@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Use after anti-gigo passes — decompose request, fan-out parallel, synthesize results, delegate to executor
+description: Use after anti-gigo passes — decompose request, fan-out parallel, synthesize results, delegate to executor.
 ---
 
 # Orchestrate

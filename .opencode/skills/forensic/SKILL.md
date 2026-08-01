@@ -1,7 +1,9 @@
 ---
 name: forensic
-description: Use when investigating codebase, debugging deep errors, or auditing dependencies — evidence-first, file:line mandatory
+description: Use when investigating codebase or debugging deep errors — evidence-first, file:line mandatory.
 ---
+
+> Cost Model: free sub-agent — read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
 
 # Forensic Investigation
 

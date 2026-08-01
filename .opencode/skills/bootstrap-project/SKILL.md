@@ -1,7 +1,9 @@
 ---
 name: bootstrap-project
-description: Generate 10 interconnected project docs (PRD, Architecture, Design, Schema, Rules, API_Contract, Tasks, Tests, Context, debug) from a project idea, plus sub-project.md anchor. Use when Boss starts a new sub-project, says "bikin dokumentasi project baru", "scaffold docs", or runs /new-project.
+description: Use when Boss starts a new sub-project or says 'bikin dokumentasi project baru' — generate 10 interconnected project docs plus sub-project.md anchor.
 ---
+
+> Cost Model: free sub-agent — read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
 
 # Bootstrap Project Docs
 
@@ -31,7 +33,7 @@ Dipakai orchestrator SEBELUM kode ditulis. Prasyarat: udah lolos `anti-gigo` (Go
 1. Info project kurang → tanya Boss (nama, satu-liner, tech stack, target user). Jangan lanjut kalau ambigu.
 2. Draft ke-10 file SEKALIGUS sebagai satu synthesis pass — bukan satu-satu berurutan — biar cross-reference (Schema↔API_Contract, PRD↔Tasks) konsisten sejak awal, bukan ditambal belakangan.
 3. Delegasikan ke **executor** dalam SATU brief: isi lengkap ke-10 file, target path `docs/` di root project aktif (cwd sekarang — BUKAN folder farewell-orchestra), instruksi "tulis persis, jangan ubah struktur".
-4. Executor beres → generate `sub-project.md` dari `templates/sub-project.md` (cari dari root repo tempat skill ini dipanggil, relative path dari cwd), isi placeholder, tandai semua row docs jadi [PASS].
+4. Executor beres → generate `sub-project.md` dari `templates/sub-project.md`. Template source: `{orchestra_root}/templates/sub-project.md` (root repo farewell-orchestra). Orchestrator resolve path absolut SEBELUM dispatch executor. Isi placeholder, tandai semua row docs jadi [PASS].
 5. Report ke Boss: "10/10 docs dibuat di {project}/docs/. sub-project.md siap." — 3 baris max.
 
 ## Update Mode (project existing)

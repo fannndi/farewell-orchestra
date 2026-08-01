@@ -1,7 +1,9 @@
 ---
 name: anti-gigo
-description: Use when receiving user request — validate input quality, enforce brief framework, detect trash before dispatch
+description: Use when receiving a user request — validate input quality, enforce brief framework, detect trash before dispatch.
 ---
+
+> Cost Model: free sub-agent — read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
 
 # Anti-GIGO: Garbage In → Garbage Out
 

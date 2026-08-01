@@ -1,7 +1,9 @@
 ---
 name: verification-ground-truth
-description: Use after implementation, before writing report — verify claims against actual tool output, never assume success. Complements `minimal-impl`.
+description: Use after implementation, before writing report — verify claims against actual tool output, never assume success. Complements minimal-impl.
 ---
+
+> Cost Model: executor — write access, verify before report. Orchestrator never writes code.
 
 # Verification & Ground-Truth
 

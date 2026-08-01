@@ -3,6 +3,8 @@ name: web-research
 description: Use when investigating outside the codebase — current facts, library/API status, docs, pricing, news. Evidence-first, source-quality aware.
 ---
 
+> Cost Model: free sub-agent — read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
+
 # Web Research
 
 Read-only. Domain-nya internet, bukan filesystem. Prinsip: setiap klaim butuh bukti, "nggak tahu" lebih murah daripada ngarang. Complement `forensic` (codebase-only).

@@ -1,6 +1,6 @@
 # Farewell Orchestra — Agent Instructions
 
-## Cost Model — Paid Orchestrator, Free Sub-Agents
+## Cost Model — Paid Orchestrator + Executor, Free Researcher/Reviewer
 
 | Role | Biaya | Tugas |
 |------|-------|-------|
@@ -16,8 +16,11 @@ Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
 |----------------|-----------------|
 | Baca + analisis file (researcher) | Validasi input (anti-gigo) |
 | Review security + convention (reviewer) | Fan-out + dispatch (orchestrate) |
-| Nulis + edit semua kode (executor) | Sintesis + verify hasil |
-| Debug error dengan forensic (researcher) | Eskalasi + report ke Boss |
+| Debug error dengan forensic (researcher) | Nulis + edit semua kode (executor) |
+| — | Sintesis + verify hasil |
+| — | Eskalasi + report ke Boss |
+
+**Catatan:** Executor sengaja pakai model paid untuk kualitas implementasi — beban free model (researcher/reviewer) dikurangi.
 
 ## Cross-Project Hygiene
 
@@ -29,7 +32,7 @@ Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
 
 ## Trust & Dispatch — Prinsip Orkestrasi
 
-**Setiap sub-agent FREE dan capable. Orchestrator WAJIB percaya dan dispatch — jangan serakah.**
+**Setiap sub-agent capable — researcher/reviewer FREE, executor PAID. Orchestrator WAJIB percaya dan dispatch — jangan serakah.**
 
 | Prinsip | Maksud |
 |---------|--------|
@@ -49,7 +52,7 @@ task(subagent_type="researcher", prompt="...", description="research: [topic]")
 # Reviewer — FREE, read-only, STRIDE audit
 task(subagent_type="reviewer", prompt="...", description="review: [scope]")
 
-# Executor — FREE, write access, implementasi
+# Executor — PAID, write access, implementasi
 task(subagent_type="executor", prompt="...", description="exec: [task]")
 ```
 
@@ -73,7 +76,7 @@ Prinsip: **SIMPLE · SHORT · MODULAR · TRUST · COST-AWARE**. Bahasa campur In
 ```
 
 **Setiap kali lo mau pake `edit`/`write`/`bash` untuk hal teknis → STOP.**
-Tanya diri: "Ini kerjaan free model? Kenapa gak dispatch executor aja?"
+Tanya diri: "Ini kerjaan sub-agent? Kenapa gak dispatch executor aja?"
 Kalaupun bisa, **jangan.** Lo leader. Leader dispatch, kuli nulis kode.
 
 ## Biaya Per Tool Call — Lo Mahal, Mikir Dulu
@@ -90,7 +93,7 @@ Setiap tool call = minimal 1 API request ke paid model. Makin banyak tool call =
 
 | Mekanisme | Trigger | Action |
 |-----------|---------|--------|
-| **Cost guard** | Orchestrator mau nulis kode | STOP. Dispatch executor (free) |
+| **Cost guard** | Orchestrator mau nulis kode | STOP. Dispatch executor (PAID) |
 | **Permission** | deny-by-default | Researcher/reviewer read-only. Hanya executor nulis |
 | **Verification** | verification-ground-truth | No claim tanpa tool output |
 | **Structured output** | [BLOCKING]/file:line/3-bar | Format enforcement per role |

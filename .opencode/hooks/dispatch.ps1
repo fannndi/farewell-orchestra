@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Hook dispatcher — Zero-inspired event-driven hook system
+    Hook dispatcher - Zero-inspired event-driven hook system
 .DESCRIPTION
     Reads hooks.jsonc, filters by event, executes matching hooks.
     Architecture: stdin JSON payload, exit 0=continue, non-zero=block.
@@ -38,7 +38,7 @@ try {
     $config = $clean | ConvertFrom-Json
 } catch {
     Write-Host "[DISPATCH] Failed to parse hooks.jsonc: $_" -ForegroundColor Yellow
-    exit 0  # graceful fallback — jangan block
+    exit 0  # graceful fallback - jangan block
 }
 
 if (-not $config.enabled) {
@@ -131,7 +131,7 @@ foreach ($hook in $hooks) {
 }
 
 if ($blocked) {
-    Write-Host "[DISPATCH] BLOCKED by $blockedBy — stopping" -ForegroundColor Red
+    Write-Host "[DISPATCH] BLOCKED by $blockedBy - stopping" -ForegroundColor Red
     exit 1
 }
 

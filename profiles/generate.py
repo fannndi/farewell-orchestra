@@ -33,7 +33,7 @@ BOILERPLATE = {
         "websearch": "allow", "question": "allow", "todowrite": "allow",
         "lsp": "allow", "skill": "allow",
         "doom_loop": "deny",
-        "external_directory": {"*": "allow"}
+        "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"}
     },
     "references": {
         "projects": {"path": "~/projects", "description": "Folder project Boss"},
@@ -123,7 +123,8 @@ AGENT_TEMPLATES = {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
-            "external_directory": {"*": "allow"},
+            "edit": "deny", "bash": "deny",
+            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
             "task": "deny"
         }
     },
@@ -138,7 +139,8 @@ AGENT_TEMPLATES = {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
             "lsp": "allow", "skill": "allow",
-            "external_directory": {"*": "allow"},
+            "edit": "deny", "bash": "deny",
+            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
             "task": "deny"
         }
     },
@@ -152,7 +154,7 @@ AGENT_TEMPLATES = {
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",
-            "external_directory": {"*": "allow"},
+            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
             "task": "deny"
         }
     }

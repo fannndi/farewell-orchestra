@@ -40,7 +40,7 @@ try {
         }
     }
 
-    Write-Host "[PRE-GENERATE] profiles.json valid — $($parsed.profiles.Count) profiles, $(($parsed.models.PSObject.Properties).Count) models" -ForegroundColor Green
+    Write-Host "[PRE-GENERATE] profiles.json valid - $($parsed.profiles.Count) profiles, $(($parsed.models.PSObject.Properties).Count) models" -ForegroundColor Green
 } catch {
     Write-Host "[PRE-GENERATE] FAIL: Invalid JSON: $_" -ForegroundColor Red
     exit 1
@@ -58,7 +58,7 @@ if (Test-Path -LiteralPath $GeneratePy) {
         Write-Host "[PRE-GENERATE] generate.py --validate OK" -ForegroundColor Green
     } catch {
         Write-Host "[PRE-GENERATE] WARN: generate.py --validate error: $_" -ForegroundColor Yellow
-        # Non-blocking — python may not be available
+        # Non-blocking - python may not be available
     }
 }
 

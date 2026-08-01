@@ -1,12 +1,12 @@
 # Farewell Orchestra
 
-Satu orchestrator berpikir. Tiga agent gratis mengeksekusi. Empat model AI dalam satu tim.
+Satu orchestrator berpikir. Researcher + reviewer gratis, executor paid. Empat model AI dalam satu tim.
 
 ## Kenapa project ini ada
 
-Model AI mahal bagus buat mikir, bukan buat ngetik kode yang model gratisan juga bisa. Tapi kebanyakan tool AI memperlakukan semua task sama — satu model ngerjain semuanya: riset, review, coding, debugging. Boros. Gak scalable.
+Model AI mahal bagus buat mikir. Tapi kebanyakan tool AI memperlakukan semua task sama — satu model ngerjain semuanya: riset, review, coding, debugging. Boros. Gak scalable.
 
-Farewell Orchestra membalik logika itu. Orchestrator (model mahal) cuma berpikir — decompose, arahkan, verifikasi. Researcher, reviewer, dan executor (model gratis) yang baca file, audit keamanan, dan nulis kode. Hasilnya: output lebih baik, biaya lebih rendah, bug lebih sedikit.
+Farewell Orchestra membalik logika itu. Orchestrator (model mahal) cuma berpikir — decompose, arahkan, verifikasi. Researcher dan reviewer (model gratis) yang baca file dan audit keamanan; executor (model paid) yang nulis kode. Hasilnya: output lebih baik, biaya lebih rendah, bug lebih sedikit.
 
 ## Cara kerja
 
@@ -31,13 +31,13 @@ Boss terima report        ← 3 baris: what, result, residual risk
 
 ## Kenapa ini bekerja
 
-**Cost-aware by design.** Orchestrator PAID, sub-agent FREE. Setiap kali orchestrator pegang `edit` atau `write` = uang kebakar. Arsitektur ini memaksa orchestrator dispatch, bukan ngerjain sendiri.
+**Cost-aware by design.** Orchestrator PAID, researcher/reviewer FREE, executor PAID. Setiap kali orchestrator pegang `edit` atau `write` = uang kebakar. Arsitektur ini memaksa orchestrator dispatch, bukan ngerjain sendiri.
 
 **Evidence-first, bukan opini.** Researcher wajib return file:line. Reviewer wajib tag [BLOCKING]/[SHOULD]/[NICE] dengan bukti. verify.py enforce format ini — klaim tanpa bukti = FAIL. Gak ada "kayaknya" atau "mungkin".
 
 **Self-critical.** `.opencode/LESSONS.md` nyimpen log tiap kali sistem gagal — termasuk reviewer halusinasi dan orchestrator bypass sub-agent. Project ini audit diri sendiri, persis seperti yang dia minta dari codebase lain.
 
-**Technical enforcement, bukan imbauan.** Permission researcher/reviewer read-only (gak bisa edit/bash). Orchestrator read dibatasi *.md doang — baca source code kena ask gate. Hook pre-generate validasi profiles.json. Bukan cuma instruksi di prompt.
+**Technical enforcement, bukan imbauan.** Permission researcher/reviewer read-only (gak bisa edit/bash). Orchestrator read dibatasi *.md doang, edit cuma sub-project.md — baca source code kena ask gate. Hook pre-generate validasi profiles.json. Bukan cuma instruksi di prompt.
 
 **Satu otak, banyak project.** Buka opencode di repo ini, arahkan ke project target — orchestra kerja di sana. sub-project.md jadi anchor buat context antar sesi. Gak perlu setup ulang tiap project.
 

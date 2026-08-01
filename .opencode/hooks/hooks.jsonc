@@ -24,6 +24,13 @@
       "command": "python",
       "args": [".opencode/scripts/check-links.py"],
       "enabled": true
+    },
+    {
+      "id": "check-links-session-end",
+      "event": "sessionEnd",
+      "command": "python",
+      "args": [".opencode/scripts/check-links.py"],
+      "enabled": true
     }
   ]
 }

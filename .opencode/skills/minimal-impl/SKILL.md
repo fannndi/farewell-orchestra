@@ -1,6 +1,6 @@
 ---
 name: minimal-impl
-description: Use before writing code — YAGNI ladder, verify-first, cleanup, error healing
+description: Use before writing code — YAGNI ladder, verify-first, cleanup, error healing.
 ---
 
 # Minimal Implementation

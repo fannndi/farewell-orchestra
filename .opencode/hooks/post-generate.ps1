@@ -1,6 +1,6 @@
-# post-generate.ps1 — Hook: validasi opencode.jsonc setelah generate
+# post-generate.ps1 - Hook: validasi opencode.jsonc setelah generate
 # Dipanggil otomatis dari generate.py setelah copy ke root
-# Semua threshold BACA dari opencode.jsonc — no hardcode
+# Semua threshold BACA dari opencode.jsonc - no hardcode
 param(
     [string]$ConfigPath = (Join-Path (Split-Path $PSScriptRoot -Parent) "opencode.jsonc")
 )
@@ -24,7 +24,7 @@ try {
 $errors = @()
 $warnings = @()
 
-# Validasi tool scoping (rules tetap hardcoded — ini policy, bukan config)
+# Validasi tool scoping (rules tetap hardcoded - ini policy, bukan config)
 $agentRules = @{
     "researcher" = @{ "forbidden" = @("edit", "bash"); "required" = @("webfetch", "websearch") }
     "reviewer"   = @{ "forbidden" = @("edit", "bash"); "required" = @("webfetch", "websearch") }
@@ -58,7 +58,7 @@ foreach ($agentName in $agentRules.Keys) {
     }
 }
 
-# Validasi step budgets — BACA dari opencode.jsonc, threshold = 80% dari declared
+# Validasi step budgets - BACA dari opencode.jsonc, threshold = 80% dari declared
 # Rationale: declared budget adalah max. Min recommended = 80% of declared biar gak terlalu kecil.
 foreach ($name in @("orchestrator", "researcher", "reviewer", "executor")) {
     $steps = $config.agent.$name.steps
