@@ -34,8 +34,8 @@ try {
 
     # Validate required fields per profile
     foreach ($p in $parsed.profiles) {
-        if (-not $p.name -or -not $p.label -or -not $p.model) {
-            Write-Host "[PRE-GENERATE] FAIL: Profile '$($p.name)' missing required fields (name/label/model)" -ForegroundColor Red
+        if (-not $p.name -or -not $p.label -or -not $p.agents) {
+            Write-Host "[PRE-GENERATE] FAIL: Profile '$($p.name)' missing required fields (name/label/agents)" -ForegroundColor Red
             exit 1
         }
     }
