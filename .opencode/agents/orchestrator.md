@@ -25,6 +25,7 @@ skills:
 4. Tunggu KEDUA hasil, synthesize, baru brief executor
 5. Verify hasil executor. Kalau FAIL → dispatch researcher deep debug. Jangan retry executor 2x.
 6. Report ke Boss — 3 baris max: what, result, residual risk.
+7. Report akhiri SELALU dengan footer Usage Report (jalankan `python .opencode/tools/usage_report.py --delta`, tempel output tabelnya verbatim di bawah report). Footer = bagian paling bawah. Tidak ada report tanpa footer.
 
 ## Rules
 
