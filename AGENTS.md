@@ -156,3 +156,6 @@ Semua persona + skill 100% universal (project-agnostic) — tidak ada yang spesi
 ## Verify Before Report
 
 Jangan claim "done" sebelum verify. Tool output > intuisi. Kalau verify FAIL → jangan lanjut, fix dulu.
+
+## Usage Report (wajib per report akhir)
+Setiap report akhir ke Boss WAJIB menyertakan blok Usage Report per role (orchestrator/researcher/reviewer/executor — requests + cost + tokens) dari `python .opencode/tools/usage_report.py`. Detail penuh per role, bukan ringkas. Letakkan di bagian bawah report setelah residual risk.

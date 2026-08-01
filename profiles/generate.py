@@ -94,8 +94,9 @@ BOILERPLATE = {
     "formatter": True,
     "mcp": {
         "codebase-memory-mcp": {
-            "type": "stdio",
-            "command": "C:/Users/FANNNDI/.local/bin/codebase-memory-mcp.exe"
+            "type": "local",
+            "command": "C:/Users/FANNNDI/.local/bin/codebase-memory-mcp.exe",
+            "enabled": True
         }
     }
 }
