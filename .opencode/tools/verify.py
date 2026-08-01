@@ -4,7 +4,7 @@ Called by verify.ts custom tool. Check agent output quality before next step.
 Returns JSON: { pass: bool, checks: [{name, status, detail}], summary: str }
 """
 
-import json, os, re, sys
+import json, os, re, subprocess, sys
 from pathlib import Path
 
 WORKTREE = os.environ.get("WORKTREE", os.getcwd())
@@ -18,14 +18,29 @@ UNCERTAINTY_MARKERS = [
 ]
 
 
+def _safe_worktree_path(fpath: str):
+    """Resolve fpath inside WORKTREE; return Path if contained, else None (blocks traversal)."""
+    base = Path(WORKTREE).resolve()
+    resolved = (base / fpath).resolve()
+    if hasattr(Path, "is_relative_to"):
+        inside = resolved.is_relative_to(base)
+    else:
+        inside = str(resolved).startswith(str(base))
+    return resolved if inside else None
+
+
 def check_stage_research(claims: str, files: list[str]) -> list[dict]:
     checks = []
 
     # Check 1: Parse file:line references
     refs = re.findall(r'([\w./\\-]+\.\w+):(\d+)', claims)
     bad_refs = []
+    skipped_refs = []
     for fpath, line in refs:
-        full = Path(WORKTREE) / fpath
+        full = _safe_worktree_path(fpath)
+        if full is None:
+            skipped_refs.append(f"{fpath} (SKIP: path di luar worktree)")
+            continue
         if not full.exists():
             bad_refs.append(f"{fpath} (file not found)")
         else:
@@ -36,10 +51,15 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
             except Exception:
                 bad_refs.append(f"{fpath} (cannot read)")
 
+    detail = f"Verified {len(refs)} references"
+    if skipped_refs:
+        detail += f"; SKIP: {skipped_refs}"
+    if bad_refs:
+        detail += f"; BAD: {bad_refs}"
     checks.append({
         "name": "file:line references",
         "status": "FAIL" if bad_refs else "PASS",
-        "detail": f"Verified {len(refs)} references" + (f"; BAD: {bad_refs}" if bad_refs else "")
+        "detail": detail
     })
 
     # Check 2: Uncertainty markers
@@ -188,12 +208,26 @@ def check_stage_implement(claims: str, files: list[str]) -> list[dict]:
 
     # Check 4: Git diff (has changes)
     try:
-        diff = os.popen('git diff --stat').read().strip()
+        proc = subprocess.run(
+            ["git", "diff", "--stat"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+            cwd=WORKTREE,
+        )
+        proc.check_returncode()
+        diff = proc.stdout.strip()
         has_changes = bool(diff)
         checks.append({
             "name": "git changes",
             "status": "PASS" if has_changes else "WARN",
             "detail": diff.split("\n")[0] if has_changes else "No git changes detected"
+        })
+    except subprocess.TimeoutExpired:
+        checks.append({
+            "name": "git changes",
+            "status": "WARN",
+            "detail": "(timeout)"
         })
     except Exception:
         checks.append({
@@ -213,7 +247,23 @@ def check_stage_implement(claims: str, files: list[str]) -> list[dict]:
 
 
 def main():
-    args = json.loads(sys.stdin.read()) if not sys.stdin.isatty() else {}
+    if not sys.stdin.isatty():
+        data = sys.stdin.read(2_000_000)
+        if len(data) == 2_000_000 and sys.stdin.read(1):
+            error = {
+                "pass": False,
+                "summary": "PAYLOAD_TOO_LARGE (max 2MB)",
+                "total": 1,
+                "passed": 0,
+                "warnings": 0,
+                "failed": 1,
+                "checks": [{"name": "payload size", "status": "FAIL", "detail": "PAYLOAD_TOO_LARGE (max 2MB)"}],
+            }
+            sys.stdout.write(json.dumps(error, indent=2))
+            sys.exit(1)
+        args = json.loads(data)
+    else:
+        args = {}
     stage = args.get("stage", "research")
     claims = args.get("claims", "")
     files = args.get("files", [])

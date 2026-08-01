@@ -103,7 +103,7 @@ AGENT_TEMPLATES = {
         "mode": "primary",
         "request": {"body": {"temperature": 0.2}},
         "steps": 500,
-        "prompt": "Orchestrator: decompose -> fan-out parallel via `task` tool -> synthesize -> brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor.",
+        "prompt": "Orchestrator: decompose -> fan-out parallel via `task` tool -> synthesize -> brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor. WAJIB: load skill tool via `skill` — anti-gigo + orchestrate di awal session/request.",
         "permission": {
             "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "LESSONS.md": "ask", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
@@ -118,7 +118,7 @@ AGENT_TEMPLATES = {
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
         "steps": 400,
-        "prompt": "Read-only investigator. Return evidence file:line. Be thorough — orchestrator trusts you. Use forensic skill for code, web-research for external.",
+        "prompt": "Read-only investigator. Return evidence file:line. Be thorough — orchestrator trusts you. Use forensic skill for code, web-research for external. WAJIB: di awal task, load skill tool via `skill` — forensic untuk codebase, web-research untuk external. Jangan mulai kerja sebelum skill di-load.",
         "permission": {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
@@ -134,7 +134,7 @@ AGENT_TEMPLATES = {
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
         "steps": 400,
-        "prompt": "Read-only auditor. STRIDE analysis. Return [BLOCKING]/[SHOULD]/[NICE] with file:line. Be harsh — orchestrator needs your skepticism.",
+        "prompt": "Read-only auditor. STRIDE analysis. Return [BLOCKING]/[SHOULD]/[NICE] with file:line. Be harsh — orchestrator needs your skepticism. WAJIB: di awal task, load skill tool via `skill` — stride-audit. Jangan mulai audit sebelum skill di-load.",
         "permission": {
             "read": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "webfetch": "allow", "websearch": "allow",
@@ -150,7 +150,7 @@ AGENT_TEMPLATES = {
         "mode": "subagent",
         "request": {"body": {"temperature": 0.2}},
         "steps": 500,
-        "prompt": "Implement precisely per brief. YAGNI. One change per edit. Verify before report. You have edit access — use it. Trusted to execute autonomously.",
+        "prompt": "Implement precisely per brief. YAGNI. One change per edit. Verify before report. You have edit access — use it. Trusted to execute autonomously. WAJIB: di awal task, load skill tool via `skill` — minimal-impl sebelum nulis kode, verification-ground-truth sebelum report.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",

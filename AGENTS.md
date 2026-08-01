@@ -100,6 +100,14 @@ Setiap tool call = minimal 1 API request ke paid model. Makin banyak tool call =
 | **Grill gate** | Input ambiguous | Interview Boss sampai clear. Jangan dispatch |
 | **Verify gate** | Orchestrator mau dispatch executor | WAJIB @verify stage:research DAN stage:review dulu. Belum verify = blokir executor. |
 
+## Emergency Protocol — Orchestrator Failure
+
+- Jika orchestrator (model paid) gagal/lemah/loop: STOP. Jangan paksa.
+- Degrade: dispatch researcher (free) untuk debug, atau manual switch profile: `profiles\switch.bat`
+- Fallback arah: PAID → FREE (degradasi, aman). DILARANG FREE → PAID (cost spike).
+- Setelah switch profile, re-inject context: sub-project.md + LESSONS.md + README (yang relevan).
+- Log kejadian ke LESSONS.md via executor.
+
 ## Step Budgets
 
 Declared: **O:500 R:400 V:400 E:500** — max ceiling. Scale per-task:
@@ -112,9 +120,9 @@ Declared: **O:500 R:400 V:400 E:500** — max ceiling. Scale per-task:
 | LARGE | >5 files atau high blast | 150 | 100 |
 | MASSIVE | Full audit + refactor multi-module | 500 (max) | 400 (max) |
 
-Estimasi: `8 + (files * 5) + (brief_lines * 2)`. Kalau ragu naikkan 1 tingkat.
+Estimasi: `8 + (files * 5) + (brief_lines * 2) + (chunks * 15)` — 15 steps overhead per chunk (dispatch+verify+synthesize). Kalau ragu naikkan 1 tingkat.
 
-**Free model capacity note:** Researcher (north-mini-code-free) dan reviewer (nemotron-3-ultra-free) punya reasoning capacity lebih rendah dari orchestrator. Untuk task LARGE atau MASSIVE, orchestrator WAJIB pakai Task Chunking Protocol — pecah jadi 2-4 dispatch kecil. JANGAN paksa 1 dispatch besar. Kalau output kosong, chunk ulang dengan unit lebih kecil.
+**Free model capacity note:** Researcher (north-mini-code-free) dan reviewer (nemotron-3-ultra-free) punya reasoning capacity lebih rendah dari orchestrator. Untuk task LARGE atau MASSIVE, orchestrator WAJIB pakai Task Chunking Protocol — pecah jadi 2-4 dispatch kecil. JANGAN paksa 1 dispatch besar. Kalau output kosong, chunk ulang dengan unit lebih kecil. **PRE-CHUNK CHECK WAJIB sebelum fan-out — hitung jumlah pertanyaan/file/format. 3+ pertanyaan ATAU 3+ file ATAU multi-format → chunk proaktif jadi 1-2 file/1 pertanyaan/1 format per unit, max 3 chunk. Chunking SEQUENTIAL satu per satu — presisi di atas kecepatan.**
 
 ## Cross-Project Usage
 

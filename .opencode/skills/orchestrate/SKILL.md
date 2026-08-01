@@ -26,36 +26,44 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
 
-### Task Chunking — Free Model Capacity
+### Task Chunking Protocol (PROACTIVE — WAJIB sebelum fan-out)
 
-Free model (researcher/reviewer) punya kapasitas terbatas. JANGAN kasih 1 prompt raksasa.
+**Step 1 — PRE-CHUNK CHECK (sebelum dispatch, jangan tunggu protes):**
+Sebelum fan-out researcher/reviewer, orchestrator WAJIB hitung ukuran task:
+- Jumlah pertanyaan berbeda dalam task
+- Jumlah file yang harus di-analisis
+- Jumlah format output diminta (tabel + analisis + rekomendasi = multi-format)
+Trigger CHUNK: 3+ pertanyaan ATAU 3+ file ATAU multi-format output → task_size = LARGE/MASSIVE → WAJIB chunk proaktif. JANGAN dispatch task besar utuh ke free model.
 
-**Kapan perlu chunking:**
-- Task punya 3+ pertanyaan berbeda → chunk
-- Task minta analisis >3 file → chunk
-- Task minta output multi-format (tabel + analisis + rekomendasi) → chunk
-- Task sebelumnya return KOSONG → chunk ulang lebih kecil
+**Step 2 — CHUNK UNIT IDEAL:**
+- 1-2 file per chunk, 1 pertanyaan tunggal, 1 format output
+- Estimasi ≤8k token input per chunk (≈200-300 baris) — safety margin researcher 256k ctx
+- Max 3 chunk per task (chunk budget ceiling). Kalau task butuh >3 chunk → eskalasi ke Boss (task terlalu besar untuk free model), jangan paksa.
 
-**Cara chunking:**
-1. Pecah task jadi 2-4 unit fokus tunggal. Tiap unit: SATU pertanyaan, SATU output.
-2. Dispatch sequential (bukan parallel) — hasil task 1 jadi input task 2.
-3. Gunakan `task_id` resume untuk task lanjutan — hemat context rebuild.
-4. Kumpulkan hasil di `%TEMP%\opencode\chunk-{task}-{n}.txt`.
-5. Orchestrator synthesize setelah semua chunk selesai.
+**Step 3 — SEQUENTIAL dispatch (satu per satu, bukan parallel besar):**
+- Dispatch chunk 1 → verify → synth → chunk 2 (pakai task_id resume di agent yang sama)
+- Tiap chunk: SATU pertanyaan, SATU output, SATU fokus. Brief singkat + CONTEXT_SUMMARY dari chunk sebelumnya.
 
-**Contoh chunking researcher:**
-```
-# BUKAN: 1 dispatch "analisis semua file, cari bug, buat rekomendasi"
-# TAPI:
-Dispatch 1: "baca orchestrator.md line 30-45, laporkan rules tentang dispatch"
-Dispatch 2 (resume task_id): "baca orchestrate SKILL.md line 83-90, laporkan exception list"  
-Dispatch 3 (resume task_id): "dari hasil 1+2, identifikasi kontradiksi — laporkan file:line"
-```
+**Step 4 — CONTEXT_SUMMARY (wajib antar chunk):**
+- Setelah tiap chunk selesai, orchestrator compose CONTEXT_SUMMARY 1-2 baris ("Chunk 1: ketemu X di file Y:Z. Chunk 2 butuh ini untuk...")
+- Inject ke prompt chunk berikutnya SEBAGAI BAGIAN BRIEF — jangan andalkan task_id resume doang
+- Simpan ke `%TEMP%\opencode\chunk-{task}-summary.txt` untuk audit trail
 
-**Signal butuh chunking:**
-- Researcher/reviewer return KOSONG → chunk task, dispatch ulang per unit
-- Output tidak lengkap (cuma jawab 1 dari 3 pertanyaan) → chunk sisa pertanyaan
-- Output generik tanpa file:line → chunk dengan instruksi lebih spesifik
+**Step 5 — CHUNK_DEPENDENCY_MAP + rollback:**
+- Definisikan di brief: {chunk_1: standalone, chunk_2: needs:chunk_1.output, ...}
+- Kalau chunk N gagal (kosong/timeout): rollback ke chunk N-1 dengan prompt revisi ("Output chunk N-1 kurang lengkap untuk chunk N. Tambahkan: [data spesifik]")
+- Max 1 rollback per chunk. Gagal 2x → STOP, report ke Boss dengan state CHUNK_DEPENDENCY_MAP
+
+**Step 6 — VERIFY per chunk:**
+- Verify chunk[N] MANDATORY kalau output chunk[N] jadi input chunk[N+1] (dependency chain)
+- Verify di akhir BOLEH untuk chunk independen
+
+**Step 7 — Overhead awareness:**
+- Hitung overhead: chunk_count × (dispatch + verify) — log ke `%TEMP%\opencode\cost-log.json`
+- Kalau overhead > 30% budget task → jangan chunk, eskalasi ke Boss
+- Cleanup: hapus file chunk-{task}-*.txt di temp setelah synthesize selesai
+
+**CHUNK_REQUIRED dari free model (tetap ada):** kalau free model protes [CHUNK_REQUIRED], itu sinyal orchestrator LANGSUNG trigger pre-chunk check (Step 1-3) — bukan "gagal". Proses ulang task jadi unit kecil.
 
 ### Audit Reception Mode — External Findings
 

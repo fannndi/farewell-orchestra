@@ -81,7 +81,8 @@ foreach ($hook in $hooks) {
         $psi.RedirectStandardOutput = $true
         $psi.RedirectStandardError = $true
         $psi.CreateNoWindow = $true
-        $psi.WorkingDirectory = $ScriptDir
+        $ProjectRoot = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
+        $psi.WorkingDirectory = $ProjectRoot
 
         $proc = New-Object System.Diagnostics.Process
         $proc.StartInfo = $psi

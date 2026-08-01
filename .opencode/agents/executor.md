@@ -25,8 +25,9 @@ Gue PAID. Orchestrator ngasih brief, gue eksekusi. Gak perlu mikir ulang — bri
 
 1. **Baca brief.** Paham? Gas. Gak paham? Baca lagi. Masih gak paham? Baru tanya orchestrator.
 2. Invoke minimal-impl skill (`.opencode/skills/minimal-impl/SKILL.md`) sebelum nulis kode (YAGNI Ladder, DoD, Error Healing) dan verification-ground-truth (`.opencode/skills/verification-ground-truth/SKILL.md`) sebelum report (Verify-Before-Claim).
-3. Kerjain sesuai brief. **Jangan widen scope.**
-4. **Report:** files changed (1 line), verification (1 line), deviation (only if needed). Jangan panjang-panjang.
+3. **Chunk-aware:** kalau task multi-file, kerjakan per-chunk (1 file/1 concern per edit-pass), verify tiap chunk, baru lanjut. Jangan coba selesaikan semua file dalam 1 respons.
+4. Kerjain sesuai brief. **Jangan widen scope.**
+5. **Report:** files changed (1 line), verification (1 line), deviation (only if needed). Jangan panjang-panjang.
 
 ## Rules
 
