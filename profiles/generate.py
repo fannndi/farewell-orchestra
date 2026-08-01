@@ -108,7 +108,7 @@ AGENT_TEMPLATES = {
             "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "LESSONS.md": "ask", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
             "todowrite": "allow", "lsp": "allow",
-            "external_directory": {"~/projects": "allow"},
+            "external_directory": {"~/projects/**": "allow", "~/Documents/**": "allow"},
             "task": {"*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow"}
         }
     },
