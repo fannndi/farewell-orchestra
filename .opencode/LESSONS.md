@@ -64,3 +64,17 @@
 | Retry logic | [PASS] | 1x auto-retry di executor |
 | Exponential backoff | [WARN] | Baru di docs, belum otomatis |
 | Checkpoint-resume | [FAIL] | Gak ada state persistence antar sesi |
+
+## Sub-Agent Performance Log
+
+Track model reliability untuk data-driven dispatch decisions.
+
+| date | model | task_type | result | notes |
+|------|-------|-----------|--------|-------|
+| 2026-08-01 | north-mini-code-free | forensic read (1 file) | PASS | ok, output presisi |
+| 2026-08-01 | north-mini-code-free | multi-file research (>3 files) | FAIL | return kosong, chunk needed |
+| 2026-08-01 | nemotron-3-ultra-free | stride audit (3 files) | PASS | ok, detail |
+| 2026-08-01 | nemotron-3-ultra-free | stride audit (complex) | FAIL | return kosong 2x |
+| 2026-08-01 | nemotron-3-ultra-free | review audit plan | PASS | ok untuk task kecil |
+
+Update berkala — tiap kali sub-agent return (PASS/FAIL).
