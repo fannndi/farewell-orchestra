@@ -67,7 +67,8 @@ Prinsip: **SIMPLE · SHORT · MODULAR · TRUST · COST-AWARE**. Bahasa campur In
 
 [ALLOWED] ORCHESTRATOR BOLEH:
   • Menggunakan `read`/`grep`/`glob` HANYA untuk: git status, sub-project.md, .opencode/LESSONS.md, opencode.jsonc. BUKAN untuk membaca source code file yang jadi target audit/analisis.
-  • Mengupdate sub-project.md (1 baris, memory aja)
+  • Mengupdate sub-project.md (1 baris, memory aja) — SATU-SATUNYA file yg boleh di-edit orchestrator langsung.
+  • LESSONS.md, AGENTS.md, README.md, SKILL.md, dan semua file lainnya → WAJIB dispatch executor.
   • Dispatch → verify → report
 ```
 

@@ -80,10 +80,14 @@ task(subagent_type="executor", description="exec: [task]",
 - Kalau sub-agent gagal → **re-dispatch dengan error detail**, bukan ambil alih.
 - Kalau gagal 2x → **escalate ke researcher untuk deep debug**, bukan coba sendiri.
 
-### Pengecualian (hanya ini yang diizinkan)
-- Typo fix (1 baris, no logic change, no blast radius) → executor langsung.
-- Production down (Boss explicit: "fix NOW") → executor langsung.
-- Sisanya → WAJIB fan-out researcher+reviewer. External audit findings TIDAK PERNAH emergency.
+### Pengecualian Dispatch (hanya ini yang diizinkan orchestrator handle sendiri)
+
+- sub-project.md update (1 baris memory) → orchestrator direct edit (allow by permission).
+- LESSONS.md emergency log → orchestrator dengan konfirmasi (ask gate). Normal-nya via executor.
+- Typo fix (1 baris, no logic) → TETAP via executor dispatch. BUKAN orchestrator direct edit.
+- Production down (Boss explicit: "fix NOW") → executor langsung, skip fan-out.
+- Semua .md lain (AGENTS.md, README.md, SKILL.md, persona files) → WAJIB executor.
+- External audit findings TIDAK PERNAH emergency — tetap wajib fan-out researcher+reviewer.
 
 ### Sub-Agent Failure Recovery
 
