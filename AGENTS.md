@@ -111,6 +111,8 @@ Declared: **O:500 R:400 V:400 E:500** — max ceiling. Scale per-task:
 
 Estimasi: `8 + (files * 5) + (brief_lines * 2)`. Kalau ragu naikkan 1 tingkat.
 
+**Free model capacity note:** Researcher (north-mini-code-free) dan reviewer (nemotron-3-ultra-free) punya reasoning capacity lebih rendah dari orchestrator. Untuk task LARGE atau MASSIVE, orchestrator WAJIB pakai Task Chunking Protocol — pecah jadi 2-4 dispatch kecil. JANGAN paksa 1 dispatch besar. Kalau output kosong, chunk ulang dengan unit lebih kecil.
+
 ## Cross-Project Usage
 
 Pakai orchestra dari folder lain: `"kerjain project ini <path>"`. Lihat `.opencode/project-guide.md` buat setup `permission.external_directory`.

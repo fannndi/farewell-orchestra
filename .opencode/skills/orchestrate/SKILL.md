@@ -26,6 +26,37 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
 
+### Task Chunking — Free Model Capacity
+
+Free model (researcher/reviewer) punya kapasitas terbatas. JANGAN kasih 1 prompt raksasa.
+
+**Kapan perlu chunking:**
+- Task punya 3+ pertanyaan berbeda → chunk
+- Task minta analisis >3 file → chunk
+- Task minta output multi-format (tabel + analisis + rekomendasi) → chunk
+- Task sebelumnya return KOSONG → chunk ulang lebih kecil
+
+**Cara chunking:**
+1. Pecah task jadi 2-4 unit fokus tunggal. Tiap unit: SATU pertanyaan, SATU output.
+2. Dispatch sequential (bukan parallel) — hasil task 1 jadi input task 2.
+3. Gunakan `task_id` resume untuk task lanjutan — hemat context rebuild.
+4. Kumpulkan hasil di `%TEMP%\opencode\chunk-{task}-{n}.txt`.
+5. Orchestrator synthesize setelah semua chunk selesai.
+
+**Contoh chunking researcher:**
+```
+# BUKAN: 1 dispatch "analisis semua file, cari bug, buat rekomendasi"
+# TAPI:
+Dispatch 1: "baca orchestrator.md line 30-45, laporkan rules tentang dispatch"
+Dispatch 2 (resume task_id): "baca orchestrate SKILL.md line 83-90, laporkan exception list"  
+Dispatch 3 (resume task_id): "dari hasil 1+2, identifikasi kontradiksi — laporkan file:line"
+```
+
+**Signal butuh chunking:**
+- Researcher/reviewer return KOSONG → chunk task, dispatch ulang per unit
+- Output tidak lengkap (cuma jawab 1 dari 3 pertanyaan) → chunk sisa pertanyaan
+- Output generik tanpa file:line → chunk dengan instruksi lebih spesifik
+
 ### Audit Reception Mode — External Findings
 
 Saat orchestrator menerima temuan audit eksternal (user, Claude, atau sumber lain dengan file:line):
