@@ -2,191 +2,133 @@
 
 Satu orchestrator berpikir. Researcher + reviewer gratis, executor paid. Empat model AI dalam satu tim, diorkestrasi lewat OpenCode + 9router.
 
-## Kenapa project ini ada
+## Kenapa Project Ini Ada
 
-Model AI mahal bagus buat mikir. Tapi kebanyakan tool AI memperlakukan semua task sama — satu model ngerjain semuanya: riset, review, coding, debugging. Boros. Gak scalable.
+Model AI mahal buat mikir — tapi kebanyakan tool treat semua task sama: satu model ngerjain semuanya. Boros, gak scalable.
 
-Farewell Orchestra membalik logika itu. Orchestrator (model mahal) cuma berpikir — decompose, arahkan, verifikasi. Researcher dan reviewer (model gratis) yang baca file dan audit keamanan; executor (model paid — deepseek-v4-flash) yang nulis kode. Hasilnya: output lebih baik, biaya lebih rendah, bug lebih sedikit.
+Farewell Orchestra membalik logika itu:
 
-Project ini berbasis **OpenCode** sebagai agent provider (hook lifecycle, verify gate, MCP integration) dan **9router** sebagai model provider yang otomatis routing request free vs paid (north-mini-code-free untuk researcher, nemotron-3-ultra-free untuk reviewer, deepseek-v4-flash untuk orchestrator/executor). Executor sekarang **PAID** — naik kelas dari model gratis sebelumnya demi kualitas implementasi yang kompetitif.
+- **Orchestrator** [PAID] — decompose, arahkan, verifikasi. Gak nulis kode.
+- **Researcher** [FREE] — baca file, trace code, fact-check.
+- **Reviewer** [FREE] — audit STRIDE, second opinion.
+- **Executor** [PAID] — tulis kode, edit file, implementasi.
 
-## Cara kerja
+**Tech stack:** OpenCode (agent provider, hook lifecycle, verify gate, MCP) + 9router (model provider, routing free vs paid otomatis).
+
+## Workflow
 
 ```
 Boss kirim request
     │
     ▼
-Orchestrator [PAID — deepseek-v4-flash]   ← validasi input (anti-gigo), pre-chunk check, decompose task, arahkan tim
-    │
-    ├── Researcher [FREE — north-mini-code-free]  ← baca file, trace code, verifikasi klaim (forensic + web-research)
-    └── Reviewer [FREE — nemotron-3-ultra-free]   ← audit STRIDE, cek konvensi, second opinion (stride-audit)
-    │       (parallel — barengan)
-    ▼
-Orchestrator [PAID]                      ← synthesize temuan, brief executor
+anti-gigo ── validasi input, tolak sampah
     │
     ▼
-Executor [PAID — deepseek-v4-flash]      ← nulis kode, edit file, implementasi (minimal-impl + verification-ground-truth)
+orchestrate ── task-chunking gate (mandatory sebelum fan-out)
+    │
+    ├── Researcher [FREE]  ── forensic + web-research → file:line evidence
+    └── Reviewer  [FREE]  ── stride-audit → tag [BLOCKING]/[SHOULD]
+    │       (parallel)
+    ▼
+synthesis-brief ── orchestrator tutup semua keputusan, executor hanya eksekusi
     │
     ▼
-Boss terima report                       ← 3 baris: what, result, residual risk
+Executor [PAID] ── minimal-impl → verification-ground-truth
+    │
+    ▼
+ping guard ── send "READY?" task sebelum dispatch; dead model → skip/escalate
+    │
+    ▼
+Boss terima report ── 3 baris: what changed, verification result, residual risk
 ```
 
-**Skill auto-load wajib** — setiap agent sudah di-hardcode di prompt (profiles/generate.py AGENT_TEMPLATES) untuk auto-load skill tool di awal task: orchestrator → anti-gigo + orchestrate, researcher → forensic + web-research, reviewer → stride-audit, executor → minimal-impl + verification-ground-truth. Skill bukan opsional self-trigger.
+**Chunking (mandatory gate):** hitung jumlah pertanyaan (Q), file (F), output format (O). Kalau Q≥3 atau F≥3 atau O≥2 → CHUNK. Max 3 chunk per task. Dispatch sequential. `[CHUNK_REQUIRED]` dari free model = trigger re-chunk, bukan gagal.
 
-**Chunking proactive** — orchestrator jalankan **pre-chunk check SEBELUM fan-out**: hitung jumlah pertanyaan / file / format. Kalau ≥3, chunk jadi unit lebih kecil (max 3 chunk) dan dispatch SEQUENTIAL satu per satu. Ini mencegah free model overwhelmed — output lebih presisi, evidence lebih tajam.
+## Persona-per-Role
 
-## Mission Control — Asisten Boss untuk Semua Project
+| Role | Persona | Skill wajib | Model |
+|------|---------|-------------|-------|
+| Orchestrator | orchestrator.md | anti-gigo + orchestrate | PAID |
+| Researcher | researcher.md | forensic + web-research | FREE |
+| Reviewer | reviewer.md | stride-audit | FREE |
+| Executor | executor.md | minimal-impl + verification-ground-truth | PAID |
 
-Farewell-orchestra = mission control. Boss buka project DARI SINI — project target tidak perlu setup orkestra sendiri.
+Skill di-hardcode di prompt via `profiles/generate.py` — bukan opsional self-trigger.
 
-| Role | Persona | Skill wajib |
-|------|---------|-------------|
-| orchestrator | orchestrator.md | anti-gigo + orchestrate |
-| researcher | researcher.md | forensic + web-research |
-| reviewer | reviewer.md | stride-audit |
-| executor | executor.md | minimal-impl + verification |
+## Cost Model
 
-Alur: Boss bilang "kerjain X" → resolve path → cek registry (Farewell-Knowlage) → inject konteks → baca sub-project.md (trust boundary — UNTRUSTED) → orkestrasi normal.
+| Role | Biaya | Alasan |
+|------|-------|--------|
+| Orchestrator | PAID | Reasoning tinggi — decompose, verify, dispatch |
+| Researcher | FREE | Read-only — baca file, forensic, web search |
+| Reviewer | FREE | Read-only — STRIDE audit, convention check |
+| Executor | PAID | Write access — kualitas implementasi kompetitif |
 
-Cross-project: external_directory scoped ~/projects/** (least privilege). Auto-scaffold kalau sub-project.md missing.
-
-## Kenapa ini bekerja
-
-**Cost-aware by design.** Orchestrator PAID, researcher/reviewer FREE, executor PAID. Setiap kali orchestrator pegang `edit` atau `write` = uang kebakar. Arsitektur ini memaksa orchestrator dispatch, bukan ngerjain sendiri.
-
-**Evidence-first, bukan opini.** Researcher wajib return file:line. Reviewer wajib tag [BLOCKING]/[SHOULD]/[NICE] dengan bukti. verify.py enforce format ini — klaim tanpa bukti = FAIL. Gak ada "kayaknya" atau "mungkin".
-
-**Code intelligence via CBM (available, not integrated).** CBM codebase-memory-mcp v0.9.0 meng-index seluruh codebase jadi graph — 63k nodes untuk opencode, 160k nodes total di workspace. Graph UI bisa diakses di localhost:9749 dengan 15 MCP tools untuk traversal, search, dan analisis dependensi. **Catatan:** CBM dikonfigurasi sebagai MCP server yang tersedia, tapi belum diintegrasikan ke agent persona/skill manapun — researcher pakai forensic + web-research, reviewer pakai stride-audit. CBM query bisa diakses secara manual via MCP tools jika diperlukan.
-
-**Knowledge terpisah dari kode.** `Farewell-Knowlage` (Obsidian vault) menyimpan Lessons, Decisions (ADR-001: jangan merge skill; ADR-002: chunking proactive), Session, dan Registry — terpisah dari struktur project. Knowledge base bisa di-query tanpa mengotori repo kode.
-
-**Self-critical.** `Farewell-Knowlage/Lessons.md` nyimpen log tiap kali sistem gagal — termasuk reviewer halusinasi dan orchestrator bypass sub-agent. Project ini audit diri sendiri, persis seperti yang dia minta dari codebase lain.
-
-**Technical enforcement, bukan imbauan.** Permission researcher/reviewer read-only (gak bisa edit/bash). Orchestrator read dibatasi *.md doang, edit cuma sub-project.md — baca source code kena ask gate. Hook pre-generate validasi profiles.json. Bukan cuma instruksi di prompt.
-
-**Satu otak, banyak project.** Buka opencode di repo ini, arahkan ke project target — orchestra kerja di sana. sub-project.md jadi anchor buat context antar sesi. Gak perlu setup ulang tiap project.
-
-**KISS dari akar.** Root cuma 5 file. YAGNI di-enforce oleh minimal-impl skill. Anti-gigo tolak input sampah di gerbang. "Hapus lebih baik dari tambah" — prinsip yang dipake buat diri sendiri.
-
-## Arsitektur & Rationale
-
-Kenapa sistem ini punya 10 skill, 3 hook, 4 tool? Bukan over-engineering — setiap komponen menjaga satu failure mode yang berbeda. Merge = separation hilang.
-
-**10 skill, bukan 10 duplikat.** Setiap skill punya guardrail unik yang gak bisa di-merge:
-
-| Skill | Guardrail unik |
-|-------|----------------|
-| `anti-gigo` | Gate input — tolak sampah sebelum diproses |
-| `grill` | Extraction — gali detail dari input ambigu |
-| `orchestrate` | Workflow — decompose → fan-out → synthesize |
-| `forensic` | Codebase evidence — bukti file:line dari dalam repo |
-| `web-research` | External evidence — fact-check dari luar repo |
-| `stride-audit` | STRIDE threat model + convention enforcement |
-| `minimal-impl` | YAGNI + error healing — anti over-engineering |
-| `verification-ground-truth` | Verify-before-claim — klaim wajib cocok sama tool output |
-| `bootstrap-project` | Scaffold — generate 10 dokumen project dari ide |
-
-Merge skill = hilang **phase separation** (input gate vs execution vs verification) dan **domain separation** (codebase vs external evidence). Reviewer sudah membuktikan tiap skill dijalankan di fase/domain berbeda — bukan kandidat duplikat.
-
-**verify.ts + verify.py — pasangan wrapper/backend, bukan duplikat.** `verify.ts` adalah plugin wrapper yang register tool `verify` (schema + `execFileSync` ke Python); `verify.py` adalah backend logic 6 check. Dipisah karena TS plugin gak bisa jalanin logic Python inline, dan backend Python tetap bisa dites standalone.
-
-**pre-generate + post-generate hooks — temporal separation wajib.** `pre-generate` (beforeGenerate) = input gate: validasi profiles.json sebelum config lahir. `post-generate` (afterGenerate) = output policy: tool scoping + step budget diterapkan setelah generate. Satu hook gabungan = validasi jalan telat, output cacat lolos.
-
-**STRIDE buat config internal — bukan berlebihan.** Config opencode adalah attack surface: permission (deny-by-default), model assignment (paid/free), external_directory (cross-project access). Satu config bocor / salah konfigurasi = seluruh sistem kompromi. Config leak lebih mahal dari code leak.
-
-**Prinsip di balik semua:** complexity is justified when each component guards a distinct failure mode. Komponen di-prune cuma kalau duplikat NYATA — bukan karena "kelihatan banyak".
-
-**Keputusan tercatat.** Referensi ADR di `Farewell-Knowlage/Decisions.md` (Obsidian vault) — ADR-001 (jangan merge skill/hook/tool — tiap komponen guardrail unik), ADR-002 (chunking proactive bertahap — presisi di atas kecepatan).
-
-**Emergency protocol.** Orchestrator failure → degrade: dispatch researcher (free) untuk debug atau switch profile via `profiles\switch.bat`. Fallback arah PAID → FREE (dilarang FREE → PAID — cost spike). Re-inject context setelah switch (sub-project.md + Farewell-Knowlage/Lessons.md).
-
-## Task Chunking — presisi lewat unit kecil
-
-Free model (researcher/reviewer) punya kapasitas reasoning terbatas. Satu prompt raksasa = timeout atau output kosong. Orchestrator memecah tugas besar jadi 2-4 dispatch kecil yang fokus pada satu pertanyaan, satu file, satu output — bukan reaktif setelah gagal, tapi **PROACTIVE sejak awal**.
-
-**Pre-chunk check wajib** — orchestrator hitung jumlah pertanyaan / file / format SEBELUM fan-out. Kalau ≥3, langsung chunk jadi unit lebih kecil (1-2 file, 1 pertanyaan, 1 format, ≤8k token). Max 3 chunk per task. Dispatch SEQUENTIAL satu per satu — presisi di atas kecepatan.
-
-**CONTEXT_SUMMARY** disisipkan antar chunk agar agent berikutnya punya konteks hasil chunk sebelumnya tanpa membaca ulang semua output. **CHUNK_DEPENDENCY_MAP** mencatat urutan dan dependensi antar chunk — kalau satu chunk gagal, rollback max 1x ke titik dependensi, bukan ulang dari nol. Verify per chunk kalau dependency chain. `[CHUNK_REQUIRED]` dari free model = trigger pre-chunk ulang, bukan gagal.
-
-Hasilnya: researcher gak overwhelmed, reviewer gak nge-blank. Tiap chunk dikerjain dengan fokus penuh — output lebih presisi, evidence lebih tajam.
-
-## Quick Start
-
-```bash
-# 1. Pilih profile (default direkomendasikan) — generate opencode.jsonc
-profiles\switch.bat
-
-# 2. Buka opencode di folder farewell-orchestra
-opencode
-
-# 3. Arahkan ke project target atau buat project baru
-/work-on <path-to-project>
-# atau
-/new-project
-
-# 4. Orchestrator otomatis handle — auto context injection + trust boundary
-```
-
-Cross-project: external_directory sudah di-scope ke `~/projects/**` (least privilege). Orchestrator auto-detect sub-project.md di target, auto-scaffold kalau missing.
+**Aturan emas:** Jangan pake model paid buat kerjaan yang model free bisa lakuin. Orchestrator pakai `edit`/`write` = uang kebakar → STOP, dispatch executor.
 
 ## Skills
 
-Setiap agent punya skill spesifik — auto-discovered dari `.opencode/skills/`.
+| # | Skill | Guardrail |
+|---|-------|-----------|
+| 1 | `anti-gigo` | Gate input — tolak sampah sebelum diproses |
+| 2 | `bootstrap-project` | Scaffold — generate 10 dokumen project dari ide |
+| 3 | `forensic` | Codebase evidence — bukti file:line dari dalam repo |
+| 4 | `grill` | Extraction — gali detail dari input ambigu |
+| 5 | `minimal-impl` | YAGNI + error healing — anti over-engineering |
+| 6 | `orchestrate` | Workflow — decompose → fan-out → synthesize |
+| 7 | `stride-audit` | STRIDE threat model + convention enforcement |
+| 8 | `synthesis-brief` | Orchestrator tutup keputusan, executor hanya eksekusi |
+| 9 | `verification-ground-truth` | Verify-before-claim — klaim wajib cocok sama tool output |
+| 10 | `web-research` | External evidence — fact-check dari luar repo |
 
-| Agent | Skill | Fungsi |
-|-------|-------|--------|
-| Orchestrator | `anti-gigo` | Validasi input — tolak sampah sebelum diproses |
-| Orchestrator | `grill` | Interview Boss — gali detail kalau input ambigu |
-| Orchestrator | `orchestrate` | Decompose → fan-out → synthesize → delegate |
-| Orchestrator | `bootstrap-project` | Generate 10 dokumen project dari ide |
-| Researcher | `forensic` | Cross-file tracing, deep debug, evidence file:line |
-| Researcher | `web-research` | External fact-check — docs, API, library status |
-| Reviewer | `stride-audit` | STRIDE threat model, convention enforcement |
-| Executor | `minimal-impl` | YAGNI-first, verify-first, anti over-engineering |
-| Executor | `verification-ground-truth` | Verify claim vs tool output — gak asumsi |
+10 skill, bukan 10 duplikat. Tiap skill guard phase/domain berbeda. Merge = separation hilang (ADR-001).
 
-**Skill auto-load wajib** — setiap agent sudah di-hardcode di prompt (profiles/generate.py AGENT_TEMPLATES) untuk auto-load skill tool di awal task:
+## Profiles
 
-| Agent | Skill auto-load |
-|-------|----------------|
-| Orchestrator | anti-gigo + orchestrate |
-| Researcher | forensic + web-research |
-| Reviewer | stride-audit |
-| Executor | minimal-impl + verification-ground-truth |
+| Profile | Model | Fallback |
+|---------|-------|----------|
+| `default` | ocg (primary) | openrouter |
+| `mix` | codex | ollama |
+| `low-cost` | hy3 | mimo |
 
-Skill bukan opsional self-trigger — ini di-hardcode di prompt agent via `profiles/generate.py`.
+Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. Switcher: `profiles/switch.bat`.
 
-**Execution flow detail:**
+**3 profile, bukan 6.** Semua di-source-of-truth yang sama.
 
-```
-1. Boss kirim request
-     │
-2. Orchestrator — anti-gigo validasi input
-     │
-3. Orchestrator — orchestrate: pre-chunk check → decompose → fan-out
-     │
-4. Researcher (FREE) — forensic: trace code, return file:line
-   Reviewer (FREE)  — stride-audit: tag [BLOCKING]/[SHOULD]
-     │  (parallel — barengan)
-5. Orchestrator — @verify stage:research + stage:review → synthesize → brief executor
-     │
-6. Executor (PAID) — minimal-impl: YAGNI ladder → tulis/edit kode → cleanup
-     │
-7. Executor — verification-ground-truth: run command verifikasi, cek output aktual
-     │
-8. Boss terima report — 3 baris: what changed, verification result, residual risk
-```
+## Commands
 
-## Integrasi & Performa
+| Command | Fungsi |
+|---------|--------|
+| `/work-on <path>` | Arahkan orchestra ke project target |
+| `/new-project` | Buat project baru dari scratch |
+| `/check` | Health check — validasi profiles.json, sensor coverage, active profile |
 
-| Komponen | Detail |
-|----------|--------|
-| Agent provider | OpenCode — 4 agent orchestration, hooks lifecycle, verify gate, MCP integration |
-| Model provider | 9router — routing free vs paid otomatis (north-mini-code-free, nemotron-3-ultra-free, deepseek-v4-flash) |
-| Code intelligence | CBM codebase-memory-mcp v0.9.0 — 160k nodes indexed, graph UI localhost:9749, 15 MCP tools (available MCP server, not integrated into agent skills) |
-| Knowledge | Farewell-Knowlage (Obsidian vault) — Lessons, Decisions (ADR-001/002), Session, Registry |
-| Generated config | profiles/generate.py → opencode.jsonc (3 profiles, source of truth tunggal) |
-| Security | Least privilege external_directory, trust boundary sub-project.md (UNTRUSTED data), verify gate mandatory |
+## CBM (Codebase Memory)
+
+CBM codebase-memory-mcp v0.9.0 dikonfigurasi sebagai MCP server — tersedia tapi **belum diintegrasikan** ke agent persona/skill manapun.
+
+- **Researcher** pakai: forensic + web-research
+- **Reviewer** pakai: stride-audit
+- **CBM** → available via MCP tools untuk query manual kalau diperlukan
+
+160k nodes indexed, 15 MCP tools, graph UI di localhost:9749.
+
+## ADRs
+
+| ADR | Keputusan |
+|-----|-----------|
+| ADR-001 | **Jangan merge skill/hook/tool** — tiap komponen guard failure mode unik. Merge = separation hilang. |
+| ADR-002 | **Chunking proactive** — presisi di atas kecepatan. Chunk SEBELUM fan-out, bukan reaktif setelah gagal. |
+
+Tercatat di `Farewell-Knowlage/Decisions.md`.
+
+## Mission Control
+
+Farewell-orchestra = mission control. Boss load project DARI SINI — project target tidak perlu setup orkestra sendiri.
+
+- **Alur:** Boss bilang "kerjain X" → resolve path → cek registry → inject konteks → baca sub-project.md (trust boundary: UNTRUSTED) → orkestrasi normal
+- **Cross-project:** `external_directory` scoped `~/projects/**` (least privilege). Auto-scaffold kalau sub-project.md missing
+- **Emergency:** Orchestrator failure → degrade ke researcher (free) atau switch profile via `profiles\switch.bat`. Fallback: PAID → FREE (dilarang FREE → PAID)
 
 ## Structure
 
@@ -196,24 +138,32 @@ Skill bukan opsional self-trigger — ini di-hardcode di prompt agent via `profi
 ├── .env.example
 ├── .gitignore
 ├── .opencode/
-│   ├── agents/                — persona 4 agent (orchestrator, researcher, reviewer, executor)
+│   ├── agents/                — persona 4 agent
 │   ├── command/               — slash commands
 │   ├── hooks/                 — lifecycle enforcement (pre/post-generate)
 │   ├── project-guide.md       — cross-project usage guide
-│   ├── skills/                — 10 agent skills (anti-gigo, forensic, stride-audit, etc.)
+│   ├── skills/                — 10 agent skills
 │   └── tools/                 — verify.ts, harness_status, learn
 ├── profiles/
-│   ├── generate.py            — profile generator ★ SOURCE OF TRUTH ★ (AGENT_TEMPLATES, model assignments)
-│   ├── profiles.json          — 3 model profiles (default, mix, low-cost)
+│   ├── generate.py            — profile generator (SOURCE OF TRUTH)
+│   ├── profiles.json          — 3 model profiles
 │   └── switch.bat             — interactive profile switcher
 ├── templates/
-│   └── sub-project.md         — project anchor template (context antar sesi)
+│   └── sub-project.md         — project anchor template
 └── tests/
     └── test_generate.py       — 24 tests, 0 gagal
 ```
 
-External tools:
-- **CBM codebase-memory-mcp** — graph index codebase (160k nodes), 15 MCP tools, UI localhost:9749
-- **Farewell-Knowlage** (Obsidian vault) — Lessons, Decisions, Session, Registry — terpisah dari repo kode
+## Kenapa Ini Bekerja
+
+- **Cost-aware by design** — orchestrator + executor paid, researcher + reviewer free. Arsitektur memaksa dispatch, bukan ngerjain sendiri.
+- **Evidence-first** — researcher wajib file:line, reviewer wajib tag [BLOCKING]/[SHOULD]/[NICE]. verify.py enforce — klaim tanpa bukti = FAIL.
+- **External audit rule** — findings butuh researcher verify + reviewer second opinion. Gak ada "kayaknya".
+- **Technical enforcement** — permission read-only researcher/reviewer, hook validasi profiles.json, verify gate mandatory.
+- **Self-critical** — `Lessons.md` nyimpen log tiap kali sistem gagal. Audit diri sendiri.
+- **KISS dari akar** — root cuma 5 file. YAGNI di-enforce. "Hapus lebih baik dari tambah."
+- **Satu otak, banyak project** — buka opencode di repo ini, arahkan ke target. Gak perlu setup ulang.
+
+---
 
 MIT
