@@ -51,7 +51,7 @@
       "label": "Default | ocg flash+pro fallback + free",
       "agents": {
         "orchestrator": {"model": "9router/ocg/deepseek-v4-flash", "small_model": "9router/ocg/deepseek-v4-pro"},
-        "executor": {"model": "9router/ocg/deepseek-v4-flash", "small_model": "9router/ocg/deepseek-v4-pro"},
+        "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
         "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/openrouter/cohere/north-mini-code:free"},
         "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"}
       }
