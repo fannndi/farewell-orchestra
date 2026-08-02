@@ -77,19 +77,18 @@ Saat orchestrator menerima temuan audit eksternal (user, Claude, atau sumber lai
 
 ### Pre-Dispatch Ping Guard
 
-Before dispatching ANY agent via `task()`, verify the model is alive:
+Before dispatching any agent via `task()` for real work, send a minimal pre-flight ping:
 
 ```
-python .opencode/tools/ping_model.py --agent <type>
+task(subagent_type=<agent>, prompt='Reply with exactly: READY')
 ```
 
-| Result | Action |
-|--------|--------|
-| **ALIVE** (exit 0) | Proceed to dispatch. |
-| **DEAD** (exit 1), reviewer/researcher (FREE) | SKIP the agent. Proceed with remaining agents. In the final report, note the agent was skipped due to a dead model. Do NOT retry blindly. |
-| **DEAD** (exit 1), executor (PAID) | ESCALATE to Boss — do NOT dispatch to a dead model. Report the dead model and await Boss direction. |
+- If the agent returns a NON-EMPTY response → model is alive; proceed with the real dispatch.
+- If the agent returns EMPTY or errors → model is DEAD:
+  * reviewer / researcher (free, non-critical): SKIP the agent. Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
+  * executor (paid, critical): ESCALATE to Boss — do NOT dispatch the real job. Report the dead model and await Boss direction.
 
-The orchestrator itself is not pinged (it is already running). Ping is optional for `--profile` (defaults to current profile).
+The orchestrator itself is not pinged (it is already running).
 
 ## 3. Fan-Out — WAJIB via `task` Tool
 
