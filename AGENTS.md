@@ -157,18 +157,3 @@ Semua persona + skill 100% universal (project-agnostic) — tidak ada yang spesi
 
 Jangan claim "done" sebelum verify. Tool output > intuisi. Kalau verify FAIL → jangan lanjut, fix dulu.
 
-## Usage Report (footer wajib — jangan dilewati)
-Setiap report akhir ke Boss WAJIB diakhiri blok Usage Report sebagai FOOTER (bagian paling bawah, setelah residual risk). Gak boleh report tanpa footer.
-- Jalankan: `python .opencode/tools/usage_report.py --delta` (di root farewell-orchestra)
-- Format footer:
-```
-## Usage Report
-| Role | Total | +Delta (sesi) | = Total baru | Cost | Tokens in/out |
-|------|-------|---------------|--------------|------|---------------|
-| orchestrator | X | +Y | Z | $0.00 | ... |
-| reviewer | X | +Y | Z | ... |
-| researcher | X | +Y | Z | ... |
-| executor | X | +Y | Z | ... |
-| **TOTAL** | X | +Y | Z | ... |
-```
-- Delta = request sesi berjalan (mekanisme '+'). Kalau script error/DB gak ada → tulis "Usage report unavailable: [reason]" — TETAP wajib ada footer, jangan skip diam-diam.
