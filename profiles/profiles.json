@@ -50,30 +50,30 @@
       "name": "default",
       "label": "Default | ocg flash+pro fallback + free",
       "agents": {
-        "orchestrator": {"model": "9router/ocg/deepseek-v4-flash", "small_model": "9router/ocg/deepseek-v4-pro"},
+        "orchestrator": {"model": "9router/ocg/deepseek-v4-flash", "small_model": "9router/cx/gpt-5.6-luna"},
         "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/openrouter/cohere/north-mini-code:free"},
-        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"}
+        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
+        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
       }
     },
     {
       "name": "mix",
       "label": "Mix | codex + ollama + free",
       "agents": {
-        "orchestrator": {"model": "9router/cx/gpt-5.6-luna", "small_model": "9router/ollama/minimax-m3"},
+        "orchestrator": {"model": "9router/cx/gpt-5.6-luna", "small_model": "9router/ocg/hy3"},
         "executor": {"model": "9router/ollama/minimax-m3", "small_model": "9router/cx/gpt-5.6-luna"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/openrouter/cohere/north-mini-code:free"},
-        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"}
+        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
+        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
       }
     },
     {
       "name": "low-cost",
       "label": "Low Cost | hy3 + mimo (small flipped)",
       "agents": {
-        "orchestrator": {"model": "9router/ocg/hy3", "small_model": "9router/ocg/mimo-v2.5"},
+        "orchestrator": {"model": "9router/ocg/hy3", "small_model": "9router/cx/gpt-5.6-luna"},
         "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/openrouter/cohere/north-mini-code:free"},
-        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"}
+        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
+        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
       }
     }
   ]

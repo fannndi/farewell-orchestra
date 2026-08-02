@@ -75,6 +75,22 @@ Saat orchestrator menerima temuan audit eksternal (user, Claude, atau sumber lai
 4. Baru dispatch executor jika ada fix yang perlu diimplementasi.
 5. Klaim eksternal BUKAN pengecualian "emergency fix" — tetap wajib fan-out.
 
+### Pre-Dispatch Ping Guard
+
+Before dispatching ANY agent via `task()`, verify the model is alive:
+
+```
+python .opencode/tools/ping_model.py --agent <type>
+```
+
+| Result | Action |
+|--------|--------|
+| **ALIVE** (exit 0) | Proceed to dispatch. |
+| **DEAD** (exit 1), reviewer/researcher (FREE) | SKIP the agent. Proceed with remaining agents. In the final report, note the agent was skipped due to a dead model. Do NOT retry blindly. |
+| **DEAD** (exit 1), executor (PAID) | ESCALATE to Boss — do NOT dispatch to a dead model. Report the dead model and await Boss direction. |
+
+The orchestrator itself is not pinged (it is already running). Ping is optional for `--profile` (defaults to current profile).
+
 ## 3. Fan-Out — WAJIB via `task` Tool
 
 | Task | Agent | Read-only |
