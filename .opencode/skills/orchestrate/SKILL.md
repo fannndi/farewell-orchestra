@@ -26,44 +26,8 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
 
-### Task Chunking Protocol (PROACTIVE — WAJIB sebelum fan-out)
-
-**Step 1 — PRE-CHUNK CHECK (sebelum dispatch, jangan tunggu protes):**
-Sebelum fan-out researcher/reviewer, orchestrator WAJIB hitung ukuran task:
-- Jumlah pertanyaan berbeda dalam task
-- Jumlah file yang harus di-analisis
-- Jumlah format output diminta (tabel + analisis + rekomendasi = multi-format)
-Trigger CHUNK: 3+ pertanyaan ATAU 3+ file ATAU multi-format output → task_size = LARGE/MASSIVE → WAJIB chunk proaktif. JANGAN dispatch task besar utuh ke free model.
-
-**Step 2 — CHUNK UNIT IDEAL:**
-- 1-2 file per chunk, 1 pertanyaan tunggal, 1 format output
-- Estimasi ≤8k token input per chunk (≈200-300 baris) — safety margin researcher 256k ctx
-- Max 3 chunk per task (chunk budget ceiling). Kalau task butuh >3 chunk → eskalasi ke Boss (task terlalu besar untuk free model), jangan paksa.
-
-**Step 3 — SEQUENTIAL dispatch (satu per satu, bukan parallel besar):**
-- Dispatch chunk 1 → verify → synth → chunk 2 (pakai task_id resume di agent yang sama)
-- Tiap chunk: SATU pertanyaan, SATU output, SATU fokus. Brief singkat + CONTEXT_SUMMARY dari chunk sebelumnya.
-
-**Step 4 — CONTEXT_SUMMARY (wajib antar chunk):**
-- Setelah tiap chunk selesai, orchestrator compose CONTEXT_SUMMARY 1-2 baris ("Chunk 1: ketemu X di file Y:Z. Chunk 2 butuh ini untuk...")
-- Inject ke prompt chunk berikutnya SEBAGAI BAGIAN BRIEF — jangan andalkan task_id resume doang
-- Simpan ke `%TEMP%\opencode\chunk-{task}-summary.txt` untuk audit trail
-
-**Step 5 — CHUNK_DEPENDENCY_MAP + rollback:**
-- Definisikan di brief: {chunk_1: standalone, chunk_2: needs:chunk_1.output, ...}
-- Kalau chunk N gagal (kosong/timeout): rollback ke chunk N-1 dengan prompt revisi ("Output chunk N-1 kurang lengkap untuk chunk N. Tambahkan: [data spesifik]")
-- Max 1 rollback per chunk. Gagal 2x → STOP, report ke Boss dengan state CHUNK_DEPENDENCY_MAP
-
-**Step 6 — VERIFY per chunk:**
-- Verify chunk[N] MANDATORY kalau output chunk[N] jadi input chunk[N+1] (dependency chain)
-- Verify di akhir BOLEH untuk chunk independen
-
-**Step 7 — Overhead awareness:**
-- Hitung overhead: chunk_count × (dispatch + verify) — log ke `%TEMP%\opencode\cost-log.json`
-- Kalau overhead > 30% budget task → jangan chunk, eskalasi ke Boss
-- Cleanup: hapus file chunk-{task}-*.txt di temp setelah synthesize selesai
-
-**CHUNK_REQUIRED dari free model (tetap ada):** kalau free model protes [CHUNK_REQUIRED], itu sinyal orchestrator LANGSUNG trigger pre-chunk check (Step 1-3) — bukan "gagal". Proses ulang task jadi unit kecil.
+### Task Chunking Protocol (MANDATORY GATE — WAJIB sebelum fan-out)
+Sebelum dispatch researcher+reviewer, WAJIB load skill `task-chunking` dan jalanin Pre-Chunk Check. Jangan dispatch task utuh ke free model — pecah dulu kalau Q>=3 / F>=3 / O>=2. Lihat skill `task-chunking` untuk checklist, algoritma chunk, pola dispatch (chunk sequential, agent parallel dalam chunk), dan recovery kalau output kosong.
 
 ### Audit Reception Mode — External Findings
 
@@ -101,6 +65,8 @@ The orchestrator itself is not pinged (it is already running).
 **ALWAYS dispatch researcher + reviewer PARALLEL via `task` tool. Baca kedua hasil, baru dispatch executor. NEVER skip.**
 
 ### Cara Dispatch yang Benar
+
+Pre-condition: Task Chunking Gate sudah lulus (skill `task-chunking` loaded, Pre-Chunk Check done). Jika belum, jangan dispatch.
 
 GUNAKAN `task` tool. BUKAN lakukan sendiri.
 

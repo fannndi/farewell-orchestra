@@ -122,7 +122,7 @@ Declared: **O:500 R:400 V:400 E:500** — max ceiling. Scale per-task:
 
 Estimasi: `8 + (files * 5) + (brief_lines * 2) + (chunks * 15)` — 15 steps overhead per chunk (dispatch+verify+synthesize). Kalau ragu naikkan 1 tingkat.
 
-**Free model capacity note:** Researcher (north-mini-code-free) dan reviewer (nemotron-3-ultra-free) punya reasoning capacity lebih rendah dari orchestrator. Untuk task LARGE atau MASSIVE, orchestrator WAJIB pakai Task Chunking Protocol — pecah jadi 2-4 dispatch kecil. JANGAN paksa 1 dispatch besar. Kalau output kosong, chunk ulang dengan unit lebih kecil. **PRE-CHUNK CHECK WAJIB sebelum fan-out — hitung jumlah pertanyaan/file/format. 3+ pertanyaan ATAU 3+ file ATAU multi-format → chunk proaktif jadi 1-2 file/1 pertanyaan/1 format per unit, max 3 chunk. Chunking SEQUENTIAL satu per satu — presisi di atas kecepatan.**
+**Task Chunking = GATE wajib (bukan saran).** Free model (researcher/reviewer) kapasitas rendah - task kegedean -> output kosong/garbled/mislabel. Sebelum fan-out researcher+reviewer, orchestrator WAJIB load skill `task-chunking` lalu jalanin Pre-Chunk Check: Q>=3 ATAU F>=3 ATAU O>=2 -> CHUNK. Per-chunk: <=2 file, 1 pertanyaan, 1 format. DALAM chunk agent parallel (researcher||reviewer); ANTAR chunk SEQUENTIAL (chunk k+1 bawa CONTEXT_SUMMARY dari chunk k). Recovery: output kosong/garbled -> re-chunk lebih kecil (max 2x) lalu eskalasi. Sub-agent `[CHUNK_REQUIRED]` = trigger re-chunk, bukan gagal.
 
 ## Cross-Project Usage
 
