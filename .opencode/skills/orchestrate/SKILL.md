@@ -156,7 +156,7 @@ Log setiap retry ke Farewell-Knowlage/Lessons.md (Obsidian vault) via `learn` to
 
 ## 4. Synthesize
 
-Gabung hasil researcher + reviewer → max 3 bullet. Konflik? reviewer (security) > researcher (facts). Tapi researcher punya bukti file:line sanggah reviewer → catat "dispute" ke Boss.
+Gabung hasil researcher + reviewer → max 3 bullet. Konflik? reviewer (security) > researcher (facts). Tapi researcher punya bukti file:line sanggah reviewer → catat "dispute" ke Boss. Synthesis diperkuat skill `synthesis-brief` (load sebelum executor handoff).
 
 ## 5. Brief Executor — 5 field, max 200 token
 
@@ -167,6 +167,8 @@ CONTEXT: [1-2 kalimat — kenapa, constraint]
 TRIED: [opsional — apa yg udah gagal, biar nggak diulang]
 VERIFY: [command — cara test bahwa task selesai]
 ```
+
+Synthesis diperkuat skill `synthesis-brief` (load sebelum executor handoff).
 
 ## 6. Blast Radius — Impact Check
 
@@ -186,6 +188,9 @@ Violation: dispatch executor tanpa verify = orchestrator MELANGGAR aturan sendir
 - **Research & Review:** Panggil `@verify stage:"research/review" claims:"..." files:["..."]`
 - **Implement:** Panggil `@verify stage:"implement" claims:"..." files:["..."]`
 - ❌ FAIL → reject, minta revisi. ✅ PASS → next.
+
+## 7b. Synthesis Brief — WAJIB Sebelum Executor
+Setelah verify gate PASS, SEBELUM dispatch executor: WAJIB load skill `synthesis-brief`. Gunakan untuk mensintesis output researcher + reviewer menjadi tabel atomic (file:line -> exact change), lalu bungkus ke 5-field executor brief. Prinsip: semua fork/decision CLOSED di level orchestrator — executor cukup nulis, tidak boleh mikir. Berlaku untuk ALL task (termasuk TRIVIAL; untuk TRIVIAL tabelnya bisa 1 baris). Jangan kirim brief yang masih mengandung opini/ambiguitas.
 
 ## 8. Post-Flight
 

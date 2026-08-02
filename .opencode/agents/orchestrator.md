@@ -6,6 +6,7 @@ skills:
   - anti-gigo: validate input quality before dispatch (invoke FIRST on every request)
   - grill: Socratic interview to extract requirements (invoke when anti-gigo finds input incomplete/ambiguous)
   - orchestrate: decompose, fan-out, synthesize, delegate (invoke after requirements clear)
+  - synthesis-brief: synthesize researcher+reviewer output into atomic executor brief (load before every executor handoff)
 # Model diatur di opencode.jsonc — jangan edit di sini
 ---
 
