@@ -37,14 +37,14 @@ Orchestrator bakal tanya nama, satu-liner, tech stack → generate 10 docs di `d
 /work-on <nama-project>
 ```
 
-Contoh: `/work-on my-app`, `/work-on C:\Users\FANNNDI\projects\my-app`
+Contoh: `/work-on my-app`, `/work-on ~/projects/my-app`
 
 Orchestrator resolve path, baca `sub-project.md`, tampilin context (fase, task aktif), siap nerima request.
 
 ### 3. Langsung kerja (tanpa context switch)
 
 ```
-kerjain project ini C:\Users\FANNNDI\projects\my-app, tolong tambahin fitur X
+kerjain project ini ~/projects/my-app, tolong tambahin fitur X
 ```
 
 Orchestrator deteksi path, baca anchor, langsung gas.
@@ -75,4 +75,4 @@ Project kecil, sekali pakai, nggak butuh dokumentasi → skip `/new-project`. La
 - Kalau lupa nama project, ketik `/work-on` kosong — orchestrator bakal tanya.
 - `sub-project.md` adalah otak orchestra di project itu. Jangan dihapus.
 - Path dengan spasi: gunakan quotes. Contoh: `/work-on "my app"`
-- Profile (e.g. default-oc, default-or, codex-oc, codex-or, ollama-oc, ollama-or) dipilih pas `/new-project` atau bisa diganti manual di `sub-project.md`.
+- Profile (e.g. default, mix, low-cost) dipilih pas `/new-project` atau bisa diganti manual di `sub-project.md`.

@@ -67,9 +67,6 @@ foreach ($name in @("orchestrator", "researcher", "reviewer", "executor")) {
         continue
     }
     $minRecommended = [int]([math]::Ceiling($steps * 0.8))
-    if ($steps -lt $minRecommended -and $steps -lt 20) {
-        $warnings += "[BUDGET] $name steps ($steps) below sanity floor ($minRecommended = 80% of declared or 20, whichever higher)"
-    }
 }
 
 # Validasi instructions (tidak boleh load semua agent file)

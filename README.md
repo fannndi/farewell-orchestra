@@ -18,8 +18,8 @@ Boss kirim request
     ▼
 Orchestrator [PAID — deepseek-v4-flash]   ← validasi input (anti-gigo), pre-chunk check, decompose task, arahkan tim
     │
-    ├── Researcher [FREE — north-mini-code-free]  ← baca file, trace code, verifikasi klaim (forensic + web-research + CBM query)
-    └── Reviewer [FREE — nemotron-3-ultra-free]   ← audit STRIDE, cek konvensi, second opinion (stride-audit + CBM query)
+    ├── Researcher [FREE — north-mini-code-free]  ← baca file, trace code, verifikasi klaim (forensic + web-research)
+    └── Reviewer [FREE — nemotron-3-ultra-free]   ← audit STRIDE, cek konvensi, second opinion (stride-audit)
     │       (parallel — barengan)
     ▼
 Orchestrator [PAID]                      ← synthesize temuan, brief executor
@@ -42,8 +42,8 @@ Farewell-orchestra = mission control. Boss buka project DARI SINI — project ta
 | Role | Persona | Skill wajib |
 |------|---------|-------------|
 | orchestrator | orchestrator.md | anti-gigo + orchestrate |
-| researcher | researcher.md | forensic + web-research + CBM |
-| reviewer | reviewer.md | stride-audit + CBM |
+| researcher | researcher.md | forensic + web-research |
+| reviewer | reviewer.md | stride-audit |
 | executor | executor.md | minimal-impl + verification |
 
 Alur: Boss bilang "kerjain X" → resolve path → cek registry (Farewell-Knowlage) → inject konteks → baca sub-project.md (trust boundary — UNTRUSTED) → orkestrasi normal.
@@ -56,7 +56,7 @@ Cross-project: external_directory scoped ~/projects/** (least privilege). Auto-s
 
 **Evidence-first, bukan opini.** Researcher wajib return file:line. Reviewer wajib tag [BLOCKING]/[SHOULD]/[NICE] dengan bukti. verify.py enforce format ini — klaim tanpa bukti = FAIL. Gak ada "kayaknya" atau "mungkin".
 
-**Code intelligence lewat CBM.** CBM codebase-memory-mcp v0.9.0 meng-index seluruh codebase jadi graph — 63k nodes untuk opencode, 160k nodes total di workspace. Researcher dan reviewer bisa query struktur codebase tanpa baca file mentah satu per satu: **120x hemat token**. Graph UI bisa diakses di localhost:9749 dengan 15 MCP tools untuk traversal, search, dan analisis dependensi.
+**Code intelligence via CBM (available, not integrated).** CBM codebase-memory-mcp v0.9.0 meng-index seluruh codebase jadi graph — 63k nodes untuk opencode, 160k nodes total di workspace. Graph UI bisa diakses di localhost:9749 dengan 15 MCP tools untuk traversal, search, dan analisis dependensi. **Catatan:** CBM dikonfigurasi sebagai MCP server yang tersedia, tapi belum diintegrasikan ke agent persona/skill manapun — researcher pakai forensic + web-research, reviewer pakai stride-audit. CBM query bisa diakses secara manual via MCP tools jika diperlukan.
 
 **Knowledge terpisah dari kode.** `Farewell-Knowlage` (Obsidian vault) menyimpan Lessons, Decisions (ADR-001: jangan merge skill; ADR-002: chunking proactive), Session, dan Registry — terpisah dari struktur project. Knowledge base bisa di-query tanpa mengotori repo kode.
 
@@ -70,9 +70,9 @@ Cross-project: external_directory scoped ~/projects/** (least privilege). Auto-s
 
 ## Arsitektur & Rationale
 
-Kenapa sistem ini punya 9 skill, 3 hook, 4 tool? Bukan over-engineering — setiap komponen menjaga satu failure mode yang berbeda. Merge = separation hilang.
+Kenapa sistem ini punya 10 skill, 3 hook, 4 tool? Bukan over-engineering — setiap komponen menjaga satu failure mode yang berbeda. Merge = separation hilang.
 
-**9 skill, bukan 9 duplikat.** Setiap skill punya guardrail unik yang gak bisa di-merge:
+**10 skill, bukan 10 duplikat.** Setiap skill punya guardrail unik yang gak bisa di-merge:
 
 | Skill | Guardrail unik |
 |-------|----------------|
@@ -113,7 +113,7 @@ Hasilnya: researcher gak overwhelmed, reviewer gak nge-blank. Tiap chunk dikerja
 ## Quick Start
 
 ```bash
-# 1. Pilih profile (default-oc direkomendasikan) — generate opencode.jsonc
+# 1. Pilih profile (default direkomendasikan) — generate opencode.jsonc
 profiles\switch.bat
 
 # 2. Buka opencode di folder farewell-orchestra
@@ -141,9 +141,7 @@ Setiap agent punya skill spesifik — auto-discovered dari `.opencode/skills/`.
 | Orchestrator | `bootstrap-project` | Generate 10 dokumen project dari ide |
 | Researcher | `forensic` | Cross-file tracing, deep debug, evidence file:line |
 | Researcher | `web-research` | External fact-check — docs, API, library status |
-| Researcher | `CBM query` | Index codebase graph traversal — 120x hemat token vs baca file mentah |
 | Reviewer | `stride-audit` | STRIDE threat model, convention enforcement |
-| Reviewer | `CBM query` | Query struktur codebase via graph — verifikasi dependensi dan attack surface |
 | Executor | `minimal-impl` | YAGNI-first, verify-first, anti over-engineering |
 | Executor | `verification-ground-truth` | Verify claim vs tool output — gak asumsi |
 
@@ -167,8 +165,8 @@ Skill bukan opsional self-trigger — ini di-hardcode di prompt agent via `profi
      │
 3. Orchestrator — orchestrate: pre-chunk check → decompose → fan-out
      │
-4. Researcher (FREE) — forensic: trace code, return file:line + CBM query index
-   Reviewer (FREE)  — stride-audit: tag [BLOCKING]/[SHOULD], CBM query dependensi
+4. Researcher (FREE) — forensic: trace code, return file:line
+   Reviewer (FREE)  — stride-audit: tag [BLOCKING]/[SHOULD]
      │  (parallel — barengan)
 5. Orchestrator — @verify stage:research + stage:review → synthesize → brief executor
      │
@@ -185,9 +183,9 @@ Skill bukan opsional self-trigger — ini di-hardcode di prompt agent via `profi
 |----------|--------|
 | Agent provider | OpenCode — 4 agent orchestration, hooks lifecycle, verify gate, MCP integration |
 | Model provider | 9router — routing free vs paid otomatis (north-mini-code-free, nemotron-3-ultra-free, deepseek-v4-flash) |
-| Code intelligence | CBM codebase-memory-mcp v0.9.0 — 160k nodes indexed, graph UI localhost:9749, 15 MCP tools, 120x token savings |
+| Code intelligence | CBM codebase-memory-mcp v0.9.0 — 160k nodes indexed, graph UI localhost:9749, 15 MCP tools (available MCP server, not integrated into agent skills) |
 | Knowledge | Farewell-Knowlage (Obsidian vault) — Lessons, Decisions (ADR-001/002), Session, Registry |
-| Generated config | profiles/generate.py → opencode.jsonc (6 profiles, source of truth tunggal) |
+| Generated config | profiles/generate.py → opencode.jsonc (3 profiles, source of truth tunggal) |
 | Security | Least privilege external_directory, trust boundary sub-project.md (UNTRUSTED data), verify gate mandatory |
 
 ## Structure
@@ -202,16 +200,16 @@ Skill bukan opsional self-trigger — ini di-hardcode di prompt agent via `profi
 │   ├── command/               — slash commands
 │   ├── hooks/                 — lifecycle enforcement (pre/post-generate)
 │   ├── project-guide.md       — cross-project usage guide
-│   ├── skills/                — 9 agent skills (anti-gigo, forensic, stride-audit, etc.)
+│   ├── skills/                — 10 agent skills (anti-gigo, forensic, stride-audit, etc.)
 │   └── tools/                 — verify.ts, harness_status, learn
 ├── profiles/
 │   ├── generate.py            — profile generator ★ SOURCE OF TRUTH ★ (AGENT_TEMPLATES, model assignments)
-│   ├── profiles.json          — 6 model profiles (default-oc, opencode, gemini, minimal, full, custom)
+│   ├── profiles.json          — 3 model profiles (default, mix, low-cost)
 │   └── switch.bat             — interactive profile switcher
 ├── templates/
 │   └── sub-project.md         — project anchor template (context antar sesi)
 └── tests/
-    └── test_generate.py       — 18 tests, 0 gagal
+    └── test_generate.py       — 24 tests, 0 gagal
 ```
 
 External tools:

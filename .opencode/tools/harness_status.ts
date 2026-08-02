@@ -101,7 +101,7 @@ export default tool({
     let sensorOk = 0, sensorMissing = 0, sensorPartial = 0
     if (args.check === "all" || args.check === "sensors") {
       try {
-        const lessonsPath = "C:\\Users\\FANNNDI\\Documents\\Farewell-Knowlage\\Lessons.md"
+        const lessonsPath = path.join(path.dirname(worktree), "Farewell-Knowlage", "Lessons.md")
         const lessonsContent = fs.readFileSync(lessonsPath, "utf-8")
         const sensorSection = lessonsContent.match(/## Sensor Coverage[\s\S]*?(?=## |$)/)
         if (sensorSection) {

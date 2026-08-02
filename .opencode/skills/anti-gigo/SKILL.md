@@ -52,7 +52,7 @@ Tiap request → klasifikasi ekstrem:
 
 | Kelas | Kriteria | Tindakan |
 |-------|----------|----------|
-| TRIVIAL | 1 file, ≤3 baris, no blast | DIRECT execute |
+| TRIVIAL | 1 file, ≤3 baris, no blast | Researcher + executor (reviewer optional) — orchestrator never writes code, always delegate |
 | SMALL | 1-2 files, ≤20 baris, low blast | Researcher + executor |
 | MEDIUM | 3-5 files, low-medium blast | Researcher + executor |
 | LARGE | >5 files atau high blast | FULL orchestra |

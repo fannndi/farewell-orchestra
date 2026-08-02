@@ -25,9 +25,9 @@ Panggil via orchestrator: `@harness_status check:"all" format:"json"`
     "executor":    { "model": "[PAID]",  "steps_limit": 500 }
   },
   "profiles": {
-    "total": 6,
+    "total": 3,
     "valid": true,
-    "names": ["default-oc", "default-or", "codex-oc", "codex-or", "ollama-oc", "ollama-or"]
+    "names": ["default", "mix", "low-cost"]
   },
   "sensors": {
     "ok": 12,

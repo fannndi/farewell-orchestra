@@ -16,7 +16,7 @@ export default tool({
 
   async execute(args, context) {
     const worktree = context.worktree
-    const lessonsPath = "C:\\Users\\FANNNDI\\Documents\\Farewell-Knowlage\\Lessons.md"
+    const lessonsPath = path.join(path.dirname(worktree), "Farewell-Knowlage", "Lessons.md")
     const date = new Date().toISOString().slice(0, 10)
 
     // Escape pipe characters for markdown table

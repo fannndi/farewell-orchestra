@@ -116,7 +116,7 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
     checks = []
 
     # Check 1: Priority tags
-    valid_tags = ["BLOCKING", "SHOULD", "NICE", "FYI", "WARN", "INFO"]
+    valid_tags = ["BLOCKING", "SHOULD", "NICE", "FYI", "WARN", "INFO", "D1", "D2", "D3", "D4"]
     found_tags = re.findall(r'\[(\w+)\]', claims)
     bad_tags = [t for t in found_tags if t not in valid_tags]
     detail = f"Tags found: {found_tags}" if found_tags else "No tags found"

@@ -13,11 +13,11 @@ Run on every new session. Validasi struktur workspace + profile.
 - [ ] .opencode/agents/reviewer.md — ada
 - [ ] .opencode/agents/executor.md — ada
 
-## 2. Skills (9 file di .opencode/skills/)
+## 2. Skills (10 file di .opencode/skills/)
 
 - [ ] anti-gigo, grill, orchestrate, forensic, web-research — ada
 - [ ] stride-audit, minimal-impl, verification-ground-truth — ada
-- [ ] bootstrap-project — ada
+- [ ] bootstrap-project, synthesis-brief — ada
 
 ## 3. Profile system
 
@@ -56,7 +56,7 @@ Checklist for every custom tool / mechanism:
 | verify.ts | check.md | `.opencode/agents/orchestrator.md`:22-30 | sesi real | generate.py --validate |
 | harness_status.ts | check.md | `.opencode/agents/orchestrator.md`:62-64 | sesi real | `@harness_status` |
 | learn.ts | check.md | `.opencode/agents/orchestrator.md`:69 | sesi real | cek Farewell-Knowlage/Lessons.md row |
-| bash_denylist | generate.py | `.opencode/hooks/post-generate.ps1`:29-30 | generate.py hook | `python generate.py default-oc` |
+| bash_denylist | generate.py | `.opencode/hooks/post-generate.ps1`:29-30 | generate.py hook | `python generate.py default` |
 | step budget scaling | `.opencode/agents/orchestrator.md`:38-48 | `.opencode/agents/orchestrator.md`:48 | dispatch tiap task | bandingkan actual vs budget |
 
 **Legend:** [D] ada di doc/config | [W] agent/skill instructions nyebut | [E] pernah dipanggil | [V] ada cara verify
@@ -68,7 +68,7 @@ Manual check — tidak ada auto-trigger via hooks/CI:
 - **Script:** `.opencode/scripts/check-links.py` — melacak semua refs di markdown
 - **Coverage:** Formal links (text diikuti path dalam kurung), refs seperti `filename.md` dan `filename.md:42`
 - **Forward refs:** file yang akan dihasilkan oleh bootstrap-project (sub-project.md, PRD.md, dsb.) dikecualikan
-- **Trigger:** HANYA manual — hooks.jsonc tidak dispatch event link-check (tidak ada `sessionEnd`/`beforeCommit` handler). Jalankan langsung:
+- **Trigger:** hooks.jsonc dispatches link-check via `beforeCommit` + `sessionEnd` handlers (check-links hook). Also runnable manually:
 - **Exit code:** 0 kalau semua beres, 1 kalau ada broken references
 - **Output:** `[LINK-CHECK] Scanning <N> markdown files...` + report per broken ref format `  BROKEN <rel>:<line> — <target> -> NOT FOUND`
 

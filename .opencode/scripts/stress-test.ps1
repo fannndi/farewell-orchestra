@@ -15,6 +15,10 @@ Write-Host "`n=== STRESS TEST - Dispatch Configuration ===" -ForegroundColor Cya
 Write-Host ""
 
 # Read files
+if (-not (Test-Path "$root\opencode.jsonc")) {
+    Write-Host "opencode.jsonc not found - run switch.bat first" -ForegroundColor Yellow
+    exit 1
+}
 $rawJsonc = Get-Content "$root\opencode.jsonc" -Raw
 $orchMd = Get-Content "$root\.opencode\agents\orchestrator.md" -Raw
 $agentsMd = Get-Content "$root\AGENTS.md" -Raw
@@ -119,7 +123,8 @@ if ($t4) { $passed++ } else { $failed++ }
 # ---- TEST 5 ----
 Write-Host "[TEST 5] Cross-File Dispatch Consistency" -ForegroundColor Yellow
 $t5=$true
-$fileChecks = @{'orchestrator.md'=$orchMd; 'SKILL.md'=$skillMd; 'AGENTS.md'=$agentsMd}
+# orchestrator persona delegates dispatch to orchestrate SKILL — literals live in SKILL.md, not orchestrator.md
+$fileChecks = @{'SKILL.md'=$skillMd; 'AGENTS.md'=$agentsMd}
 foreach ($kv in $fileChecks.GetEnumerator()) {
     $fn = $kv.Key; $content = $kv.Value
     $hasTask = $content -match [regex]::Escape('task(')

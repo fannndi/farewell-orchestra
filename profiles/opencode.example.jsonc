@@ -169,7 +169,7 @@
   "mcp": {
     "codebase-memory-mcp": {
       "type": "stdio",
-      "command": "C:/Users/FANNNDI/.local/bin/codebase-memory-mcp.exe"
+      "command": "~/.local/bin/codebase-memory-mcp.exe"
     }
   },
   "model": "9router/ocg/deepseek-v4-flash",
