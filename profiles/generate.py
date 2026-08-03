@@ -31,7 +31,14 @@ BOILERPLATE = {
         "doom_loop": "deny", "edit": "ask", "bash": "ask", "task": "ask",
         "webfetch": "ask", "websearch": "ask",
         "read": "allow", "glob": "allow", "grep": "allow", "list": "allow",
-        "question": "allow", "todowrite": "allow", "lsp": "allow", "skill": "allow"
+        "question": "allow", "todowrite": "allow", "lsp": "allow", "mcp_*": "deny",
+        "skill": {
+            "*": "deny", "anti-gigo": "allow", "bootstrap-project": "allow",
+            "customize-opencode": "allow", "forensic": "allow", "grill": "allow",
+            "minimal-impl": "allow", "orchestrate": "allow", "stride-audit": "allow",
+            "synthesis-brief": "allow", "task-chunking": "allow",
+            "verification-ground-truth": "allow", "web-research": "allow"
+        }
     },
     "references": {
         "projects": {"path": "~/projects", "description": "Folder project Boss"},
@@ -56,7 +63,13 @@ BOILERPLATE = {
             }
         }
     },
-    "experimental": {"primary_tools": ["todowrite", "question"]},
+    "experimental": {
+        "primary_tools": ["todowrite", "question"],
+        "policies": [
+            {"effect": "deny", "action": "provider.use", "resource": "*"},
+            {"effect": "allow", "action": "provider.use", "resource": "9router"}
+        ]
+    },
     "tool_output": {"max_lines": 1000, "max_bytes": 20000},
     "compaction": {
         "auto": True,
@@ -89,7 +102,7 @@ BOILERPLATE = {
             "max_base64_bytes": 5242880
         }
     },
-    "lsp": True,
+    "lsp": False,
     "formatter": True
 }
 
