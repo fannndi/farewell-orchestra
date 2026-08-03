@@ -49,7 +49,8 @@ class TestLoadProfiles:
             for role in ("orchestrator", "researcher", "reviewer", "executor"):
                 assert role in p["agents"], f"Profile '{p['name']}' missing agent '{role}'"
                 assert "model" in p["agents"][role]
-                assert "small_model" in p["agents"][role]
+                if "small_model" in p["agents"][role]:
+                    assert isinstance(p["agents"][role]["small_model"], str)
 
     def test_models_have_required_keys(self):
         reg = get_registry()

@@ -42,6 +42,34 @@
     "9router/ocg/mimo-v2.5": {
       "reasoning": true, "tool_call": true,
       "limit": { "context": 1000000, "output": 200000 }
+    },
+    "9router/oc/big-pickle": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 256000, "output": 128000 }
+    },
+    "9router/oc/deepseek-v4-flash-free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 200000 }
+    },
+    "9router/oc/mimo-v2.5-free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 1000000, "output": 200000 }
+    },
+    "9router/oc/ling-3.0-flash-free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 128000, "output": 128000 }
+    },
+    "9router/oc/laguna-s-2.1-free": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 128000, "output": 128000 }
+    },
+    "9router/ps/poolside/laguna-s-2.1": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 128000, "output": 128000 }
+    },
+    "9router/ps/poolside/laguna-xs-2.1": {
+      "reasoning": true, "tool_call": true,
+      "limit": { "context": 128000, "output": 128000 }
     }
   },
 
@@ -74,6 +102,16 @@
         "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
         "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
         "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
+      }
+    },
+    {
+      "name": "free",
+      "label": "100% FREE | adik belajar | multi fallback",
+      "agents": {
+        "orchestrator": {"model": "9router/oc/deepseek-v4-flash-free", "small_model": "9router/oc/laguna-s-2.1-free"},
+        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/oc/nemotron-3-ultra-free"},
+        "reviewer": {"model": "9router/oc/ling-3.0-flash-free", "small_model": "9router/oc/big-pickle"},
+        "executor": {"model": "9router/oc/mimo-v2.5-free", "small_model": "9router/ps/poolside/laguna-xs-2.1"}
       }
     }
   ]

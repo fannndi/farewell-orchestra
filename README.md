@@ -92,10 +92,11 @@ Catatan: label PAID/FREE = pembagian beban & peran (paid = reasoning tinggi untu
 | `default` | ocg/deepseek-v4-flash | cx/gpt-5.6-luna |
 | `mix` | cx/gpt-5.6-luna | ocg/hy3 |
 | `low-cost` | ocg/hy3 | cx/gpt-5.6-luna |
+| `free` | oc/deepseek-v4-flash-free | — |
 
 Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. Switcher: `profiles/switch.bat`.
 
-**3 profile, bukan 6.** Semua di-source-of-truth yang sama.
+**4 profile, bukan 6.** Semua di-source-of-truth yang sama.
 
 ## Commands
 
