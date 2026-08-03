@@ -122,7 +122,7 @@ def main():
                 continue
 
             # Skip known forward refs (files that will be generated)
-            if ref_path in FORWARD_REFS or any(ref_path.endswith(f"/{f}") for f in FORWARD_REFS):
+            if ref_path in FORWARD_REFS or any(ref_path.endswith(f"/{f}") for f in FORWARD_REFS) or "Farewell-Knowlage/" in ref_path:
                 continue
 
             # Resolve relative to source dir then project root

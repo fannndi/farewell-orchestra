@@ -66,7 +66,7 @@ foreach ($name in @("orchestrator", "researcher", "reviewer", "executor")) {
         $warnings += "[BUDGET] $name steps not defined in config"
         continue
     }
-    $minRecommended = [int]([math]::Ceiling($steps * 0.8))
+
 }
 
 # Validasi instructions (tidak boleh load semua agent file)

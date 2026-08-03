@@ -81,7 +81,7 @@ Skill di-hardcode di prompt via `profiles/generate.py` — bukan opsional self-t
 | 9 | `verification-ground-truth` | Verify-before-claim — klaim wajib cocok sama tool output |
 | 10 | `web-research` | External evidence — fact-check dari luar repo |
 
-10 skill, bukan 10 duplikat. Tiap skill guard phase/domain berbeda. Merge = separation hilang (ADR-001).
+11 skill, bukan 11 duplikat. Tiap skill guard phase/domain berbeda. Merge = separation hilang (ADR-001).
 
 ## Profiles
 
@@ -142,7 +142,7 @@ Farewell-orchestra = mission control. Boss load project DARI SINI — project ta
 │   ├── command/               — slash commands
 │   ├── hooks/                 — lifecycle enforcement (pre/post-generate)
 │   ├── project-guide.md       — cross-project usage guide
-│   ├── skills/                — 10 agent skills
+│   ├── skills/                — 11 agent skills
 │   └── tools/                 — verify.ts, harness_status, learn
 ├── profiles/
 │   ├── generate.py            — profile generator (SOURCE OF TRUTH)

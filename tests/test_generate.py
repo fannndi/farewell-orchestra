@@ -71,9 +71,9 @@ class TestValidateRegistry:
 class TestFindProfile:
     def test_finds_by_name(self):
         reg = get_registry()
-        p = find_profile(reg, "default-oc")
+        p = find_profile(reg, "default")
         assert p is not None
-        assert p["name"] == "default-oc"
+        assert p["name"] == "default"
 
     def test_returns_none_for_missing(self):
         reg = get_registry()
@@ -84,7 +84,7 @@ class TestFindProfile:
 class TestBuildAgentConfig:
     def test_returns_all_templates(self):
         reg = get_registry()
-        profile = find_profile(reg, "default-oc")
+        profile = find_profile(reg, "default")
         agents = build_agent_config(profile)
         for name in ("orchestrator", "researcher", "reviewer", "executor"):
             assert name in agents, f"Missing agent '{name}'"
@@ -92,7 +92,7 @@ class TestBuildAgentConfig:
 
     def test_agents_have_model_assigned(self):
         reg = get_registry()
-        profile = find_profile(reg, "default-oc")
+        profile = find_profile(reg, "default")
         agents = build_agent_config(profile)
         for name in ("orchestrator", "researcher", "reviewer", "executor"):
             assert agents[name].get("model"), f"Agent '{name}' has no model"
@@ -100,14 +100,14 @@ class TestBuildAgentConfig:
 
     def test_hidden_agents_exist(self):
         reg = get_registry()
-        profile = find_profile(reg, "default-oc")
+        profile = find_profile(reg, "default")
         agents = build_agent_config(profile)
         for hidden in ("title", "summary", "compaction"):
             assert hidden in agents, f"Missing hidden agent '{hidden}'"
 
     def test_disabled_agents_exist(self):
         reg = get_registry()
-        profile = find_profile(reg, "default-oc")
+        profile = find_profile(reg, "default")
         agents = build_agent_config(profile)
         for disabled in ("build", "plan", "general", "explore"):
             assert disabled in agents, f"Missing disabled agent '{disabled}'"
@@ -117,7 +117,7 @@ class TestBuildAgentConfig:
 class TestCollectModels:
     def test_deduplicates(self):
         reg = get_registry()
-        profile = find_profile(reg, "default-oc")
+        profile = find_profile(reg, "default")
         models = collect_models(reg, profile)
         # Should have at least orchestrator model + small_model distinct models
         main = profile["model"]
@@ -147,12 +147,12 @@ class TestShortModelId:
 class TestGenerateSmoke:
     """Quick smoke tests — gaya live, bukan mock."""
 
-    def test_generate_default_oc_stdout_produces_json(self):
-        """--stdout default-oc should produce valid JSON with proper keys."""
+    def test_generate_default_stdout_produces_json(self):
+        """--stdout default should produce valid JSON with proper keys."""
         import subprocess
         script = os.path.join(os.path.dirname(__file__), "..", "profiles", "generate.py")
         result = subprocess.run(
-            [sys.executable, script, "--stdout", "default-oc"],
+            [sys.executable, script, "--stdout", "default"],
             capture_output=True, text=True, timeout=30
         )
         assert result.returncode == 0, f"STDERR: {result.stderr}"

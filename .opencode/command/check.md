@@ -13,7 +13,7 @@ Run on every new session. Validasi struktur workspace + profile.
 - [ ] .opencode/agents/reviewer.md — ada
 - [ ] .opencode/agents/executor.md — ada
 
-## 2. Skills (10 file di .opencode/skills/)
+## 2. Skills (11 file di .opencode/skills/)
 
 - [ ] anti-gigo, grill, orchestrate, forensic, web-research — ada
 - [ ] stride-audit, minimal-impl, verification-ground-truth — ada
