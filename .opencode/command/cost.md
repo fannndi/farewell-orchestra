@@ -16,6 +16,6 @@ Session  | Orchestrator     | Researcher     | Reviewer       | Executor       |
 2026-08-01 | 234/500 (ocg/v4) | 89/400 (north) | 0/400 (nemotron) | 156/500 (nemotron) | $0.35
 
 ## Notes
-- Cost log disimpan di %TEMP%\opencode\cost-log.json
+- Cost log disimpan di %TEMP%\opencode\cost-log.json (Windows) atau $TEMP/opencode/cost-log.json (Unix)
 - Estimasi biaya berdasarkan model pricing (approximate)
 - Hanya mencatat kalau orchestrator eksplisit log

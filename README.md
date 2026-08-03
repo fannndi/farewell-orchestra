@@ -87,9 +87,9 @@ Skill di-hardcode di prompt via `profiles/generate.py` — bukan opsional self-t
 
 | Profile | Model | Fallback |
 |---------|-------|----------|
-| `default` | ocg (primary) | openrouter |
-| `mix` | codex | ollama |
-| `low-cost` | hy3 | mimo |
+| `default` | ocg/deepseek-v4-flash | cx/gpt-5.6-luna |
+| `mix` | cx/gpt-5.6-luna | ocg/hy3 |
+| `low-cost` | ocg/hy3 | cx/gpt-5.6-luna |
 
 Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. Switcher: `profiles/switch.bat`.
 
@@ -102,16 +102,6 @@ Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. S
 | `/work-on <path>` | Arahkan orchestra ke project target |
 | `/new-project` | Buat project baru dari scratch |
 | `/check` | Health check — validasi profiles.json, sensor coverage, active profile |
-
-## CBM (Codebase Memory)
-
-CBM codebase-memory-mcp v0.9.0 dikonfigurasi sebagai MCP server — tersedia tapi **belum diintegrasikan** ke agent persona/skill manapun.
-
-- **Researcher** pakai: forensic + web-research
-- **Reviewer** pakai: stride-audit
-- **CBM** → available via MCP tools untuk query manual kalau diperlukan
-
-160k nodes indexed, 15 MCP tools, graph UI di localhost:9749.
 
 ## ADRs
 
@@ -151,7 +141,7 @@ Farewell-orchestra = mission control. Boss load project DARI SINI — project ta
 ├── templates/
 │   └── sub-project.md         — project anchor template
 └── tests/
-    └── test_generate.py       — 24 tests, 0 gagal
+    └── test_generate.py       — 20 tests, 0 gagal
 ```
 
 ## Kenapa Ini Bekerja

@@ -11,7 +11,8 @@ Tambahin SEKALI di `~/.config/opencode/opencode.json`:
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "external_directory": {
-      "~/projects/**": "allow"
+      "~/projects/**": "allow",
+      "~/Documents/Farewell-Knowlage/**": "allow"
     }
   }
 }
@@ -19,7 +20,7 @@ Tambahin SEKALI di `~/.config/opencode/opencode.json`:
 
 Ganti path sesuai folder tempat Boss biasa clone repo.
 
-> **Catatan:** Hanya `~/projects/**` yang di-allow — least privilege. Jangan tambah Documents (private files).
+> **Catatan:** Hanya `~/projects/**` + `~/Documents/Farewell-Knowlage/**` yang di-allow — executor butuh vault untuk nulis Lessons.md
 
 ## Cara Pakai
 

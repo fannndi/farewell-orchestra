@@ -28,11 +28,11 @@ BOILERPLATE = {
     "subagent_depth": 2,
     "share": "disabled",
     "permission": {
+        "doom_loop": "deny",
         "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
         "list": "allow", "bash": "allow", "task": "allow", "webfetch": "allow",
         "websearch": "allow", "question": "allow", "todowrite": "allow",
-        "lsp": "allow", "skill": "allow",
-        "doom_loop": "deny"
+        "lsp": "allow", "skill": "allow"
     },
     "references": {
         "projects": {"path": "~/projects", "description": "Folder project Boss"},
@@ -91,14 +91,7 @@ BOILERPLATE = {
         }
     },
     "lsp": True,
-    "formatter": True,
-    "mcp": {
-        "codebase-memory-mcp": {
-            "type": "local",
-            "command": os.path.expanduser("~/.local/bin/codebase-memory-mcp.exe"),
-            "enabled": True
-        }
-    }
+    "formatter": True
 }
 
 # Agent config template — only `model` changes per profile
@@ -161,7 +154,7 @@ AGENT_TEMPLATES = {
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
             "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",
-            "external_directory": {"~/projects/**": "allow", "~/Documents/Farewell-Knowlage/**": "allow", "~/Documents/Source Code/**": "allow"},
+            "external_directory": {"~/projects/**": "allow", "~/Documents/Farewell-Knowlage/**": "allow"},
             "task": "deny"
         }
     }

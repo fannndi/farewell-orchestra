@@ -39,11 +39,11 @@ class TestLoadProfiles:
         for p in reg["profiles"]:
             assert "name" in p, f"Profile missing name: {p}"
             assert "label" in p, f"Profile missing label: {p}"
-            assert "model" in p, f"Profile missing model: {p}"
-            assert "small_model" in p, f"Profile missing small_model: {p}"
             assert "agents" in p, f"Profile missing agents: {p}"
             for role in ("orchestrator", "researcher", "reviewer", "executor"):
                 assert role in p["agents"], f"Profile '{p['name']}' missing agent '{role}'"
+                assert "model" in p["agents"][role]
+                assert "small_model" in p["agents"][role]
 
     def test_models_have_required_keys(self):
         reg = get_registry()
@@ -120,8 +120,8 @@ class TestCollectModels:
         profile = find_profile(reg, "default")
         models = collect_models(reg, profile)
         # Should have at least orchestrator model + small_model distinct models
-        main = profile["model"]
-        small = profile["small_model"]
+        main = profile["agents"]["orchestrator"]["model"]
+        small = profile["agents"]["orchestrator"]["small_model"]
         assert main in models, f"Main model '{main}' not collected"
         assert small in models, f"Small model '{small}' not collected"
 
@@ -185,3 +185,20 @@ class TestGenerateSmoke:
             capture_output=True, text=True, timeout=30
         )
         assert result.returncode != 0
+
+
+class TestSecurityChecks:
+    """Verify CBM removed and least-privilege external_directory."""
+
+    def test_boilerplate_has_no_codebase_memory_mcp(self):
+        """BOILERPLATE must not contain codebase-memory-mcp."""
+        from generate import BOILERPLATE
+        bp_str = json.dumps(BOILERPLATE)
+        assert "codebase-memory-mcp" not in bp_str
+
+    def test_executor_external_directory_no_source_code(self):
+        """Executor external_directory must not contain 'Source Code'."""
+        from generate import AGENT_TEMPLATES
+        ext = AGENT_TEMPLATES["executor"].get("permission", {}).get("external_directory", {})
+        for key in ext:
+            assert "Source Code" not in key, f"Executor external_directory contains 'Source Code': {key}"

@@ -11,6 +11,7 @@
   "subagent_depth": 2,
   "share": "disabled",
   "permission": {
+    "doom_loop": "deny",
     "read": "allow",
     "edit": "allow",
     "glob": "allow",
@@ -23,8 +24,7 @@
     "question": "allow",
     "todowrite": "allow",
     "lsp": "allow",
-    "skill": "allow",
-    "doom_loop": "deny"
+    "skill": "allow"
   },
   "references": {
     "projects": {
@@ -175,13 +175,6 @@
   },
   "lsp": true,
   "formatter": true,
-  "mcp": {
-    "codebase-memory-mcp": {
-      "type": "local",
-      "command": "C:\\Users\\FANNNDI/.local/bin/codebase-memory-mcp.exe",
-      "enabled": true
-    }
-  },
   "model": "9router/ocg/deepseek-v4-flash",
   "small_model": "9router/cx/gpt-5.6-luna",
   "agent": {
@@ -310,8 +303,7 @@
         "skill": "allow",
         "external_directory": {
           "~/projects/**": "allow",
-          "~/Documents/Farewell-Knowlage/**": "allow",
-          "~/Documents/Source Code/**": "allow"
+          "~/Documents/Farewell-Knowlage/**": "allow"
         },
         "task": "deny"
       },
