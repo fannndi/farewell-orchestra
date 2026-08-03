@@ -28,11 +28,10 @@ BOILERPLATE = {
     "subagent_depth": 2,
     "share": "disabled",
     "permission": {
-        "doom_loop": "deny",
-        "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
-        "list": "allow", "bash": "allow", "task": "allow", "webfetch": "allow",
-        "websearch": "allow", "question": "allow", "todowrite": "allow",
-        "lsp": "allow", "skill": "allow"
+        "doom_loop": "deny", "edit": "ask", "bash": "ask", "task": "ask",
+        "webfetch": "ask", "websearch": "ask",
+        "read": "allow", "glob": "allow", "grep": "allow", "list": "allow",
+        "question": "allow", "todowrite": "allow", "lsp": "allow", "skill": "allow"
     },
     "references": {
         "projects": {"path": "~/projects", "description": "Folder project Boss"},
@@ -105,8 +104,8 @@ AGENT_TEMPLATES = {
         "steps": 500,
         "prompt": "Orchestrator: decompose -> fan-out parallel via `task` tool -> synthesize -> brief executor. Trust your sub-agents (researcher/reviewer/executor) to do their job. USE task tool with subagent_type for every non-trivial request. WAJIB parallel dispatch researcher+reviewer before executor. WAJIB: load skill tool via `skill` — anti-gigo + orchestrate di awal session/request.",
         "permission": {
-            "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "Farewell-Knowlage/Lessons.md": "ask", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
-            "list": "allow", "bash": "allow", "question": "allow", "skill": "allow",
+            "read": {"*.md": "allow", "*": "ask"}, "edit": {"sub-project.md": "allow", "Farewell-Knowlage/Lessons.md": "deny", "*.md": "deny", "*": "deny"}, "glob": "allow", "grep": "allow",
+            "list": "allow", "question": "allow", "skill": "allow",
             "todowrite": "allow", "lsp": "allow",
             "external_directory": {"~/projects/**": "allow"},
             "task": {"*": "deny", "researcher": "allow", "reviewer": "allow", "executor": "allow"}
@@ -161,8 +160,8 @@ AGENT_TEMPLATES = {
 }
 
 DISABLED_AGENTS = {
-    "build": {"mode": "primary", "color": "primary", "disable": True},
-    "plan": {"mode": "primary", "color": "secondary", "disable": True},
+    "build": {"mode": "primary", "color": "primary", "disable": True, "permission": {"read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "edit": "deny", "bash": "deny", "task": "deny"}},
+    "plan": {"mode": "primary", "color": "secondary", "disable": True, "permission": {"read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "edit": "deny", "bash": "deny", "task": "deny"}},
     "general": {
         "mode": "subagent", "disable": True,
         "permission": {"*": "deny", "read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "task": "deny"}
@@ -228,9 +227,9 @@ def build_agent_config(profile):
     else:
         small = orch
     hidden = {
-        "title": {"model": small, "mode": "primary", "hidden": True},
-        "summary": {"model": small, "mode": "primary", "hidden": True},
-        "compaction": {"model": small, "mode": "primary", "hidden": True, "steps": 8}
+        "title": {"model": small, "mode": "primary", "hidden": True, "permission": {"read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "edit": "deny", "bash": "deny", "task": "deny"}},
+        "summary": {"model": small, "mode": "primary", "hidden": True, "permission": {"read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "edit": "deny", "bash": "deny", "task": "deny"}},
+        "compaction": {"model": small, "mode": "primary", "hidden": True, "steps": 8, "permission": {"read": "allow", "glob": "allow", "grep": "allow", "list": "allow", "edit": "deny", "bash": "deny", "task": "deny"}}
     }
     agents.update(hidden)
     agents.update(DISABLED_AGENTS)

@@ -64,6 +64,8 @@ Skill di-hardcode di prompt via `profiles/generate.py` — bukan opsional self-t
 | Reviewer | FREE | Read-only — STRIDE audit, convention check |
 | Executor | PAID | Write access — kualitas implementasi kompetitif |
 
+Catatan: label PAID/FREE = pembagian beban & peran (paid = reasoning tinggi untuk orchestrate/implement, free = read-only), bukan klaim harga model spesifik. Model aktual per profile: lihat `profiles/profiles.json`.
+
 **Aturan emas:** Jangan pake model paid buat kerjaan yang model free bisa lakuin. Orchestrator pakai `edit`/`write` = uang kebakar → STOP, dispatch executor.
 
 ## Skills

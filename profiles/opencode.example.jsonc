@@ -12,15 +12,15 @@
   "share": "disabled",
   "permission": {
     "doom_loop": "deny",
+    "edit": "ask",
+    "bash": "ask",
+    "task": "ask",
+    "webfetch": "ask",
+    "websearch": "ask",
     "read": "allow",
-    "edit": "allow",
     "glob": "allow",
     "grep": "allow",
     "list": "allow",
-    "bash": "allow",
-    "task": "allow",
-    "webfetch": "allow",
-    "websearch": "allow",
     "question": "allow",
     "todowrite": "allow",
     "lsp": "allow",
@@ -196,14 +196,13 @@
         },
         "edit": {
           "sub-project.md": "allow",
-          "Farewell-Knowlage/Lessons.md": "ask",
+          "Farewell-Knowlage/Lessons.md": "deny",
           "*.md": "deny",
           "*": "deny"
         },
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
-        "bash": "allow",
         "question": "allow",
         "skill": "allow",
         "todowrite": "allow",
@@ -313,28 +312,73 @@
     "title": {
       "model": "9router/cx/gpt-5.6-luna",
       "mode": "primary",
-      "hidden": true
+      "hidden": true,
+      "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny"
+      }
     },
     "summary": {
       "model": "9router/cx/gpt-5.6-luna",
       "mode": "primary",
-      "hidden": true
+      "hidden": true,
+      "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny"
+      }
     },
     "compaction": {
       "model": "9router/cx/gpt-5.6-luna",
       "mode": "primary",
       "hidden": true,
-      "steps": 8
+      "steps": 8,
+      "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny"
+      }
     },
     "build": {
       "mode": "primary",
       "color": "primary",
-      "disable": true
+      "disable": true,
+      "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny"
+      }
     },
     "plan": {
       "mode": "primary",
       "color": "secondary",
-      "disable": true
+      "disable": true,
+      "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny"
+      }
     },
     "general": {
       "mode": "subagent",
