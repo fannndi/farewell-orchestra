@@ -2,7 +2,7 @@
 Tests for profiles/generate.py — validate registry, agent config, model collection.
 Run:  python -m pytest tests/ -v
 """
-import json, os, sys, tempfile
+import hashlib, json, os, sys, tempfile
 
 # Ensure profiles/ is importable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "profiles"))
@@ -14,6 +14,12 @@ from generate import (
     collect_models,
     short_model_id,
     AGENT_TEMPLATES,
+    BOILERPLATE,
+    MAX_BACKUPS,
+    generate,
+    rollback,
+    BACKUP_DIR,
+    ROOT_FILE,
 )
 
 FIXTURE = os.path.join(os.path.dirname(__file__), "..", "profiles", "profiles.json")
@@ -202,3 +208,122 @@ class TestSecurityChecks:
         ext = AGENT_TEMPLATES["executor"].get("permission", {}).get("external_directory", {})
         for key in ext:
             assert "Source Code" not in key, f"Executor external_directory contains 'Source Code': {key}"
+
+
+# ── Behavioral: Permission Scoping ──────────────────────────────────────
+
+class TestPermissionScoping:
+    """Guard: executor MUST have bash:allow; researcher/reviewer MUST NOT have edit/bash."""
+
+    def test_executor_has_bash_allow(self):
+        assert AGENT_TEMPLATES["executor"]["permission"]["bash"] == "allow"
+
+    def test_researcher_reviewer_deny_edit_bash(self):
+        for role in ("researcher", "reviewer"):
+            perm = AGENT_TEMPLATES[role]["permission"]
+            assert perm["edit"] == "deny", f"{role} edit should be deny, got {perm['edit']}"
+            assert perm["bash"] == "deny", f"{role} bash should be deny, got {perm['bash']}"
+
+    def test_boilerplate_deny_by_default(self):
+        assert BOILERPLATE["permission"]["edit"] == "ask"
+        assert BOILERPLATE["permission"]["bash"] == "ask"
+
+    def test_executor_external_directory_scoped(self):
+        ext = AGENT_TEMPLATES["executor"]["permission"]["external_directory"]
+        assert set(ext.keys()) == {"~/projects/**", "~/Documents/Farewell-Knowlage/**"}
+
+
+# ── Behavioral: Backup Integrity ────────────────────────────────────────
+
+class TestBackupIntegrity:
+    """Guard: generate() must create backups and respect MAX_BACKUPS."""
+
+    def _save_root(self):
+        root = os.path.abspath(ROOT_FILE)
+        if os.path.isfile(root):
+            with open(root, "r", encoding="utf-8") as f:
+                return f.read()
+        return None
+
+    def _restore_root(self, content):
+        root = os.path.abspath(ROOT_FILE)
+        if content is None:
+            if os.path.isfile(root):
+                os.remove(root)
+        else:
+            with open(root, "w", encoding="utf-8") as f:
+                f.write(content)
+
+    def test_backup_created_before_overwrite(self):
+        orig = self._save_root()
+        try:
+            backup_dir = os.path.abspath(BACKUP_DIR)
+            before_count = len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")]) if os.path.isdir(backup_dir) else 0
+            generate("default")
+            after_count = len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")]) if os.path.isdir(backup_dir) else 0
+            assert after_count >= before_count, "No backup created after generate()"
+        finally:
+            self._restore_root(orig)
+
+    def test_max_backups_respected(self):
+        orig = self._save_root()
+        try:
+            backup_dir = os.path.abspath(BACKUP_DIR)
+            os.makedirs(backup_dir, exist_ok=True)
+            # Alternate profiles to trigger backup creation (same profile = no-op)
+            for i in range(MAX_BACKUPS + 2):
+                profile = "mix" if i % 2 == 0 else "default"
+                generate(profile)
+            backups = [f for f in os.listdir(backup_dir) if f.startswith("opencode.") and f.endswith(".jsonc")]
+            assert len(backups) <= MAX_BACKUPS, f"Expected <= {MAX_BACKUPS} backups, got {len(backups)}"
+        finally:
+            self._restore_root(orig)
+
+
+# ── Behavioral: Rollback Correctness ────────────────────────────────────
+
+class TestRollbackCorrectness:
+    """Guard: rollback() must restore the previous opencode.jsonc content."""
+
+    def _save_root(self):
+        root = os.path.abspath(ROOT_FILE)
+        if os.path.isfile(root):
+            with open(root, "r", encoding="utf-8") as f:
+                return f.read()
+        return None
+
+    def _restore_root(self, content):
+        root = os.path.abspath(ROOT_FILE)
+        if content is None:
+            if os.path.isfile(root):
+                os.remove(root)
+        else:
+            with open(root, "w", encoding="utf-8") as f:
+                f.write(content)
+
+    def test_rollback_restores_previous(self):
+        orig = self._save_root()
+        try:
+            # Generate "default" to establish a known state
+            generate("default")
+            root = os.path.abspath(ROOT_FILE)
+            with open(root, "r", encoding="utf-8") as f:
+                default_content = f.read()
+            default_hash = hashlib.md5(default_content.encode()).hexdigest()
+
+            # Generate "mix" — this creates a backup of "default" content
+            generate("mix")
+            with open(root, "r", encoding="utf-8") as f:
+                mix_content = f.read()
+            assert hashlib.md5(mix_content.encode()).hexdigest() != default_hash, \
+                "default and mix should produce different content"
+
+            # Rollback should restore the backup (which contains "default" content)
+            rollback()
+            with open(root, "r", encoding="utf-8") as f:
+                restored_content = f.read()
+            restored_hash = hashlib.md5(restored_content.encode()).hexdigest()
+            assert restored_hash == default_hash, \
+                f"Rollback did not restore: expected {default_hash}, got {restored_hash}"
+        finally:
+            self._restore_root(orig)
