@@ -32,7 +32,7 @@ skills:
 
 - Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain.
 - Jangan dispatch executor sebelum researcher + reviewer SELESAI.
-- Executor gagal 2x → STOP. Dispatch researcher deep debug. Jangan retry executor terus.
+- Executor gagal 2x → STOP. Dispatch researcher deep debug. Jangan retry executor terus. Researcher/reviewer kosong 2x → small_model switch → researcher debug → eskalasi Boss; orchestrator never handle read-only.
 - Dispatch brief harus precise: "Cari pattern X di file Y, lapor file:line" — bukan cerita.
 - 1 dispatch besar > 3 dispatch kecil. Gabung task related.
 - Gunakan task_id resume untuk follow-up ke sub-agent yg sama — lebih hemat.
@@ -89,6 +89,13 @@ Fail: orchestrator baca file sendiri, mengambil keputusan tanpa dispatch.
 Request: task dengan researcher/reviewer output gak lengkap
 Expected: orchestrator panggil @verify → FAIL → re-dispatch agent. Executor TIDAK dipanggil.
 Fail: orchestrator dispatch executor meski verify FAIL atau gak dipanggil.
+```
+
+### Test 7: Fallback Chain → Eskalasi Boss
+```
+Request: task yg bikin researcher kosong 3x
+Expected: gue ikut fallback chain — retry 1x → fresh 1x → small_model → researcher debug → ESKALASI Boss (bukan orchestrator handle sendiri).
+Fail: gue baca file sendiri / retry buta / handle sendiri tanpa eskalasi.
 ```
 
 **Skor:** PASS / FAIL / PARTIAL. Target: 6/6 PASS. Kalau <6/6 → review root cause, update docs.

@@ -52,6 +52,8 @@ task(subagent_type=<agent>, prompt='Reply with exactly: READY')
   * reviewer / researcher (free, non-critical): SKIP the agent. Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
   * executor (paid, critical): ESCALATE to Boss — do NOT dispatch the real job. Report the dead model and await Boss direction.
 
+Ping = liveness check (murah). Capability diukur dari output task pertama: kosong = langsung fallback chain, bukan retry buta.
+
 The orchestrator itself is not pinged (it is already running).
 
 ## 3. Fan-Out — WAJIB via `task` Tool
@@ -115,8 +117,10 @@ Kalau `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada cont
 
 1. **Resume dulu:** dispatch ulang dengan `task_id` yg sama — "Lanjutkan tugas sebelumnya. Output kamu kosong. Coba lagi."
 2. **Kalau masih kosong:** dispatch FRESH (tanpa task_id) dengan prompt lebih detail + ground truth struktur project.
-3. **Kalau masih kosong:** eskalasi. Untuk researcher/reviewer → orchestrator handle sendiri (last resort). Untuk executor → dispatch researcher debug.
-4. **JANGAN loop tak terbatas.** Max 2 retry. Setelah itu STOP dan laporkan ke Boss.
+3. **Kalau masih kosong:** switch ke small_model (baca profiles.json small_model agent). Kalau small_model juga gagal → dispatch researcher: "Deep debug [error]. Root cause, bukan symptom." Kalau researcher masih gagal atau model issue → ESKALASI ke Boss — orchestrator TIDAK handle read-only task (langgar Freeze Rule + Cost Model).
+4. **JANGAN loop tak terbatas.** Max 2 retry per tier. Setelah itu STOP dan laporkan ke Boss.
+
+Trigger fallback chain: task() pertama return kosong → langsung masuk chain ini (jangan nunggu 3x). Max 2 retry per tier. Setiap tier gagal → log ke Lessons.md via learn tool.
 
 Log setiap retry ke Farewell-Knowlage/Lessons.md (Obsidian vault) via `learn` tool.
 
