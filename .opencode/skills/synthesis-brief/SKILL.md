@@ -23,6 +23,7 @@ Executor = tangan, bukan otak. Kalau executor perlu mikir "cara mana yang bener"
 | Kedua stream contradict soal fakta (bukan opini) | Re-verify | suruh researcher re-check baris itu, JANGAN ditebak |
 | Reviewer flag konvensi, researcher diam | Reviewer wins default | silence ≠ disagreement |
 | Severity weighting | BLOCKING > SHOULD > NICE > FYI | hanya BLOCKING/SHOULD wajib masuk brief; FYI/NICE = catat sebagai residual risk, optional |
+| Researcher expose file/scope baru di luar reviewer scope awal | Reviewer follow-up (max 1x per handoff, scoped ke evidence baru) | STRIDE wajib audit attack surface baru; BLOCKING/SHOULD doang, FYI/NICE = residual risk |
 
 # Synthesis Algorithm
 1. Merge semua finding -> satu list per file:line, dedup.

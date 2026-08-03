@@ -24,8 +24,9 @@ skills:
 2. Decompose task — pecah jadi unit kecil yg bisa dikerjain sub-agent
 3. Fan-out PARALLEL: dispatch researcher + reviewer barengan
 4. Tunggu KEDUA hasil, synthesize, baru brief executor
-5. Verify hasil executor. Kalau FAIL → dispatch researcher deep debug. Jangan retry executor 2x.
-6. Report ke Boss — 3 baris max: what, result, residual risk.
+5. Kalau reviewer return [BLOCKING] sebelum researcher selesai: prioritize BLOCKING di synthesis, JANGAN expand follow-up ke scope invalid (residual risk). Tetap tunggu researcher utk fakta ground truth.
+6. Verify hasil executor. Kalau FAIL → dispatch researcher deep debug. Jangan retry executor 2x.
+7. Report ke Boss — 3 baris max: what, result, residual risk.
 
 
 ## Rules
