@@ -126,11 +126,13 @@ class TestCollectModels:
         reg = get_registry()
         profile = find_profile(reg, "default")
         models = collect_models(reg, profile)
-        # Should have at least orchestrator model + small_model distinct models
+        # Should have at least orchestrator model
         main = profile["agents"]["orchestrator"]["model"]
-        small = profile["agents"]["orchestrator"]["small_model"]
         assert main in models, f"Main model '{main}' not collected"
-        assert small in models, f"Small model '{small}' not collected"
+        # small_model is optional — if present and distinct, must also be collected
+        small = profile["agents"]["orchestrator"].get("small_model")
+        if small and small != main:
+            assert small in models, f"Small model '{small}' not collected"
 
     def test_all_profiles_have_valid_model_refs(self):
         reg = get_registry()

@@ -176,7 +176,6 @@
   "lsp": true,
   "formatter": true,
   "model": "9router/ocg/deepseek-v4-flash",
-  "small_model": "9router/cx/gpt-5.6-luna",
   "agent": {
     "orchestrator": {
       "color": "#7c3aed",
@@ -217,8 +216,7 @@
           "executor": "allow"
         }
       },
-      "model": "9router/ocg/deepseek-v4-flash",
-      "small_model": "9router/cx/gpt-5.6-luna"
+      "model": "9router/ocg/deepseek-v4-flash"
     },
     "researcher": {
       "color": "#3b82f6",
@@ -247,8 +245,7 @@
         },
         "task": "deny"
       },
-      "model": "9router/oc/north-mini-code-free",
-      "small_model": "9router/ollama/minimax-m3"
+      "model": "9router/oc/north-mini-code-free"
     },
     "reviewer": {
       "color": "#f59e0b",
@@ -277,8 +274,7 @@
         },
         "task": "deny"
       },
-      "model": "9router/oc/nemotron-3-ultra-free",
-      "small_model": "9router/ocg/hy3"
+      "model": "9router/oc/nemotron-3-ultra-free"
     },
     "executor": {
       "color": "#10b981",
@@ -306,8 +302,7 @@
         },
         "task": "deny"
       },
-      "model": "9router/ocg/mimo-v2.5",
-      "small_model": "9router/ocg/hy3"
+      "model": "9router/ocg/mimo-v2.5"
     },
     "title": {
       "model": "9router/cx/gpt-5.6-luna",

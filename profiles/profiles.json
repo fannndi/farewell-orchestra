@@ -75,43 +75,53 @@
 
   "profiles": [
     {
-      "name": "default",
-      "label": "Default | ocg flash + codex + free",
+      "name": "Pro",
+      "label": "Full Paid",
       "agents": {
-        "orchestrator": {"model": "9router/ocg/deepseek-v4-flash", "small_model": "9router/cx/gpt-5.6-luna"},
-        "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
-        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
+        "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
+        "executor": {"model": "9router/ocg/deepseek-v4-flash"},
+        "researcher": {"model": "9router/ocg/mimo-v2.5"},
+        "reviewer": {"model": "9router/ocg/hy3"}
       }
     },
     {
-      "name": "mix",
-      "label": "Mix | codex + ollama + free",
+      "name": "Codex Main",
+      "label": "Codex = orchestrator | Minimax = executor",
       "agents": {
-        "orchestrator": {"model": "9router/cx/gpt-5.6-luna", "small_model": "9router/ocg/hy3"},
-        "executor": {"model": "9router/ollama/minimax-m3", "small_model": "9router/cx/gpt-5.6-luna"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
-        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
+        "orchestrator": {"model": "9router/cx/gpt-5.6-luna"},
+        "executor": {"model": "9router/ollama/minimax-m3"},
+        "researcher": {"model": "9router/oc/north-mini-code-free"},
+        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free"}
       }
     },
     {
-      "name": "low-cost",
-      "label": "Low Cost | hy3 + mimo (small flipped)",
+      "name": "Daily",
+      "label": "Low Cost | Mixed",
       "agents": {
-        "orchestrator": {"model": "9router/ocg/hy3", "small_model": "9router/cx/gpt-5.6-luna"},
-        "executor": {"model": "9router/ocg/mimo-v2.5", "small_model": "9router/ocg/hy3"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/ollama/minimax-m3"},
-        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free", "small_model": "9router/ocg/hy3"}
+        "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
+        "executor": {"model": "9router/ocg/deepseek-v4-flash"},
+        "researcher": {"model": "9router/oc/north-mini-code-free"},
+        "reviewer": {"model": "9router/oc/nemotron-3-ultra-free"}
       }
     },
     {
-      "name": "free",
-      "label": "100% FREE | adik belajar | multi fallback",
+      "name": "Free 1",
+      "label": "Daily Free",
       "agents": {
-        "orchestrator": {"model": "9router/oc/deepseek-v4-flash-free", "small_model": "9router/oc/laguna-s-2.1-free"},
-        "researcher": {"model": "9router/oc/north-mini-code-free", "small_model": "9router/oc/nemotron-3-ultra-free"},
-        "reviewer": {"model": "9router/oc/ling-3.0-flash-free", "small_model": "9router/oc/big-pickle"},
-        "executor": {"model": "9router/oc/mimo-v2.5-free", "small_model": "9router/ps/poolside/laguna-xs-2.1"}
+        "orchestrator": {"model": "9router/oc/deepseek-v4-flash-free"},
+        "researcher": {"model": "9router/oc/north-mini-code-free"},
+        "reviewer": {"model": "9router/oc/ling-3.0-flash-free"},
+        "executor": {"model": "9router/oc/mimo-v2.5-free"}
+      }
+    },
+    {
+      "name": "Free 2",
+      "label": "Emergency",
+      "agents": {
+        "orchestrator": {"model": "9router/oc/laguna-s-2.1-free"},
+        "researcher": {"model": "9router/oc/nemotron-3-ultra-free"},
+        "reviewer": {"model": "9router/oc/big-pickle"},
+        "executor": {"model": "9router/ps/poolside/laguna-xs-2.1"}
       }
     }
   ]

@@ -214,7 +214,8 @@ def build_agent_config(profile):
         agent_data = profile["agents"].get(name)
         if isinstance(agent_data, dict):
             cfg["model"] = agent_data["model"]
-            cfg["small_model"] = agent_data.get("small_model", agent_data["model"])
+            if agent_data.get("small_model"):
+                cfg["small_model"] = agent_data["small_model"]
         else:
             # legacy: agent_data is a plain model string
             cfg["model"] = agent_data
@@ -279,7 +280,8 @@ def generate(profile_name, to_stdout=False):
     orch = profile["agents"].get("orchestrator", {})
     if isinstance(orch, dict):
         config["model"] = orch["model"]
-        config["small_model"] = orch.get("small_model", orch["model"])
+        if orch.get("small_model"):
+            config["small_model"] = orch["small_model"]
     else:
         config["model"] = orch
     config["provider"]["9router"]["models"] = build_provider_models(registry, profile)
@@ -543,7 +545,11 @@ def inspect_profile(name, registry):
     for agent in ["orchestrator", "researcher", "reviewer", "executor"]:
         ad = profile["agents"].get(agent, "")
         if isinstance(ad, dict):
-            print(f"  {agent:<14} model={ad['model']}  small_model={ad.get('small_model', ad['model'])}")
+            small = ad.get("small_model", "")
+            if small and small != ad["model"]:
+                print(f"  {agent:<14} model={ad['model']}  small_model={small}")
+            else:
+                print(f"  {agent:<14} model={ad['model']}")
         else:
             print(f"  {agent:<14} {ad}")
     print()
@@ -552,51 +558,80 @@ def inspect_profile(name, registry):
         print(f"  {m}")
 
 
+# ── ANSI colors (Windows 10+ CMD / Windows Terminal) ──────────────
+_RESET   = "\033[0m"
+_BOLD    = "\033[1m"
+_RED     = "\033[31m"
+_GREEN   = "\033[32m"
+_YELLOW  = "\033[33m"
+_CYAN    = "\033[36m"
+_MAGENTA = "\033[35m"
+
+
 def show_menu():
     """Interactive menu — pick a profile, generate."""
     registry = load_profiles()
     profiles = registry["profiles"]
 
+    # detect active profile from opencode.jsonc header comment
+    active_label = None
+    root_path = os.path.abspath(ROOT_FILE)
+    try:
+        with open(root_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("// Profile:"):
+                    active_label = line.split("// Profile:", 1)[1].strip()
+                    break
+    except OSError:
+        pass
+
     while True:
         os.system("cls" if os.name == "nt" else "clear")
-        print("=" * 62)
-        print("  SWITCH PROFILE — Farewell Orchestra")
-        print("=" * 62)
-        print(f"  {'#':<3} {'Profile':<14} {'Orch':<20} {'Res':<20} {'Rev/Exe':<20}")
-        print("  " + "-" * 58)
+        print(f"{_BOLD}{_CYAN}{'=' * 62}{_RESET}")
+        print(f"{_BOLD}{_CYAN}  PROFILE SWITCHER - Farewell Orchestra{_RESET}")
+        print(f"{_BOLD}{_CYAN}{'=' * 62}{_RESET}")
         for i, p in enumerate(profiles, 1):
-            def _get_model(agent_name):
-                ad = p["agents"].get(agent_name, "")
-                return ad["model"] if isinstance(ad, dict) else ad
-            orch = short_model(_get_model("orchestrator"))
-            res = short_model(_get_model("researcher"))
-            rev = short_model(_get_model("reviewer"))
-            print(f"  {i:<3} {p['name']:<14} {orch:<20} {res:<20} {rev:<20}")
-        print("  " + "-" * 58)
-        print(f"  0   Keluar")
+            is_active = (p["label"] == active_label)
+            name_color = _GREEN if is_active else _CYAN
+            suffix = f" {_GREEN}(AKTIF){_RESET}" if is_active else ""
+            print(f"  {_CYAN}{'-' * 62}{_RESET}")
+            print(f"  {name_color}{_BOLD}[{i}] {p['name']}{_RESET}{suffix}")
+            lbl = p["label"][:60] + ("..." if len(p["label"]) > 60 else "")
+            print(f"      {_CYAN}{'Label':<13}{_RESET}: {lbl}")
+            for akey, alabel in [("orchestrator", "Orchestrator"), ("researcher", "Researcher"),
+                                  ("reviewer", "Reviewer"), ("executor", "Executor")]:
+                ad = p["agents"].get(akey)
+                if ad is not None:
+                    model = ad.get("model", "") if isinstance(ad, dict) else ad
+                    small = ad.get("small_model", "") if isinstance(ad, dict) else ""
+                    print(f"      {_CYAN}{alabel:<13}{_RESET}: {model}")
+                    if small:
+                        print(f"      {_CYAN}{'small':<13}{_RESET}: {small}")
+        print(f"  {_CYAN}{'-' * 62}{_RESET}")
+        print(f"  {_YELLOW}0   Keluar{_RESET}")
         print()
 
         try:
-            choice = input("  Pilihan [0-{}]: ".format(len(profiles))).strip()
+            choice = input(f"  {_GREEN}Pilihan [0-{len(profiles)}]:{_RESET} ").strip()
         except (EOFError, KeyboardInterrupt):
             print()
             break
 
         if choice == "0":
-            print("\n  Bye.")
+            print(f"\n  {_YELLOW}Bye.{_RESET}")
             break
 
         try:
             idx = int(choice) - 1
             if 0 <= idx < len(profiles):
                 profile = profiles[idx]
-                print(f"\n  >>> Memilih: {profile['name']} ({profile['label']})")
+                print(f"\n  >>> Memilih: {_BOLD}{profile['name']}{_RESET} ({profile['label']})")
                 generate(profile["name"])
                 input("\n  [Enter] untuk kembali ke menu...")
             else:
-                input(f"\n  Pilihan {choice} nggak ada. [Enter]...")
+                input(f"\n  {_RED}Pilihan {choice} nggak ada. [Enter]...{_RESET}")
         except ValueError:
-            input(f"\n  '{choice}' bukan angka. [Enter]...")
+            input(f"\n  {_RED}'{choice}' bukan angka. [Enter]...{_RESET}")
 
 
 def rollback():
