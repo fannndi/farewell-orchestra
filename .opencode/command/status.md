@@ -48,7 +48,7 @@ Panggil via orchestrator: `@harness_status check:"all" format:"json"`
 | `agents.*.model` | opencode.jsonc `agent.*.model` | Short model ID (no provider prefix) |
 | `agents.*.steps_limit` | opencode.jsonc `agent.*.steps` | Declared step budget |
 | `profiles.valid` | `generate.py --validate` exit code | |
-| `sensors.*` | `Farewell-Knowlage/Lessons.md` ## Sensor Coverage | Count of [PASS][FAIL][WARN] |
+| `sensors.*` | `Farewell-Knowlage/Lessons.md` ## Sensor Coverage | Count of [PASS][FAIL][WARN] di tabel — **manual/periodik, bukan otomatis** |
 
 ## Health
 

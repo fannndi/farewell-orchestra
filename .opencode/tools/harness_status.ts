@@ -27,7 +27,7 @@ export default tool({
   },
 
   async execute(args, context) {
-    const worktree = context.worktree
+    const worktree = path.isAbsolute(context.worktree) ? context.worktree : path.resolve(process.cwd(), context.worktree)
     const results: string[] = []
     const errors: string[] = []
 
@@ -106,9 +106,9 @@ export default tool({
         const sensorSection = lessonsContent.match(/## Sensor Coverage[\s\S]*?(?=## |$)/)
         if (sensorSection) {
           const section = sensorSection[0]
-          sensorOk = (section.match(/✅/g) || []).length
-          sensorMissing = (section.match(/❌/g) || []).length
-          sensorPartial = (section.match(/⚠️/g) || []).length
+          sensorOk = (section.match(/\[PASS\]/g) || []).length
+          sensorMissing = (section.match(/\[FAIL\]/g) || []).length
+          sensorPartial = (section.match(/\[WARN\]/g) || []).length
           results.push(`Sensor coverage: ${sensorOk} OK, ${sensorMissing} MISSING, ${sensorPartial} PARTIAL`)
         } else {
           errors.push("Sensor coverage section not found in Farewell-Knowlage/Lessons.md")
