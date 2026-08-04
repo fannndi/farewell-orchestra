@@ -106,6 +106,18 @@ Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. S
 | `/new-project` | Buat project baru dari scratch |
 | `/check` | Health check — validasi profiles.json, sensor coverage, active profile |
 
+## Environment
+
+- `OPENCODE_DISABLE_LSP_DOWNLOAD=true` — blokir auto-download binary LSP server (LSP tidak dipakai di orkestra ini, hemat bandwidth/disk).
+- Set manual: `[Environment]::SetEnvironmentVariable("OPENCODE_DISABLE_LSP_DOWNLOAD","true","User")` (Windows) atau `export OPENCODE_DISABLE_LSP_DOWNLOAD=true` (Unix).
+
+## Server Runbook
+
+- Start: `powershell -File scripts/start-server.ps1` — jalankan `opencode serve` di `127.0.0.1:4096`, log ke `%TEMP%\opencode\server.log`.
+- Attach: `opencode run --attach http://127.0.0.1:4096 --format json "Reply with exactly: OK"`.
+- Stop: `powershell -File scripts/start-server.ps1 -Stop` — kill proses opencode serve.
+- Security: bind `127.0.0.1` saja + password wajib (`OPENCODE_SERVER_PASSWORD`; kalau kosong script generate random 32-char).
+
 ## ADRs
 
 | ADR | Keputusan |

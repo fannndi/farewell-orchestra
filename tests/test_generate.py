@@ -216,10 +216,10 @@ class TestSecurityChecks:
 # ── Behavioral: Permission Scoping ──────────────────────────────────────
 
 class TestPermissionScoping:
-    """Guard: executor MUST have bash:allow; researcher/reviewer MUST NOT have edit/bash."""
+    """Guard: executor MUST have granular bash (git/npm allow, * ask); researcher/reviewer MUST NOT have edit/bash."""
 
-    def test_executor_has_bash_allow(self):
-        assert AGENT_TEMPLATES["executor"]["permission"]["bash"] == "allow"
+    def test_executor_has_granular_bash(self):
+        assert AGENT_TEMPLATES["executor"]["permission"]["bash"] == {"git *": "allow", "npm *": "allow", "*": "ask"}
 
     def test_researcher_reviewer_deny_edit_bash(self):
         for role in ("researcher", "reviewer"):

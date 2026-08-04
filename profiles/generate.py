@@ -165,7 +165,7 @@ AGENT_TEMPLATES = {
         "prompt": "Implement precisely per brief. YAGNI. One change per edit. Verify before report. You have edit access — use it. Trusted to execute autonomously. WAJIB: di awal task, load skill tool via `skill` — minimal-impl sebelum nulis kode, verification-ground-truth sebelum report.",
         "permission": {
             "read": "allow", "edit": "allow", "glob": "allow", "grep": "allow",
-            "list": "allow", "bash": "allow", "lsp": "allow", "skill": "allow",
+            "list": "allow", "bash": {"git *": "allow", "npm *": "allow", "*": "ask"}, "lsp": "allow", "skill": "allow",
             "external_directory": {"~/projects/**": "allow", "~/Documents/Farewell-Knowlage/**": "allow"},
             "task": "deny"
         }
