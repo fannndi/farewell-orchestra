@@ -118,6 +118,16 @@ Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. S
 - Stop: `powershell -File scripts/start-server.ps1 -Stop` — kill proses opencode serve.
 - Security: bind `127.0.0.1` saja + password wajib (`OPENCODE_SERVER_PASSWORD`; kalau kosong script generate random 32-char).
 
+## Debug Logging
+
+Troubleshooting multi-agent (tool gagal, sub-agent output kosong, executor gagal 2x).
+
+1. **Kapan aktifkan:** HANYA saat reproduce bug. Default cukup INFO — DEBUG bikin log membesar + berisiko bocor data.
+2. **Cara aktifkan:** (a) `opencode --log-level DEBUG`, (b) env `OPENCODE_LOG_LEVEL=DEBUG`, (c) config `logLevel: "debug"`. Level: `debug`/`info`/`warn`/`error`/`none`.
+3. **Lokasi log (Windows):** `%USERPROFILE%\.local\share\opencode\log\opencode.log` (file timestamped `.log`).
+4. **Cara baca:** `Get-Content -Tail 100 "$env:USERPROFILE\.local\share\opencode\log\opencode.log" | Select-String "ERROR|WARN"` — fokus tool calls + error terakhir sebelum kegagalan.
+5. **⚠️ Keamanan:** log berisi API key (`sk-...`, Bearer), path sensitif, isi konversasi — WAJIB redact sebelum share. Bersihkan setelah selesai: `Remove-Item "$env:USERPROFILE\.local\share\opencode\log\opencode.log"`.
+
 ## ADRs
 
 | ADR | Keputusan |
