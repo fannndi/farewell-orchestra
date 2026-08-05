@@ -8,8 +8,96 @@ description: Use when receiving a request — validate input, extract requiremen
 Gate awal sebelum dispatch. Flow:
 
 ```
-Request → Input Validation → HOLD? STOP. PARTIAL? → Grill. PASS? → Chunk → Dispatch
+Request → Cross-Project? → YES → Check Docs → Reverse Engineer? → Generate → Normal Flow
+                ↓ NO
+         Input Validation → HOLD? STOP. PARTIAL? → Grill. PASS? → Chunk → Dispatch
 ```
+
+## 0. Cross-Project Detection
+
+Kalau user bilang "aku mau kerja di project X" / "handle project ini" / sebut path project lain:
+
+**Step 1 — Detect:**
+- User mention path project lain (bukan farewell-orchestra)
+- User bilang "project ini", "project X", "handle", "kerja di"
+
+**Step 2 — Check Docs:**
+```
+glob <project>/docs/*.md
+```
+
+Cek 5 core docs + 2 conditional:
+
+| Doc | Status | Cek |
+|-----|--------|-----|
+| PRD.md | **CORE** | WAJIB ada |
+| Architecture.md | **CORE** | WAJIB ada |
+| Rules.md | **CORE** | WAJIB ada |
+| Tasks.md | **CORE** | WAJIB ada |
+| Context.md | **CORE** | WAJIB ada |
+| Schema.md | **CONDITIONAL** | Ada kalau project pakai database |
+| API_Contract.md | **CONDITIONAL** | Ada kalau project pakai API |
+
+**Step 3 — Decision:**
+- Semua CORE ada → baca docs → pahami context → lanjut ke normal flow (§1 Input Validation)
+- Ada yang hilang → **Reverse Engineering Mode** (§0.1)
+
+### §0.1 Reverse Engineering Mode
+
+Dispatch **researcher** untuk deep scan project:
+
+**Phase 1 — Structure (5%)**
+```
+glob <project>/**/*.{ts,js,py,go,rs,java,tsx,jsx}
+```
+- Pahami folder layout
+- Identifikasi entry points (index.ts, main.py, app.py, dll)
+- Identifikasi config files (package.json, tsconfig, .env, docker-compose)
+
+**Phase 2 — Config (10%)**
+- Read package.json / requirements.txt / Cargo.toml / go.mod → tech stack
+- Read tsconfig / vite.config / next.config → framework config
+- Read .env.example / .env.local → environment variables
+- Read docker-compose.yml / Dockerfile → deployment setup
+
+**Phase 3 — Code Patterns (40%)**
+- Read entry points → pahami routing, middleware, initialization
+- Trace import chains → pahami dependency graph
+- Read 2-3 representative files → infer naming conventions, error handling patterns
+- Read database models / migrations → schema (kalau ada)
+- Read API routes / controllers → endpoints (kalau ada)
+
+**Phase 4 — Tests & Docs (20%)**
+- Read existing tests → pahami test patterns, coverage
+- Read README.md → pahami existing documentation
+- Read CHANGELOG.md / HISTORY.md → project history (kalau ada)
+
+**Phase 5 — Inference (25%)**
+- Dari Phase 1-4, infer:
+  - Tech stack (FE/BE/DB/Tools)
+  - Architecture decisions
+  - Coding conventions
+  - Business logic patterns
+  - API surface (kalau ada)
+  - Database schema (kalau ada)
+
+**Output: 5 Core Docs + 2 Conditional**
+
+Dispatch **executor** untuk generate docs:
+
+```
+TASK: Generate 5 core docs + 2 conditional docs dari reverse engineering findings
+FILES: <project>/docs/PRD.md, Architecture.md, Rules.md, Tasks.md, Context.md, [Schema.md], [API_Contract.md]
+CONTEXT: Reverse engineering findings dari researcher
+VERIFY: ls <project>/docs/ — semua core docs ada
+```
+
+**Consistency Rules:**
+- Nama variabel/tabel di Schema.md = nama field di API_Contract.md
+- Tech stack di Architecture.md = konvensi di Rules.md
+- Fitur di PRD.md = task di Tasks.md
+
+Setelah docs generated → baca docs → pahami context → lanjut ke normal flow (§1)
 
 ## 1. Input Validation
 

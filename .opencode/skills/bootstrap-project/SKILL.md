@@ -1,46 +1,58 @@
 ---
 name: bootstrap-project
-description: Use when Boss starts a new sub-project or says 'bikin dokumentasi project baru' — generate 10 interconnected project docs plus sub-project.md anchor.
+description: Use when starting work on a sub-project — generate docs via reverse engineering or update existing.
 ---
-
-> Role: read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
 
 # Bootstrap Project Docs
 
-Dipakai orchestrator SEBELUM kode ditulis. Prasyarat: udah lolos `prepare` (Goal/Scope/Acceptance jelas). Kalau info project belum lengkap (nama, satu-liner, tech stack), tanya dulu — jangan asumsi stack yang nggak disebut Boss.
+Dipakai orchestrator saat mulai kerja di project lain. Dua mode:
 
-## Konsistensi Wajib
-10 file ini saling rujuk, harus zero-kontradiksi:
-- Nama variabel/tabel di `Schema.md` = nama field di `API_Contract.md`
-- Tech stack di `Architecture.md` = konvensi di `Rules.md`
-- Fitur Core di `PRD.md` = task di `Tasks.md` = acceptance criteria di `Tests.md`
+## Mode 1: Project Baru (ada ide, belum ada kode)
 
-## 10 File & Isi Wajib
+Kalau user kasih ide project baru:
+1. Info project kurang → tanya Boss (nama, satu-liner, tech stack, target user)
+2. Draft 5 core docs + 2 conditional SEKALIGUS (bukan satu-satu)
+3. Delegasikan ke executor dalam SATU brief
+4. Generate sub-project.md dari template
+5. Report: "5/5 core docs dibuat. sub-project.md siap."
 
-1. **PRD.md** — latar belakang, definisi MVP, Core Features (wajib ada), Out of Scope, target user, user flow.
-2. **Architecture.md** — tech stack (FE/BE/DB), directory tree, alur data (Client→API→Service→DB), architecture decisions + alasan.
-3. **Design.md** — palet warna (hex), tipografi, style komponen global (tombol/input/card), layout guide (mobile-first/grid).
-4. **Schema.md** — daftar tabel, kolom+tipe data, relasi (1:1/1:N/N:N), constraints (unique/not-null).
-5. **Rules.md** — naming convention (var/fungsi/file/komponen), aturan framework spesifik, error handling + standar respons API.
-6. **API_Contract.md** — tiap endpoint: method+URL, request payload, response sukses (JSON), response error+status HTTP.
-7. **Tasks.md** — checklist `- [ ]` per fase, berurutan, granular, executor-friendly.
-8. **Tests.md** — acceptance criteria per fitur utama, skenario manual test.
-9. **Context.md** — masalah dunia nyata yang diselesaikan, business logic rules.
-10. **debug.md** — kosong di awal, cuma format template: Tanggal | Gejala | Penyebab | Solusi.
+## Mode 2: Project Existing (ada kode, belum ada docs)
 
-## Workflow
+Ini **Reverse Engineering Mode**. Dipanggil dari prepare §0.
 
-1. Info project kurang → tanya Boss (nama, satu-liner, tech stack, target user). Jangan lanjut kalau ambigu.
-2. Draft ke-10 file SEKALIGUS sebagai satu synthesis pass — bukan satu-satu berurutan — biar cross-reference (Schema↔API_Contract, PRD↔Tasks) konsisten sejak awal, bukan ditambal belakangan.
-3. Delegasikan ke **executor** dalam SATU brief: isi lengkap ke-10 file, target path `docs/` di root project aktif (cwd sekarang — BUKAN folder farewell-orchestra), instruksi "tulis persis, jangan ubah struktur". **Pengecualian chunking F>=3:** 10 file WAJIB 1 dispatch (bukan di-chunk) demi cross-consistency antar dokumen.
-4. Executor beres → generate `sub-project.md` dari `templates/sub-project.md`. Template source: `{orchestra_root}/templates/sub-project.md` (root repo farewell-orchestra). Orchestrator resolve path absolut SEBELUM dispatch executor. Isi placeholder, tandai semua row docs jadi `[x]` (checkbox — format asli template di `templates/sub-project.md` pakai `[ ]`, bukan string `[PASS]`).
-5. Report ke Boss: "10/10 docs dibuat di {project}/docs/. sub-project.md siap." — 3 baris max.
+1. Dispatch researcher untuk deep scan (lihat cross-project/guide.md Phase 1-5)
+2. Dispatch executor untuk generate docs dari findings researcher
+3. Consistency check: Schema↔API_Contract, PRD↔Tasks
+4. Report: "Docs generated dari reverse engineering. Review?"
 
-## Update Mode (project existing)
+## 5 Core Docs (WAJIB)
 
-Kalau `sub-project.md` udah ada — JANGAN generate ulang dari nol. Baca dulu, tanya Boss bagian mana yang mau di-update, edit incremental lewat executor, update baris "Terakhir update" di `sub-project.md` yang relevan aja.
+| Doc | Isi |
+|-----|-----|
+| **PRD.md** | Latar belakang, scope, MVP, target user, fitur in/out, user flow |
+| **Architecture.md** | Tech stack, directory tree, alur data, keputusan + alasan |
+| **Rules.md** | Naming convention, error handling, coding standards |
+| **Tasks.md** | Checklist `- [ ]` per fase, berurutan, granular |
+| **Context.md** | Konteks bisnis, business rules, background story |
 
-## Proactive behavior
+## 2 Conditional Docs
 
-- Orchestrator: kalau researcher lapor project tanpa docs/, ATAU executor nemu project butuh scaffold di tengah kerja — suntik reminder bootstrap-project ke brief mereka; jangan andalkan researcher/executor baca skill ini sendiri.
-- Executor gagal di tengah generate (misal file ke-6 gagal ditulis)? JANGAN re-dispatch semua 10 file dari nol — cukup re-dispatch file yang gagal + re-check cross-reference yang menyentuh file itu.
+| Doc | Generate Kalau |
+|-----|---------------|
+| **Schema.md** | Project pakai database (tabel, kolom, relasi, constraints) |
+| **API_Contract.md** | Project pakai API (endpoint, method, request, response) |
+
+## Consistency Rules
+
+- Nama variabel/tabel di Schema.md = nama field di API_Contract.md
+- Tech stack di Architecture.md = konvensi di Rules.md
+- Fitur di PRD.md = task di Tasks.md = acceptance di Tasks.md
+
+## Update Mode (project existing + docs ada)
+
+Kalau docs udah ada — JANGAN generate ulang. Baca dulu, tanya Boss bagian mana yang mau di-update, edit incremental.
+
+## Proactive
+
+- Orchestrator: kalau researcher lapor project tanpa docs → trigger reverse engineering
+- Executor gagal di tengah generate → re-dispatch file yang gagal aja, jangan ulang semua

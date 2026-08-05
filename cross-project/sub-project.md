@@ -1,7 +1,8 @@
 # Sub-Project: {{PROJECT_NAME}}
 
 > Anchor file. Orchestrator baca ini DULUAN di awal tiap sesi sebelum kerja apapun.
-> Di-update executor tiap ada perubahan fase/docs.
+> Auto-generated oleh skill `bootstrap-project`, di-update executor tiap ada perubahan fase/docs.
+> Template ini milik farewell-orchestra (bootstrap-project skill). Jangan edit isi template — kalau project butuh penyesuaian, edit sub-project.md project-nya langsung.
 
 ## Ringkasan
 - **Nama:** {{PROJECT_NAME}}
@@ -14,22 +15,18 @@
 
 ## Dokumen (`docs/`)
 
-### Core (WAJIB)
-
 | File | Status | Terakhir update |
 |------|--------|-----------------|
 | PRD.md | [ ] | — |
 | Architecture.md | [ ] | — |
-| Rules.md | [ ] | — |
-| Tasks.md | [ ] | — |
-| Context.md | [ ] | — |
-
-### Conditional
-
-| File | Status | Terakhir update |
-|------|--------|-----------------|
+| Design.md | [ ] | — |
 | Schema.md | [ ] | — |
+| Rules.md | [ ] | — |
 | API_Contract.md | [ ] | — |
+| Tasks.md | [ ] | — |
+| Tests.md | [ ] | — |
+| Context.md | [ ] | — |
+| debug.md | [ ] | — |
 
 ## Konteks Bisnis Singkat
 {{2-3 kalimat ringkasan dari Context.md — bukan copy paste, biar anchor ini tetep ringan}}
@@ -46,7 +43,7 @@
 | reviewer | {{REVIEW_CTX}} | {{REVIEW_FILES}} |
 | executor | {{EXEC_CTX}} | {{EXEC_FILES}} |
 
-*Diupdate executor tiap selesai task — 1 kalimat konteks terakhir + file kunci.*
+*Diupdate executor tiap selesai task — 1 kalimat konteks terakhir + file kunci. Orchestrator update Keputusan & Konteks tiap ada keputusan baru.*
 
 ## Keputusan & Konteks
-{{max 5 bullets — keputusan arsitektur, task yg ditunda, temuan penting}}
+{{max 5 bullets — keputusan arsitektur, task yg ditunda, temuan penting. Diupdate orchestrator tiap ada keputusan baru.}}

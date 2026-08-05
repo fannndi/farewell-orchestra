@@ -35,6 +35,53 @@ executor ── implement kode
 orchestrate ── post-flight, report 3 baris ke Boss
 ```
 
+## Cross-Project Workflow
+
+Farewell Orchestra bisa handle project lain. Cukup ngomong biasa:
+
+```
+Lo: "aku mau kerja di ~/projects/my-app"
+    ↓
+Orchestrator detect cross-project request
+    ↓
+Cek: project punya docs/?
+    ↓
+    ├── Ada → baca docs → pahami context → kerja
+    └── Nggak ada → reverse engineer → generate 5+2 docs → kerja
+```
+
+**Nggak perlu command.** Cukup bilang "aku mau kerja di project X" atau "handle project ini", orchestrator yang figure out.
+
+### Docs yang Diperlukan
+
+**5 Core (WAJIB):**
+
+| Doc | Isi |
+|-----|-----|
+| PRD.md | Scope, MVP, target user, fitur in/out |
+| Architecture.md | Tech stack, struktur, alur data |
+| Rules.md | Naming convention, coding standards |
+| Tasks.md | Checklist per fase |
+| Context.md | Konteks bisnis, business rules |
+
+**2 Conditional:**
+
+| Doc | Kapan |
+|-----|-------|
+| Schema.md | Kalau ada database |
+| API_Contract.md | Kalau ada API |
+
+### Reverse Engineering Mode
+
+Kalau docs nggak ada, researcher deep scan project:
+1. Scan structure (folder layout, entry points)
+2. Read config (package.json, tsconfig, .env)
+3. Trace code patterns (naming, error handling, routing)
+4. Read tests & existing docs
+5. Infer tech stack, conventions, architecture
+
+Lalu executor generate docs dari findings.
+
 ## Arsitektur
 
 ### Roles & Trust Boundary
@@ -75,18 +122,20 @@ Max 2 attempt total. Jangan loop.
 
 | Skill | Fungsi | Dipakai Oleh |
 |-------|--------|-------------|
-| `prepare` | Input validation + requirement extraction + task chunking | orchestrator |
+| `prepare` | Input validation + cross-project detection + task chunking | orchestrator |
 | `orchestrate` | Decompose → fan-out → synthesize → brief executor | orchestrator |
 | `research` | Codebase forensics + web research | researcher |
 | `review` | STRIDE threat model + convention enforcement + drift detection | reviewer |
 | `implement` | YAGNI implementation + verify before claim | executor |
-| `bootstrap-project` | Scaffold 10 project docs + sub-project.md | orchestrator |
+| `bootstrap-project` | Scaffold 5+2 project docs (reverse engineering mode) | orchestrator |
 
 ### Skill Pipeline Flow
 
 **prepare:**
 ```
-Request → Input Validation → HOLD? STOP. PARTIAL? → Assumption Logger → Grill → Chunk → Dispatch
+Request → Cross-Project? → Check Docs → Reverse Engineer? → Generate → Normal Flow
+                ↓ NO
+         Input Validation → HOLD? STOP. PARTIAL? → Grill → Chunk → Dispatch
 ```
 
 **orchestrate:**
@@ -154,7 +203,9 @@ python profiles/generate.py <nama>
 | **Eco** | ds-flash-free | north-mini | ling-flash-free | mimo-free |
 | **Backup** | laguna-free | nemotron | big-pickle | laguna-xs |
 
-## Commands
+## Commands (Optional)
+
+Commands tersedia tapi **nggak wajib dipakai**. Cukup ngomong biasa ke orchestrator.
 
 | Command | Fungsi |
 |---------|--------|
@@ -195,13 +246,15 @@ farewell-orchestra/
 ├── AGENTS.md                          # Rules (single source of truth)
 ├── README.md                          # This file
 ├── opencode.jsonc                     # Config (generated)
+├── cross-project/
+│   └── guide.md                       # Cross-project workflow guide
 ├── profiles/
 │   ├── profiles.json                  # Model registry
 │   ├── generate.py                    # Profile generator
 │   ├── switch.bat                     # Windows quick switch
 │   └── opencode.example.jsonc         # Example output
 ├── templates/
-│   └── sub-project.md                 # Anchor template per project
+│   └── sub-project.md                 # Anchor template (5+2 docs)
 ├── scripts/
 │   ├── check-links.py                 # Link integrity checker
 │   └── start-server.ps1              # OpenCode server manager
@@ -251,7 +304,7 @@ farewell-orchestra/
 3. Set API key: `$env:NINEROUTER_API_KEY = "your-key"`
 4. Generate config: `python profiles/generate.py Pro`
 5. Open opencode di folder ini
-6. Mulai: `/work-on <project>` atau `/new-project`
+6. Mulai: ngomong biasa ke orchestrator, misal "aku mau kerja di ~/projects/my-app"
 
 ## License
 
