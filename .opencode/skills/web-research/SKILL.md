@@ -140,3 +140,8 @@ Ini override semua aturan di atas.
 - `Finding: [klaim]. Sumber: [nama/link]. Confidence: [tinggi/sedang/verifikasi].`
 - Multiple findings → 1 baris per finding (sama kayak format `forensic`)
 - Confidence <90% → wajib tag `(perlu verifikasi)`
+
+## Proactive behavior
+
+- Dependency perlu cek status (deprecated/CVE/maintenance) → usul web-research ke orchestrator, jangan tunggu diminta.
+- Nemu alternatif yang lebih baik → flag sebagai rekomendasi, bukan cuma fakta netral.

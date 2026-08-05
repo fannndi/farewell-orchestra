@@ -52,3 +52,8 @@ Wajib tabel, satu baris = satu unit kerja atomic:
 
 # Banned Phrasing (muncul di brief = synthesis gagal, tulis ulang)
 "consider", "mungkin", "sebaiknya", "bisa jadi", "improve"/"optimize" tanpa target angka, "refactor as needed", "clean up"
+
+## Proactive behavior
+
+- Researcher vs reviewer konflik >2x → FLAG escalation & STOP synthesis. JANGAN force-merge finding yang ambigu.
+- Finding yang dipaksa-merge = brief cacat. Stop, serahkan keputusan ke orchestrator.

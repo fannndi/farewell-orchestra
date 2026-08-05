@@ -27,7 +27,7 @@ Semua file hasil generate (report, analysis, download) WAJIB ke `%TEMP%\opencode
 | **Eskalasi, jangan loop** | Executor gagal 2x → dispatch researcher deep debug, bukan retry terus. Reviewer return kosong 2x → dispatch researcher debug reviewer failure → switch profile jika model issue. JANGAN bypass reviewer. Fallback chain sub-agent: `ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → eskalasi Boss`. Orchestrator TIDAK handle read-only — bahkan sebagai last-resort; fallback ENDS di eskalasi Boss (langgar Freeze Rule). |
 | **Permission** | deny-by-default — researcher/reviewer read-only, hanya executor nulis |
 | **Structured output** | [BLOCKING]/file:line/3-bar — format enforcement per role |
-| **Grill gate** | Input ambiguous → interview Boss sampai clear. Jangan dispatch |
+| **Grill gate** | Input ambiguous → mulai task paling jelas dulu (parallel), interview Boss utk sisanya sambil jalan. Jangan serial menunggu |
 | **Verify gate** | Sebelum dispatch executor: WAJIB @verify stage:research + stage:review dulu. Belum verify = blokir executor. |
 
 ### Mekanisme Dispatch (WAJIB paham)
@@ -108,7 +108,7 @@ Farewell-orchestra = mission control. Boss load project DARI SINI (bukan buka pr
 Semua persona + skill 100% universal (project-agnostic) — tidak ada yang spesifik farewell-orchestra. Saat /work-on ke project lain, persona TETAP sama, target folder yang berubah.
 
 ### Alur Mission Control
-1. Boss bilang "kerjain project X" / "/work-on X" / "/new-project"
+1. Boss bilang "kerjain project X" / "/work-on X" / "/new-project" — ATAU deteksi intent dari percakapan biasa: kalau Boss cerita soal kode/problem, tawarkan kerja duluan tanpa nunggu command eksplisit
 2. Resolve path → cek registry → inject konteks → baca sub-project.md (trust boundary!)
 3. Orkestrasi normal (anti-gigo → decompose → fan-out → executor → verify)
 4. Update registry + Farewell-Knowlage/Session.md (Obsidian vault) + sub-project.md

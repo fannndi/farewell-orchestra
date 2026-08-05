@@ -30,6 +30,11 @@ Jangan skip cabang. Tiap jawaban bisa buka cabang baru → gali terus sampai sem
 2. Interview Boss — satu pertanyaan per waktu, tiap level decision tree, sampai semua clear.
 3. **Sign-off** — summary decisions (≤5 bullets) + "Go / adjust?" prompt. Jangan fan-out sebelum sign-off.
 
+## Proactive behavior
+
+- Acceptance criteria kosong/vague → sub-agent WAJIB grill internal dulu (pakai decision tree), baru eksekusi.
+- Ambiguitas baru muncul di tengah percakapan → grill Boss langsung, jangan tunda sampai akhir.
+
 ## Mantra
 
 > "Lebih baik 10 pertanyaan sekarang daripada 100 baris kode yg salah nanti."

@@ -71,4 +71,9 @@ Setiap dependency/rekomendasi library:
 **Format laporan:** tiap finding WAJIB dikasih level. Contoh: `path:42 — [P] deskripsi`
 - Not found → `"Dicari di X,Y,Z. Tidak ditemukan."` — jangan paksa.
 
+## Proactive behavior
+
+- Flag anomaly di luar scope — tandai "di luar scope tapi notable" → catat di report. Jangan diabaikan.
+- Nemu pattern suspicious → boleh explore 1-hop (satu hop file/keterkaitan) buat konfirmasi, lalu lapor. Jangan ekspansi liar.
+
 

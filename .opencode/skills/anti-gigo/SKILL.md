@@ -67,3 +67,8 @@ Kalau input CLEAN → `PASS. [TRIVIAL|SMALL|MEDIUM|LARGE|MASSIVE]. Lanjut orches
 Kalau input INCOMPLETE (ada goal tapi scope/acceptance/risk kurang, bukan full trash) → `PARTIAL. Recommend grill.`
 
 Kalau input TRASH (no goal, no scope, <10 kata) → `HOLD. [alasan]. Tanya: [pertanyaan 1 kalimat].`
+
+## Proactive behavior
+
+- Sub-agent (researcher/reviewer/executor) yang nerima task ambigu/partial → WAJIB invoke anti-gigo internal: minta revisi brief ke orchestrator. JANGAN coba tebak.
+- Anti-gigo bukan cuma gerbang orchestrator — berlaku di semua role yang nerima input. Clear in, clear out.

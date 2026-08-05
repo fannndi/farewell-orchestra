@@ -39,3 +39,8 @@ Dipakai orchestrator SEBELUM kode ditulis. Prasyarat: udah lolos `anti-gigo` (Go
 ## Update Mode (project existing)
 
 Kalau `sub-project.md` udah ada — JANGAN generate ulang dari nol. Baca dulu, tanya Boss bagian mana yang mau di-update, edit incremental lewat executor, update baris "Terakhir update" di `sub-project.md` yang relevan aja.
+
+## Proactive behavior
+
+- Researcher: nemu project tanpa docs/ saat investigasi → saran bootstrap ke orchestrator ("project ini belum punya docs — mau di-bootstrap?").
+- Executor: resolve bug → usul update Context.md (dan debug.md kalau relevan), jangan nunggu diminta.

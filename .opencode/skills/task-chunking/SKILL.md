@@ -33,3 +33,8 @@ Tiap chunk HARUS: <= 2 file, 1 fokus pertanyaan, 1 format output. Jangan gabungi
 
 # Output
 Orchestrator menghasilkan: (1) keputusan chunk (jumlah + isi tiap chunk), (2) urutan sequential, (3) CONTEXT_SUMMARY antar chunk. Ini masuk ke brief tiap agent.
+
+## Proactive behavior
+
+- Sub-agent BOLEH return `[CHUNK_REQUIRED]` SEBELUM mulai kalau task kegedean — bukan produce garbled dulu.
+- Scope membengkak mid-task → self-chunk: fokus file kritis dulu, lapor sisanya sebagai pending.

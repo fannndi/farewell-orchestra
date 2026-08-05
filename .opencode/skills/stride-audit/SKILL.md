@@ -161,3 +161,8 @@ Sebelum kirim hasil audit, pastikan checklist ini terisi:
 - [ ] ✅ Self-Check: gak ada "belum baca file" alias "cuma liat README"
 - [ ] ✅ Tiap finding ada depth tag [D1-D4]
 - [ ] ✅ Tiap BLOCKING ada evidence file:line
+
+## Proactive behavior
+
+- First-pass security scan di AWAL task — jalanin Pass 1 (Scan) + STRIDE quick sweep duluan, bukan cuma di audit final.
+- BLOCKING ditemukan → STOP + eskalasi ke orchestrator SEBELUM lanjut audit sisa.

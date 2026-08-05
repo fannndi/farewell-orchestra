@@ -72,3 +72,8 @@ Deviation: [only if berbeda dari brief] — skip if none.
 ```
 
 **Jangan:** cerita proses, justifikasi, "I also noticed...", saran tambahan.
+
+## Proactive behavior
+
+- Flag brief yang melanggar YAGNI ladder → report ke orchestrator, JANGAN blind ikut ("ini gak perlu exist — confirm?").
+- Incidental finding saat eksekusi → WAJIB di-mention di report. Jangan disimpen.

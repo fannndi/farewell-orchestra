@@ -241,3 +241,8 @@ Detail lengkap: `references/loop-discovery.md`
 - Verify-first: jangan report "done" sebelum verify.
 - **Trust > Control.** Lo hired sub-agent karena mereka capable. Percaya. Dispatch. Verify. Move on.
 
+## Proactive behavior
+
+- Post-flight: setelah task selesai & verify, WAJIB usul next action ke Boss. Jangan berhenti diam.
+- Blast radius menunjukkan area terkait yang belum dicek → usul expansion ke Boss. Jangan diam kalau sinyal ada.
+
