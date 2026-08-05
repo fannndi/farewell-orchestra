@@ -1,10 +1,29 @@
 import { tool } from "@opencode-ai/plugin"
-import { execFileSync } from "child_process"
+import { execFileSync, spawnSync } from "child_process"
 
-const pythonCmd = (() => {
-  try { execFileSync('python3', ['--version'], { stdio: 'ignore' }); return 'python3'; }
-  catch { return 'python'; }
-})();
+// Python-first: 'python' terbukti respond (CLI test 132ms); 'python3' di Windows
+// sering WindowsApps stub yang hang tanpa output. Probe via spawnSync + timeout
+// pendek (2000ms) supaya stub terdeteksi cepat (ETIMEDOUT -> throw -> coba next),
+// bukan hang sampe timeout eksekusi 30s.
+function detectPython(): string {
+  for (const cmd of ["python", "python3"]) {
+    try {
+      const probe = spawnSync(cmd, ["--version"], {
+        timeout: 2000,
+        stdio: "pipe",
+        encoding: "utf-8",
+      })
+      if (probe.status === 0) return cmd
+    } catch {
+      // hang/timeout atau spawn error — lanjut ke command berikutnya
+    }
+  }
+  throw new Error(
+    "Python detection failed: 'python' dan 'python3' tidak merespons. Install Python atau perbaiki PATH."
+  )
+}
+
+const pythonCmd = detectPython()
 import path from "path"
 
 export default tool({
@@ -47,8 +66,9 @@ export default tool({
 
     try {
       const raw = execFileSync(pythonCmd, [scriptPath], {
+        cwd: context.worktree,
         encoding: "utf-8",
-        timeout: 15000,
+        timeout: 30000,
         env: { ...process.env, WORKTREE: context.worktree },
         input: input,  // stdin avoids Windows argv encoding issues
         shell: false,

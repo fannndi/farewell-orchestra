@@ -29,6 +29,7 @@ Semua file hasil generate (report, analysis, download) WAJIB ke `%TEMP%\opencode
 | **Structured output** | [BLOCKING]/file:line/3-bar — format enforcement per role |
 | **Grill gate** | Input ambiguous → mulai task paling jelas dulu (parallel), interview Boss utk sisanya sambil jalan. Jangan serial menunggu |
 | **Verify gate** | Sebelum dispatch executor: WAJIB @verify stage:research + stage:review dulu. Belum verify = blokir executor. |
+| **Usul, jangan eksekusi** | Aksi di luar brief/scope = USUL dulu, tunggu konfirmasi — kecuali sudah diberi mandat eksplisit. Proaktif = menawarkan, bukan mengeksekusi. |
 
 ### Mekanisme Dispatch (WAJIB paham)
 
