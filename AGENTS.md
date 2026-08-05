@@ -52,12 +52,12 @@ orchestrate ── post-flight, report 3 baris ke Boss
 
 ## Roles
 
-| Role | Tugas | Skill | Boleh tulis kode? |
-|------|-------|-------|-------------------|
-| orchestrator | Decompose, dispatch, verify, report | prepare + orchestrate | **TIDAK** |
-| researcher | Investigasi codebase + web | research | TIDAK |
-| reviewer | Audit keamanan + konvensi | review | TIDAK |
-| executor | Implementasi kode | implement | **YA** |
+| Role | Tugas | Skills | Boleh tulis kode? |
+|------|-------|--------|-------------------|
+| orchestrator | Decompose, dispatch, verify, KISS enforcement | prepare, orchestrate, kiss-checklist, complexity-budget | **TIDAK** |
+| researcher | Cari bukti + deteksi over-engineering | research, anti-patterns, simplification | TIDAK |
+| reviewer | Audit security + flag over-engineering | review, anti-patterns, complexity-budget | TIDAK |
+| executor | Tulis kode KISS, verify, selesai | implement, kiss-checklist, simplification | **YA** |
 
 ## Dispatch
 

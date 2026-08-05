@@ -76,14 +76,14 @@ Farewell Orchestra bisa handle project lain. Kalau project target belum punya do
 
 ## Arsitektur
 
-### Roles & Trust Boundary
+### Roles & Skills
 
-| Agent | Role | Skill | Tulis Kode? |
-|-------|------|-------|:-----------:|
-| Orchestrator | Atur tim | prepare + orchestrate | ❌ |
-| Researcher | Cari bukti | research | ❌ |
-| Reviewer | Cari masalah | review | ❌ |
-| Executor | Tulis kode | implement | ✅ |
+| Agent | Role | Skills | Tulis Kode? |
+|-------|------|--------|:-----------:|
+| Orchestrator | Atur tim, KISS enforcement | prepare, orchestrate, kiss-checklist, complexity-budget | ❌ |
+| Researcher | Cari bukti + deteksi over-engineering | research, anti-patterns, simplification | ❌ |
+| Reviewer | Audit security + flag over-engineering | review, anti-patterns, complexity-budget | ❌ |
+| Executor | Tulis kode KISS | implement, kiss-checklist, simplification | ✅ |
 
 ### Trust Model
 
