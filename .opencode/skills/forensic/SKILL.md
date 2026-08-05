@@ -38,9 +38,12 @@ Read-only. SETIAP kata harus punya nilai bukti.
 | API surface | endpoints, method, input, output, auth |
 | Config/infra | .env, docker, CI, deployment |
 
+- **Multi-match:** Grep return puluhan hit? Prioritaskan file dekat entrypoint/nama fungsi yang di-mention di brief dulu, baru fallback ke recency (`git log -1`).
+- **Evidence kontradiktif** (2 code path beda perilaku)? Cari 1-2 titik tambahan (caller/config/flag) buat disambiguasi, jangan pilih sepihak — lapor both + confidence level.
+
 ## Deep Debugging
 
-Dipanggil saat executor gagal >2x. Prosedur:
+Dipanggil saat executor gagal 2x. Prosedur:
 
 1. **Reproduce error** — baca error message, stack trace, kondisi trigger
 2. **Trace backward** — dari symptom ke call site, dari call site ke dependency

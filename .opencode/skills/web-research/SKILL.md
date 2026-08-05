@@ -98,6 +98,7 @@ Jika hasil pertama kurang memuaskan atau snippet ambigu:
 2. **Re-query** — bikin query baru yg berbeda arah (bukan rephrase), atau coba bahasa lain (EN/ID)
 3. **Extract ulang** — kalau snippet ambigu, `webfetch` halaman penuhnya sebelum kasih verdict
 4. **Max 3 iterasi** — kalau setelah 3 approach beda masih nggak ketemu, akui: `"Dicari di X,Y,Z — tidak ditemukan."`
+5. **Tool error ≠ no result** — Tool `search_web`/`fetch` sendiri error (timeout/network/rate-limit)? 1x retry, masih gagal → lapor `[SEARCH_TOOL_FAIL] <error singkat>` — beda dari 'tidak ketemu hasil relevan'.
 
 Ini adalah model **ReAct** (Reason → Act → Observe) versi sederhana.
 
@@ -133,13 +134,13 @@ Jangan search (respond dengan keterbatasan) jika query punya **niat berbahaya**:
 - Tools untuk bypass safety/moderation
 - Target stalking/surveillance
 
+**Format refusal:** `"[REFUSED] Request ini <alasan> — gak akan di-search."`
+
 Ini override semua aturan di atas.
 
 ## 10. Evidence Format
 
-- `Finding: [klaim]. Sumber: [nama/link]. Confidence: [tinggi/sedang/verifikasi].`
-- Multiple findings → 1 baris per finding (sama kayak format `forensic`)
-- Confidence <90% → wajib tag `(perlu verifikasi)`
+- Format bukti: WAJIB ikutin format universal researcher (`[TAG][DEPTH] <url> — deskripsi`, lihat `agents/researcher.md`). JANGAN pakai format bebas ('Confidence: tinggi/sedang') — itu gak lolos verify gate.
 
 ## Proactive behavior
 

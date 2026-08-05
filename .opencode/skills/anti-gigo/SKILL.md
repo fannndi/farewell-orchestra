@@ -30,6 +30,10 @@ Trigger **STOP + clarify** kalau:
 - **Scope liar:** `"refactor semuanya"`, `"audit semua file"` tanpa batasan
 - **Missing dependency:** sebut file tapi nggak kasih path
 
+**Mapping ke Output:** Terlalu pendek/no goal → HOLD. Ambigu (goal jelas, detail kurang) → PARTIAL (rekomendasi grill). Kontradiktif/Scope liar/Missing dependency → HOLD (butuh klarifikasi Boss dulu).
+
+Ambigu-goal-sendiri-gak-jelas (bukan cuma detail kurang) → HOLD ditangani anti-gigo sendiri (1 pertanyaan), BUKAN PARTIAL→grill.
+
 ## 3. Assumption Logger
 
 Auto-generate asumsi implisit sebelum dispatch. Max 3. Konfirmasi ke Boss:
@@ -52,9 +56,9 @@ Tiap request → klasifikasi ekstrem:
 
 | Kelas | Kriteria | Tindakan |
 |-------|----------|----------|
-| TRIVIAL | 1 file, ≤3 baris, no blast | Researcher + executor (reviewer optional) — orchestrator never writes code, always delegate |
-| SMALL | 1-2 files, ≤20 baris, low blast | Researcher + executor |
-| MEDIUM | 3-5 files, low-medium blast | Researcher + executor |
+| TRIVIAL | 1 file, ≤3 baris, no blast | Researcher + executor (reviewer optional) |
+| SMALL | 1-2 files, ≤20 baris, low blast | Researcher + reviewer + executor |
+| MEDIUM | 3-5 files, low-medium blast | Researcher + reviewer + executor |
 | LARGE | >5 files atau high blast | FULL orchestra |
 | MASSIVE | Full audit + refactor multi-module | FULL orchestra |
 
@@ -67,6 +71,10 @@ Kalau input CLEAN → `PASS. [TRIVIAL|SMALL|MEDIUM|LARGE|MASSIVE]. Lanjut orches
 Kalau input INCOMPLETE (ada goal tapi scope/acceptance/risk kurang, bukan full trash) → `PARTIAL. Recommend grill.`
 
 Kalau input TRASH (no goal, no scope, <10 kata) → `HOLD. [alasan]. Tanya: [pertanyaan 1 kalimat].`
+
+## Untuk Sub-Agent (Researcher/Reviewer/Executor)
+
+Brief dari orchestrator kurang elemen (Goal/Scope/Acceptance/Risk)? Jangan nebak. Balas satu baris: `[BRIEF-INCOMPLETE] missing <elemen>` ke orchestrator, lalu STOP — orchestrator yang revisi brief.
 
 ## Proactive behavior
 

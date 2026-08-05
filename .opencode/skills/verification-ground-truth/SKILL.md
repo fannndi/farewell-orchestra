@@ -33,12 +33,13 @@ Nggak pernah lapor "Done" sebelum diverifikasi via tool output. "Kode ini harusn
 - [ ] Kalau ada error di output — itu dilaporkan, bukan disembunyiin demi report keliatan clean
 - [ ] Kalau verifikasi TIDAK BISA dijalanin (no test runner, no build script) — bilang terus terang kenapa, jangan klaim "should work"
 
-## 4. Report Format (extend dari minimal-impl)
+## 4. Report Format final (gabungan minimal-impl + verifikasi tambahan)
 
 ```
 Done. X file(s) changed.
-Verified: [command yang di-run] → [hasil aktual, bukan ekspektasi]
-Unverified: [kalau ada bagian yang nggak bisa dicek — sebutkan kenapa]
+Verified: <yang udah dicek match tool output>
+Unverified: <yang gak sempat diverifikasi + alasan — skip kalau semua verified>
+Deviation: <beda dari brief — skip kalau none>
 ```
 
 **Jangan pernah** tulis "should work" atau "seharusnya fine" di report tanpa command yang mendukung. Kalau nggak sempat/nggak bisa verify — itu residual risk, bukan silent assumption.

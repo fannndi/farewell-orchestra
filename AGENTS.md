@@ -46,6 +46,10 @@ Orchestrator punya `task` permission terbatas: **hanya** researcher, reviewer, e
 
 Prinsip: **SIMPLE · SHORT · MODULAR · TRUST**. Bahasa campur Inggris.
 
+## Self-Conflict Protocol
+
+Instruksi sendiri (persona/skill) kontradiksi & gak ada yang eksplisit menang? JANGAN diam-diam pilih salah satu. Pilih opsi **PALING KONSERVATIF/AMAN**, lapor `[SELF_CONFLICT] <instruksi A> vs <instruksi B> di <file:line>` ke orchestrator, lanjut kerja pakai pilihan konservatif sambil nunggu klarifikasi.
+
 ## Freeze Rule — Orchestrator Never Writes Code
 
 ```

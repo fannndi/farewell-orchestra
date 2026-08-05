@@ -45,7 +45,7 @@ task(subagent_type=<agent>, prompt='Reply with exactly: READY')
 ```
 - If the agent returns a NON-EMPTY response → model is alive; proceed to Step 2.
 - If the agent returns EMPTY or errors → model is DEAD:
-  * reviewer / researcher (non-critical): SKIP the agent. Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
+  * reviewer / researcher (non-critical): SKIP **agent ini** (ganti/fallback). Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
   * executor (critical): ESCALATE to Boss — do NOT dispatch the real job. Report the dead model and await Boss direction.
 
 **Step 2 — Capability probe (~50 token, fail-fast):**
@@ -61,7 +61,7 @@ task(subagent_type="reviewer", prompt='Reply with exactly one line: [BLOCKING] f
 Liveness = model hidup. Capability = model bisa ikut format output role (tidak garbled). Probe kosong = langsung fallback chain, bukan retry buta. The orchestrator itself is not pinged (it is already running).
 
 ## 3. Fan-Out — WAJIB via `task` Tool
-Dispatch researcher + reviewer PARALLEL via `task` tool — mekanisme + prinsip lihat AGENTS.md §Trust & Dispatch. Baca kedua hasil, baru dispatch executor. NEVER skip.
+Dispatch researcher + reviewer PARALLEL via `task` tool — mekanisme + prinsip lihat AGENTS.md §Trust & Dispatch. Baca kedua hasil, baru dispatch executor. NEVER skip **tahapan fan-out**.
 
 ```python
 # ✅ BENAR — Parallel dispatch researcher + reviewer
@@ -87,6 +87,8 @@ Trigger: `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada c
 
 **JANGAN loop tak terbatas.** Max 2 retry per tier. Setelah itu STOP dan laporkan ke Boss. Log setiap retry ke Farewell-Knowlage/Lessons.md (Obsidian vault) via `learn` tool.
 
+> Counter ini SAMA dengan §13 Runtime Loop Guard, bukan counter terpisah: "2x identik" dalam SATU tier (resume/fresh/researcher-debug) trigger escalate ke tier berikutnya; "max 2 retry per tier" = gak lebih dari 2 attempt sebelum pindah tier.
+
 ## 4. Synthesize
 Gabung hasil researcher + reviewer → max 3 bullet. Konflik? reviewer (security) > researcher (facts). Tapi researcher punya bukti file:line sanggah reviewer → catat "dispute" ke Boss. Synthesis diperkuat skill `synthesis-brief` (load sebelum executor handoff).
 
@@ -110,12 +112,14 @@ Sebelum dispatch executor, orchestrator WAJIB:
 4. Kalau salah satu FAIL → REJECT. Re-dispatch agent yg fail dengan detail error.
 5. Kalau PARTIAL → orchestrator putuskan (boleh lanjut dengan caution)
 
+PARTIAL boleh lanjut kalau WARN cuma di check non-evidence (duplicate/uncertainty-flag); WAJIB treat kayak FAIL (re-dispatch) kalau WARN nyentuh evidence-adjacency/tag-adjacency check.
+
 Violation: dispatch executor tanpa verify = orchestrator MELANGGAR aturan sendiri.
 
-## 7b. Synthesis Brief — WAJIB Sebelum Executor
+## 8. Synthesis Brief — WAJIB Sebelum Executor
 Setelah verify gate PASS, SEBELUM dispatch executor: WAJIB load skill `synthesis-brief`. Gunakan untuk mensintesis output researcher + reviewer menjadi tabel atomic (file:line -> exact change), lalu bungkus ke 5-field executor brief. Prinsip: semua fork/decision CLOSED di level orchestrator — executor cukup nulis, tidak boleh mikir. Berlaku untuk ALL task (termasuk TRIVIAL; untuk TRIVIAL tabelnya bisa 1 baris). Jangan kirim brief yang masih mengandung opini/ambiguitas.
 
-## 8. Post-Flight
+## 9. Post-Flight
 Verifikasi acceptance criteria. Report 3 baris: what, result, residual risk. Sisipkan steps: `steps: [used]/[total]`.
 
 ## 10. Peer Debate (trigger: `debat` / `double check` / high-stakes)
@@ -132,7 +136,7 @@ FINAL: [kesimpulan final]
 ```
 **Efisiensi:** Rebuttal pake `task_id` resume subagent, jangan dispatch ulang.
 
-## 11. Quality Check — 5 Gates
+## 11. Quality Check — 4 Gates
 Tiap task lewati ini sebelum report:
 1. **Scope jelas?** — Goal + path disebut, in/out scope eksplisit
 2. **Tool available?** — File di workspace, permission cukup
@@ -152,8 +156,10 @@ Detail lengkap: `references/loop-discovery.md`
 | Executor gagal error identik 2x | Escalate ke researcher |
 | Researcher balik hasil sama 2x | Udah cukup — jangan research lagi |
 | Conversation muter tanpa progress | Report: "Stuck di [topik]. Perlu arahan." |
+| Read file SAMA >3x tanpa nulis | Kurangi scope |
+| Tool + argumen sama 2x tanpa progress | Kurangi scope atau ganti approach |
 
-> Runtime loop = STOP + design gate. Detail: `references/loop-discovery.md` §13-14
+> Runtime loop = STOP + design gate. Detail: `references/loop-discovery.md` §12-13
 
 ## Proactive behavior
 - Post-flight: setelah task selesai & verify, WAJIB usul next action ke Boss. Jangan berhenti diam.

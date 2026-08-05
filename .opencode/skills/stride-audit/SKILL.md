@@ -18,18 +18,18 @@ Audit keamanan + arsitektur. Read-only. Setiap finding harus justified. Kalau ng
 | **[NICE]** | Minor, style | Perbaiki kalau sentuh file itu |
 | **[FYI]** | Observasi, bukan masalah | No action needed |
 
-**Format:** `[TAG] path:42 — apa yang salah, kenapa, dampak`
+**Format:** `[TAG] [D1-D4] path:42 — apa yang salah, kenapa, dampak`
 
 ## STRIDE Threat Model
 
-| Threat | Cek |
-|--------|-----|
-| **S**poofing | Auth bypass? Token bisa dipalsukan? |
-| **T**ampering | Data bisa dimodifikasi tanpa deteksi? |
-| **R**epudiation | Action bisa disangkal? Ada audit log? |
-| **I**nformation Disclosure | Data sensitif bocor? Error message leak? |
-| **D**enial of Service | Rate limit? Timeout? Resource exhaustion? |
-| **E**levation of Privilege | Role bypass? Task delegation escape? |
+| Threat | Cek | Contoh |
+|--------|-----|--------|
+| **S**poofing | Auth bypass? Token bisa dipalsukan? | JWT tanpa signature verification, role check cuma di frontend |
+| **T**ampering | Data bisa dimodifikasi tanpa deteksi? | Request body dipercaya tanpa checksum, client bisa ubah price di payload |
+| **R**epudiation | Action bisa disangkal? Ada audit log? | Delete record gak ada log siapa/kapan — user bisa klaim "gak pernah hapus" |
+| **I**nformation Disclosure | Data sensitif bocor? Error message leak? | Stack trace di response API expose path server/DB credentials |
+| **D**enial of Service | Rate limit? Timeout? Resource exhaustion? | Endpoint upload file gak ada size limit, bisa exhaust disk/memory |
+| **E**levation of Privilege | Role bypass? Task delegation escape? | Role "viewer" bisa call endpoint admin karena dicek cuma di UI |
 
 ## Cumulative Judgment
 
@@ -39,13 +39,13 @@ Audit keamanan + arsitektur. Read-only. Setiap finding harus justified. Kalau ng
 
 ## Domain Checklists
 
-| Domain | Priority Checks |
-|--------|----------------|
-| Auth | Token lifecycle, session hijack, password policy |
-| API | RESTfulness, error codes, rate limiting, idempotency |
-| Database | Migration safety, index strategy, N+1, transactions |
-| Error Handling | Degradation path, user messages, retry logic |
-| Config | Env parity, secret rotation, health checks |
+| Domain | Priority Checks | Contoh |
+|--------|----------------|--------|
+| Auth | Token lifecycle, session hijack, password policy | JWT tanpa signature verification, role check cuma di frontend |
+| API | RESTfulness, error codes, rate limiting, idempotency | POST tanpa idempotency key — retry bikin data ke-duplikat |
+| Database | Migration safety, index strategy, N+1, transactions | Migration drop column tanpa backward-compat window, rollback bikin data hilang |
+| Error Handling | Degradation path, user messages, retry logic | Retry infinite loop tanpa backoff, satu downstream down bikin semua request numpuk |
+| Config | Env parity, secret rotation, health checks | Secret hardcoded di config file yang ke-commit, gak ada rotation policy |
 
 ## Convention Enforcement
 
@@ -82,9 +82,9 @@ Audit bukan cuma per-file — tapi celah ANTAR file yang seharusnya sinkron.
 
 ### Format temuan drift
 
-`[TAG] fileA:baris ↔ fileB:baris — apa yang harusnya sama tapi beda`
+`[TAG] [D1-D4] fileA:baris ↔ fileB:baris — apa yang harusnya sama tapi beda`
 
-## Checklist (order = priority)
+## Review Priority Order
 
 1. **Correctness** — bugs, edge cases, race conditions
 2. **Simplicity** — bisa lebih sederhana? bisa dihapus?
@@ -101,6 +101,8 @@ Summary: `"X BLOCKING, Y SHOULD, Z NICE, W FYI"` — lalu list findings 1 baris 
 ## Depth Assurance Protocol
 
 JANGAN lapor "Done" SEBELUM 3 pass ini selesai:
+
+**Capacity exceeded** (Q/F/O trigger, lihat task-chunking) → return `[CHUNK_REQUIRED]` SEBELUM mulai Pass 1, bukan di tengah audit.
 
 ### Pass 1: Scan (5%)
 - Baca README/docs → pahami klaim, arsitektur, fitur
@@ -119,7 +121,7 @@ JANGAN lapor "Done" SEBELUM 3 pass ini selesai:
 - Bandingkan temuan dari Pass 2 dengan klaim dari Pass 1
 - Cari kontradiksi: docs bilang X, kode lakukan Y
 - Cari missing pieces: docs janji Z, tapi kode gak ada Z
-- Format temuan: `[TAG] path:42 — docs claim X, tapi kode lakukan Y`
+- Format temuan: `[TAG] [D1-D4] path:42 — docs claim X, tapi kode lakukan Y`
 
 **Self-Check Sebelum Report:**
 | Pertanyaan | Ya/Tidak |
@@ -165,4 +167,4 @@ Sebelum kirim hasil audit, pastikan checklist ini terisi:
 ## Proactive behavior
 
 - First-pass security scan di AWAL task — jalanin Pass 1 (Scan) + STRIDE quick sweep duluan, bukan cuma di audit final.
-- BLOCKING ditemukan → STOP + eskalasi ke orchestrator SEBELUM lanjut audit sisa.
+- BLOCKING ditemukan sebelum semua pass selesai → (1) TUNTASKAN pass yang sedang jalan tapi SCOPE dipersempit ke file/modul yang TERKAIT LANGSUNG sama BLOCKING itu (biar cumulative judgment area itu tetap valid), (2) tandai file/modul lain di scope sebagai 'belum diaudit — residual', (3) lapor `[BLOCKING]` on discovery bareng partial-report + daftar residual eksplisit, (4) STOP total cuma kalau orchestrator eksplisit minta early-return — default-nya lanjut ke residual setelah BLOCKING pertama diakui orchestrator.

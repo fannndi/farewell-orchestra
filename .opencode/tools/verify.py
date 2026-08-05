@@ -34,6 +34,12 @@ UNCERTAINTY_MARKERS = [
 
 REF_PATTERN = r"([\w./\\-]+\.\w+):(\d+)"
 
+# Legitimate capacity-refusal signals — sub-agent reporting overload, not a
+# failure. AGENTS.md: "[CHUNK_REQUIRED] = trigger re-chunk, bukan gagal."
+# Never score these against normal evidence/tag/PASS-FAIL criteria.
+CAPACITY_TAGS = ["CHUNK_REQUIRED", "CAPACITY_CHECK"]
+CAPACITY_TOKEN_PATTERN = "|".join(rf"\[{t}\]" for t in CAPACITY_TAGS)
+
 
 def _safe_worktree_path(fpath: str):
     """Resolve fpath inside WORKTREE; return Path if contained, else None (blocks traversal)."""
@@ -95,15 +101,21 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
     )
 
     # Check 3: Evidence per claim (look for "source" or "finding" patterns)
+    capacity_signal = bool(re.search(CAPACITY_TOKEN_PATTERN, claims))
     evidence_pattern = r"(source|Sumber|evidence|Finding|file:line|confidence)"
     has_evidence = bool(re.search(evidence_pattern, claims, re.IGNORECASE))
+    if has_evidence:
+        ev_status, ev_detail = "PASS", "Evidence markers found"
+    elif capacity_signal:
+        ev_status = "CHUNK_REQUIRED"
+        ev_detail = "Capacity signal ([CHUNK_REQUIRED]/[CAPACITY_CHECK]) — evidence check skipped, not a failure"
+    else:
+        ev_status, ev_detail = "FAIL", "No evidence/source markers detected"
     checks.append(
         {
             "name": "evidence attached",
-            "status": "PASS" if has_evidence else "FAIL",
-            "detail": "Evidence markers found"
-            if has_evidence
-            else "No evidence/source markers detected",
+            "status": ev_status,
+            "detail": ev_detail,
         }
     )
 
@@ -133,13 +145,23 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
     has_maturity_tags = bool(re.search(maturity_tag_pattern, claims))
     has_depth_tags = bool(re.search(depth_tag_pattern, claims))
     has_any_tags = bool(re.search(all_tags_pattern, claims))
+    if has_maturity_tags:
+        tag_status = "PASS"
+    elif capacity_signal:
+        tag_status = "CHUNK_REQUIRED"
+    else:
+        tag_status = "FAIL"
+    if tag_status == "CHUNK_REQUIRED":
+        tag_detail = "Capacity signal ([CHUNK_REQUIRED]/[CAPACITY_CHECK]) — no findings to tag, not a failure"
+    elif has_any_tags:
+        tag_detail = f"Evidence tags found: maturity={has_maturity_tags}, depth={has_depth_tags}"
+    else:
+        tag_detail = "No evidence tags [P/W/E/O] or depth tags [D1-D4] in findings — output may be untethered"
     checks.append(
         {
             "name": "evidence tags [P/W/E/O] + depth [D1-D4]",
-            "status": "FAIL" if not has_maturity_tags else "PASS",
-            "detail": f"Evidence tags found: maturity={has_maturity_tags}, depth={has_depth_tags}"
-            if has_any_tags
-            else "No evidence tags [P/W/E/O] or depth tags [D1-D4] in findings — output may be untethered",
+            "status": tag_status,
+            "detail": tag_detail,
         }
     )
 
@@ -203,14 +225,27 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
         "D4",
     ]
     found_tags = re.findall(r"\[(\w+)\]", claims)
-    bad_tags = [t for t in found_tags if t not in valid_tags]
+    # Capacity-refusal tags are passthrough — never "INVALID", never FAIL.
+    # AGENTS.md: "[CHUNK_REQUIRED] = trigger re-chunk, bukan gagal."
+    found_capacity_tags = [t for t in found_tags if t in CAPACITY_TAGS]
+    bad_tags = [
+        t for t in found_tags if t not in valid_tags and t not in CAPACITY_TAGS
+    ]
     detail = f"Tags found: {found_tags}" if found_tags else "No tags found"
     if bad_tags:
         detail += f"; INVALID: {bad_tags}"
+    if bad_tags:
+        tag_status = "FAIL"
+    elif found_capacity_tags:
+        tag_status = "CHUNK_REQUIRED"
+    elif found_tags:
+        tag_status = "PASS"
+    else:
+        tag_status = "WARN"
     checks.append(
         {
             "name": "priority tags",
-            "status": "FAIL" if bad_tags else ("PASS" if found_tags else "WARN"),
+            "status": tag_status,
             "detail": detail,
         }
     )
@@ -399,10 +434,16 @@ def main():
     # Overall result
     fails = [c for c in checks if c["status"] == "FAIL"]
     warns = [c for c in checks if c["status"] == "WARN"]
+    capacity = [c for c in checks if c["status"] == "CHUNK_REQUIRED"]
     passed = [c for c in checks if c["status"] == "PASS"]
 
     if fails:
         summary = f"FAIL ({len(fails)} failed, {len(warns)} warnings)"
+    elif capacity:
+        summary = (
+            f"CHUNK_REQUIRED ({len(capacity)} capacity signal(s) — "
+            "sub-agent overloaded, re-chunk, not a failure)"
+        )
     elif warns:
         summary = f"PARTIAL ({len(warns)} warnings, {len(passed)} passed)"
     else:

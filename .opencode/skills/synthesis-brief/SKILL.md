@@ -12,7 +12,8 @@ Executor = tangan, bukan otak. Kalau executor perlu mikir "cara mana yang bener"
 | Researcher | fakta code, verified claim | file:line exact, current state (deskripsi/evidence) |
 | Reviewer | STRIDE finding, convention violation | file:line exact, severity (BLOCKING/SHOULD/NICE/FYI) |
 
-- Reviewer dengan ZERO findings (clean audit) = VALID, bukan "missing file:line". Lanjut tanpa reject.
+- Reviewer dengan ZERO findings (clean audit) = VALID, bukan "missing file:line". Lanjut tanpa reject. WAJIB tetap sertakan minimal 1 depth-tag (`[D1]`-`[D4]`) biar lolos mechanical verify gate — contoh: `[D3] Audit clean — 0 BLOCKING/SHOULD/NICE. Full 3-pass selesai.`
+- Reviewer TIDAK di-dispatch (sah cuma buat kelas TRIVIAL, per anti-gigo Cost-Benefit Gate) → treat sebagai stream tunggal, skip Conflict Resolution Matrix.
 - REJECT hanya kalau sebuah stream yang SEHARUSNYA punya temuan (per scope) mengembalikan temuan TANPA file:line exact, ATAU balik kosong padahal scope jelas butuh investigasi. Suruh re-run stream itu.
 
 # Conflict Resolution Matrix

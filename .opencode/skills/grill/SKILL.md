@@ -7,6 +7,8 @@ description: Use when anti-gigo finds input incomplete or ambiguous — Socratic
 
 # Grill-Me — Socratic Requirement Extraction
 
+> PARTIAL (grill) != TRASH-ambigu (anti-gigo §2) — TRASH-ambigu (goal sendiri gak jelas) ditangani anti-gigo sendiri (HOLD, 1 pertanyaan). Grill khusus buat goal-JELAS-tapi-detail/scope/constraint kurang.
+
 ## Prinsip
 - **Satu pertanyaan per satu waktu.** Jangan banjirin Boss. Satu `question` tool call = satu pertanyaan.
 - **Fakta = cari sendiri.** Cari lewat read/grep/glob sebelum tanya Boss.
@@ -24,6 +26,8 @@ description: Use when anti-gigo finds input incomplete or ambiguous — Socratic
 | **Edge cases** | Input kosong? Concurrent? | "Multiple device login?" |
 
 Jangan skip cabang. Tiap jawaban bisa buka cabang baru → gali terus sampai semua clear.
+
+> 8 pertanyaan tanpa convergence → sign-off paksa pakai asumsi default (flag eksplisit ke Boss) — selaras Runtime Loop Guard (`orchestrate/SKILL.md` §13).
 
 ## Workflow
 1. Orchestrator invoke grill setelah anti-gigo return PARTIAL (input punya goal tapi scope/acceptance/risk kurang).

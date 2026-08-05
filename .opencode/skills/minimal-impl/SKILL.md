@@ -3,6 +3,8 @@ name: minimal-impl
 description: Use before writing code — YAGNI ladder, verify-first, cleanup, error healing.
 ---
 
+> Role: executor — write access, implement before verify. Orchestrator never writes code.
+
 # Minimal Implementation
 
 Setiap byte kode harus justified.
@@ -20,7 +22,7 @@ Setiap byte kode harus justified.
 
 - **Read files ONLY if needed.** Langsung ke file+line.
 - **Prefer delete over add.** Hapus 5 > tambah 3.
-- **Satu change per edit.** Jangan batch.
+- **Satu change per edit.** Jangan batch. **Definisi 1 concern:** 1 intent/tujuan perubahan; boleh span banyak file kalau memang mekanis (rename/import fix konsisten), tapi logic berbeda = concern berbeda, WAJIB edit terpisah.
 - **Verification:** EXACT command dari brief.
 
 ## Not-Lazy Guard
@@ -71,7 +73,7 @@ Verification: [command output — 1 line]
 Deviation: [only if berbeda dari brief] — skip if none.
 ```
 
-**Jangan:** cerita proses, justifikasi, "I also noticed...", saran tambahan.
+**Jangan:** cerita proses, justifikasi, "I also noticed...", saran tambahan — KECUALI incidental finding/saran yang di-mandate persona (Perilaku Proaktif) — taruh di baris terpisah SETELAH Deviation, bukan dicampur ke narasi utama.
 
 ## Proactive behavior
 
