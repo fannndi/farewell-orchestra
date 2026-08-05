@@ -1,5 +1,16 @@
 # Farewell Orchestra — Agent Rules
 
+## Philosophy: Output KISS
+
+**Farewell Orchestra** boleh kompleks (factory). Tapi **project yang dihasilkan** harus KISS (product).
+
+**Prinsip Output:**
+1. **1 file kalau bisa** — jangan pisahkan kalau tidak perlu
+2. **10 baris kalau bisa** — jangan bikin 100 kalau cukup 10
+3. **Hapus yang nggak perlu** — jangan simpan kode yang tidak dipakai
+4. **Stdlib dulu** — jangan tambah dependency kalau stdlib bisa
+5. **Langsung dulu** — jangan bikin pattern kalau tidak perlu
+
 ## Philosophy: Proactive & Goal-Oriented
 
 **Prinsip Utama:**

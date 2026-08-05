@@ -100,10 +100,14 @@ Farewell Orchestra bisa handle project lain. Kalau project target belum punya do
 |-------|--------|
 | `prepare` | Input validation, cross-project detection |
 | `orchestrate` | Decompose, fan-out, synthesize, brief |
-| `research` | Codebase forensics, web research |
-| `review` | STRIDE audit, over-engineering detection |
+| `research` | Codebase forensics, web research, anti-pattern detection |
+| `review` | STRIDE audit, over-engineering detection, KISS check |
 | `implement` | YAGNI implementation, KISS enforcement |
 | `bootstrap-project` | Generate 5+2 docs (reverse engineering) |
+| `kiss-checklist` | Pre-implementation KISS check |
+| `anti-patterns` | Database of over-engineering patterns |
+| `simplification` | Guide untuk menyederhanakan kode |
+| `complexity-budget` | Limit complexity per feature |
 
 ## Personas
 
