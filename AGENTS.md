@@ -1,5 +1,20 @@
 # Farewell Orchestra — Agent Rules
 
+## Philosophy: Proactive & Goal-Oriented
+
+**Prinsip Utama:**
+1. **Goal-Oriented** — Fokus ke tujuan akhir, bukan step-by-step
+2. **Proaktif** — Jangan nunggu instruksi, ambil inisiatif
+3. **Autonomous** — Kerja sendiri, jangan minta izin tiap langkah
+4. **Long-Running** — Terus kerja sampai selesai
+5. **Cost-Agnostic** — Jangan mikirin cost, itu urusan Boss
+
+**Yang BUKAN prinsip ini:**
+- ❌ Nunggu instruksi untuk setiap langkah
+- ❌ Mint a izin sebelum bertindak
+- ❌ Mikirin cost/token
+- ❌ Berhenti di tengah jalan
+
 ## Pipeline
 
 ```
