@@ -41,7 +41,7 @@ Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
 | **Dispatch, jangan kerjain** | Setiap task = `task(subagent_type=...)`. **TIDAK ADA pengecualian untuk nulis kode.** |
 | **Parallel, jangan serial** | Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain. |
 | **Verify, jangan tebak** | @verify tool setiap hasil. Kalau FAIL → re-dispatch dengan error detail. |
-| **Eskalasi, jangan loop** | Executor gagal 2x → dispatch researcher deep debug, bukan retry terus. Reviewer return kosong 2x → dispatch researcher debug reviewer failure → switch profile jika model issue. JANGAN bypass reviewer. Fallback chain sub-agent: ping → retry task_id → fresh → small_model → researcher debug → eskalasi Boss. Orchestrator TIDAK handle read-only (langgar Freeze Rule). |
+| **Eskalasi, jangan loop** | Executor gagal 2x → dispatch researcher deep debug, bukan retry terus. Reviewer return kosong 2x → dispatch researcher debug reviewer failure → switch profile jika model issue. JANGAN bypass reviewer. Fallback chain sub-agent: `ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → eskalasi Boss`. Orchestrator TIDAK handle read-only — bahkan sebagai last-resort; fallback ENDS di eskalasi Boss (langgar Freeze Rule). |
 
 ### Mekanisme Dispatch (WAJIB paham)
 
@@ -71,7 +71,7 @@ Prinsip: **SIMPLE · SHORT · MODULAR · TRUST · COST-AWARE**. Bahasa campur In
 [ALLOWED] ORCHESTRATOR BOLEH:
   • Menggunakan `read`/`grep`/`glob` HANYA untuk: git status, sub-project.md, Farewell-Knowlage/Lessons.md (Obsidian vault), opencode.jsonc. BUKAN untuk membaca source code file yang jadi target audit/analisis.
   • Mengupdate sub-project.md (1 baris, memory aja) — SATU-SATUNYA file yg boleh di-edit orchestrator langsung.
-  • Farewell-Knowlage/Lessons.md (Obsidian vault), AGENTS.md, README.md, SKILL.md, dan semua file lainnya → WAJIB dispatch executor.
+  • Farewell-Knowlage/Lessons.md (Obsidian vault), AGENTS.md, README.md, skill files (.opencode/skills/), dan semua file lainnya → WAJIB dispatch executor.
   • Dispatch → verify → report
 ```
 
@@ -107,7 +107,7 @@ Setiap tool call = minimal 1 API request ke paid model. Makin banyak tool call =
 - Fallback arah: PAID → FREE (degradasi, aman). DILARANG FREE → PAID (cost spike).
 - Setelah switch profile, re-inject context: sub-project.md + Farewell-Knowlage/Lessons.md (Obsidian vault) + README (yang relevan).
 - Log kejadian ke Farewell-Knowlage/Lessons.md via executor (Obsidian vault).
-- Sub-agent model failure (researcher/reviewer): TIDAK sama dengan orchestrator failure. Ikuti fallback chain (SKILL orchestrate). Terminologi: "switch profile" = orchestrator failure via `profiles\switch.bat`; "switch small_model" = sub-agent failure, model dari profiles.json.
+- Sub-agent model failure (researcher/reviewer): TIDAK sama dengan orchestrator failure. Ikuti fallback chain (SKILL orchestrate). Terminologi: "switch profile" = orchestrator failure via `profiles\switch.bat`.
 
 ## Step Budgets
 

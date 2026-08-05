@@ -29,6 +29,10 @@ FORWARD_REFS = {
     "docs/Tasks.md",
 }
 
+# Known vault files — refs written without prefix (e.g. bare "Lessons.md")
+# are valid; they live in Farewell-Knowlage/
+VAULT_REFS = {"Lessons.md", "Session.md", "Decisions.md"}
+
 # Files where reference-like patterns are narrative prose, not file refs
 NARRATIVE_FILES = {"check.md"}
 
@@ -122,7 +126,7 @@ def main():
                 continue
 
             # Skip known forward refs (files that will be generated)
-            if ref_path in FORWARD_REFS or any(ref_path.endswith(f"/{f}") for f in FORWARD_REFS) or "Farewell-Knowlage/" in ref_path:
+            if ref_path in FORWARD_REFS or any(ref_path.endswith(f"/{f}") for f in FORWARD_REFS) or ref_path in VAULT_REFS or any(ref_path.endswith(f"/{v}") for v in VAULT_REFS):
                 continue
 
             # Resolve relative to source dir then project root

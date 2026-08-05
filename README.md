@@ -48,10 +48,10 @@ Boss terima report ── 3 baris: what changed, verification result, residual r
 
 | Role | Persona | Skill wajib | Model |
 |------|---------|-------------|-------|
-| Orchestrator | orchestrator.md | anti-gigo + orchestrate | PAID |
-| Researcher | researcher.md | forensic + web-research | FREE |
-| Reviewer | reviewer.md | stride-audit | FREE |
-| Executor | executor.md | minimal-impl + verification-ground-truth | PAID |
+| Orchestrator | .opencode/agents/orchestrator.md | anti-gigo + orchestrate | PAID |
+| Researcher | .opencode/agents/researcher.md | forensic + web-research | FREE |
+| Reviewer | .opencode/agents/reviewer.md | stride-audit | FREE |
+| Executor | .opencode/agents/executor.md | minimal-impl + verification-ground-truth | PAID |
 
 Skill di-hardcode di prompt via `profiles/generate.py` — bukan opsional self-trigger.
 
@@ -96,6 +96,12 @@ Catatan: label PAID/FREE = pembagian beban & peran (paid = reasoning tinggi untu
 
 Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. Switcher: `profiles/switch.bat`.
 
+**Alur sync config (source → generated):**
+- `opencode.jsonc` = **GENERATED + gitignored** — jangan edit langsung. Edit source di `profiles/profiles.json` / `profiles/generate.py`.
+- Regenerate: `python profiles/generate.py "Daily"` (profile aktif).
+- Restart opencode **WAJIB** setelah generate — config gak hot-reload.
+- Sanity check: `python profiles/generate.py --validate`.
+
 **4 profile, bukan 6.** Semua di-source-of-truth yang sama.
 
 ## Commands
@@ -116,7 +122,7 @@ Sumber kebenaran: `profiles/profiles.json`. Generator: `profiles/generate.py`. S
 - Start: `powershell -File scripts/start-server.ps1` — jalankan `opencode serve` di `127.0.0.1:4096`, log ke `%TEMP%\opencode\server.log`.
 - Attach: `opencode run --attach http://127.0.0.1:4096 --format json "Reply with exactly: OK"`.
 - Stop: `powershell -File scripts/start-server.ps1 -Stop` — kill proses opencode serve.
-- Security: bind `127.0.0.1` saja + password wajib (`OPENCODE_SERVER_PASSWORD`; kalau kosong script generate random 32-char).
+- Security: bind `127.0.0.1` saja + password wajib (`OPENCODE_SERVER_PASSWORD`; kalau kosong script generate random 64-hex (32 bytes)).
 
 ## Debug Logging
 
@@ -156,7 +162,7 @@ Farewell-orchestra = mission control. Boss load project DARI SINI — project ta
 │   ├── agents/                — persona 4 agent
 │   ├── command/               — slash commands
 │   ├── hooks/                 — lifecycle enforcement (pre/post-generate)
-│   ├── project-guide.md       — cross-project usage guide
+│   ├── .opencode/project-guide.md  — cross-project usage guide
 │   ├── skills/                — 11 agent skills
 │   └── tools/                 — verify.ts, harness_status, learn
 ├── profiles/

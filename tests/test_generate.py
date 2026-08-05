@@ -78,9 +78,9 @@ class TestValidateRegistry:
 class TestFindProfile:
     def test_finds_by_name(self):
         reg = get_registry()
-        p = find_profile(reg, "default")
+        p = find_profile(reg, reg["profiles"][0]["name"])
         assert p is not None
-        assert p["name"] == "default"
+        assert p["name"] == reg["profiles"][0]["name"]
 
     def test_returns_none_for_missing(self):
         reg = get_registry()
@@ -91,7 +91,7 @@ class TestFindProfile:
 class TestBuildAgentConfig:
     def test_returns_all_templates(self):
         reg = get_registry()
-        profile = find_profile(reg, "default")
+        profile = find_profile(reg, reg["profiles"][0]["name"])
         agents = build_agent_config(profile)
         for name in ("orchestrator", "researcher", "reviewer", "executor"):
             assert name in agents, f"Missing agent '{name}'"
@@ -99,7 +99,7 @@ class TestBuildAgentConfig:
 
     def test_agents_have_model_assigned(self):
         reg = get_registry()
-        profile = find_profile(reg, "default")
+        profile = find_profile(reg, reg["profiles"][0]["name"])
         agents = build_agent_config(profile)
         for name in ("orchestrator", "researcher", "reviewer", "executor"):
             assert agents[name].get("model"), f"Agent '{name}' has no model"
@@ -107,14 +107,14 @@ class TestBuildAgentConfig:
 
     def test_hidden_agents_exist(self):
         reg = get_registry()
-        profile = find_profile(reg, "default")
+        profile = find_profile(reg, reg["profiles"][0]["name"])
         agents = build_agent_config(profile)
         for hidden in ("title", "summary", "compaction"):
             assert hidden in agents, f"Missing hidden agent '{hidden}'"
 
     def test_disabled_agents_exist(self):
         reg = get_registry()
-        profile = find_profile(reg, "default")
+        profile = find_profile(reg, reg["profiles"][0]["name"])
         agents = build_agent_config(profile)
         for disabled in ("build", "plan", "general", "explore"):
             assert disabled in agents, f"Missing disabled agent '{disabled}'"
@@ -124,7 +124,7 @@ class TestBuildAgentConfig:
 class TestCollectModels:
     def test_deduplicates(self):
         reg = get_registry()
-        profile = find_profile(reg, "default")
+        profile = find_profile(reg, reg["profiles"][0]["name"])
         models = collect_models(reg, profile)
         # Should have at least orchestrator model
         main = profile["agents"]["orchestrator"]["model"]
@@ -157,11 +157,12 @@ class TestGenerateSmoke:
     """Quick smoke tests — gaya live, bukan mock."""
 
     def test_generate_default_stdout_produces_json(self):
-        """--stdout default should produce valid JSON with proper keys."""
+        """--stdout with first registry profile should produce valid JSON with proper keys."""
         import subprocess
         script = os.path.join(os.path.dirname(__file__), "..", "profiles", "generate.py")
+        reg = get_registry()
         result = subprocess.run(
-            [sys.executable, script, "--stdout", "default"],
+            [sys.executable, script, "--stdout", reg["profiles"][0]["name"]],
             capture_output=True, text=True, timeout=30
         )
         assert result.returncode == 0, f"STDERR: {result.stderr}"
@@ -262,7 +263,8 @@ class TestBackupIntegrity:
         try:
             backup_dir = os.path.abspath(BACKUP_DIR)
             before_count = len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")]) if os.path.isdir(backup_dir) else 0
-            generate("default")
+            reg = get_registry()
+            generate(reg["profiles"][0]["name"])
             after_count = len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")]) if os.path.isdir(backup_dir) else 0
             assert after_count >= before_count, "No backup created after generate()"
         finally:
@@ -274,8 +276,9 @@ class TestBackupIntegrity:
             backup_dir = os.path.abspath(BACKUP_DIR)
             os.makedirs(backup_dir, exist_ok=True)
             # Alternate profiles to trigger backup creation (same profile = no-op)
+            reg = get_registry()
             for i in range(MAX_BACKUPS + 2):
-                profile = "mix" if i % 2 == 0 else "default"
+                profile = reg["profiles"][0]["name"] if i % 2 == 0 else reg["profiles"][1]["name"]
                 generate(profile)
             backups = [f for f in os.listdir(backup_dir) if f.startswith("opencode.") and f.endswith(".jsonc")]
             assert len(backups) <= MAX_BACKUPS, f"Expected <= {MAX_BACKUPS} backups, got {len(backups)}"
@@ -307,26 +310,30 @@ class TestRollbackCorrectness:
     def test_rollback_restores_previous(self):
         orig = self._save_root()
         try:
-            # Generate "default" to establish a known state
-            generate("default")
+            reg = get_registry()
+            first = reg["profiles"][0]["name"]
+            second = reg["profiles"][1]["name"]
+
+            # Generate first profile to establish a known state
+            generate(first)
             root = os.path.abspath(ROOT_FILE)
             with open(root, "r", encoding="utf-8") as f:
-                default_content = f.read()
-            default_hash = hashlib.md5(default_content.encode()).hexdigest()
+                first_content = f.read()
+            first_hash = hashlib.md5(first_content.encode()).hexdigest()
 
-            # Generate "mix" — this creates a backup of "default" content
-            generate("mix")
+            # Generate second profile — this creates a backup of the first content
+            generate(second)
             with open(root, "r", encoding="utf-8") as f:
-                mix_content = f.read()
-            assert hashlib.md5(mix_content.encode()).hexdigest() != default_hash, \
-                "default and mix should produce different content"
+                second_content = f.read()
+            assert hashlib.md5(second_content.encode()).hexdigest() != first_hash, \
+                f"{first} and {second} should produce different content"
 
-            # Rollback should restore the backup (which contains "default" content)
+            # Rollback should restore the backup (which contains the first profile's content)
             rollback()
             with open(root, "r", encoding="utf-8") as f:
                 restored_content = f.read()
             restored_hash = hashlib.md5(restored_content.encode()).hexdigest()
-            assert restored_hash == default_hash, \
-                f"Rollback did not restore: expected {default_hash}, got {restored_hash}"
+            assert restored_hash == first_hash, \
+                f"Rollback did not restore: expected {first_hash}, got {restored_hash}"
         finally:
             self._restore_root(orig)

@@ -23,17 +23,17 @@ skills:
 1. Validasi input via anti-gigo — tolak sampah di gerbang
 2. Decompose task — pecah jadi unit kecil yg bisa dikerjain sub-agent
 3. Fan-out PARALLEL: dispatch researcher + reviewer barengan
+   - Kalau reviewer return [BLOCKING] sebelum researcher selesai: prioritize BLOCKING di synthesis, TETAP tunggu researcher utk fakta ground truth sebelum executor.
 4. Tunggu KEDUA hasil, synthesize, baru brief executor
-5. Kalau reviewer return [BLOCKING] sebelum researcher selesai: prioritize BLOCKING di synthesis, JANGAN expand follow-up ke scope invalid (residual risk). Tetap tunggu researcher utk fakta ground truth.
-6. Verify hasil executor. Kalau FAIL → dispatch researcher deep debug. Jangan retry executor 2x.
-7. Report ke Boss — 3 baris max: what, result, residual risk.
+5. Verify hasil executor. Kalau FAIL → dispatch researcher deep debug. Jangan retry executor 2x.
+6. Report ke Boss — 3 baris max: what, result, residual risk.
 
 
 ## Rules
 
 - Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain.
 - Jangan dispatch executor sebelum researcher + reviewer SELESAI.
-- Executor gagal 2x → STOP. Dispatch researcher deep debug. Jangan retry executor terus. Researcher/reviewer kosong 2x → small_model switch → researcher debug → eskalasi Boss; orchestrator never handle read-only.
+- Executor gagal 2x → STOP. Dispatch researcher deep debug. Jangan retry executor terus. Researcher/reviewer kosong 2x → ikut fallback chain: `ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → eskalasi Boss`; orchestrator never handle read-only, bahkan sebagai last-resort.
 - Dispatch brief harus precise: "Cari pattern X di file Y, lapor file:line" — bukan cerita.
 - 1 dispatch besar > 3 dispatch kecil. Gabung task related.
 - Gunakan task_id resume untuk follow-up ke sub-agent yg sama — lebih hemat.
@@ -95,7 +95,7 @@ Fail: orchestrator dispatch executor meski verify FAIL atau gak dipanggil.
 ### Test 7: Fallback Chain → Eskalasi Boss
 ```
 Request: task yg bikin researcher kosong 3x
-Expected: gue ikut fallback chain — retry 1x → fresh 1x → small_model → researcher debug → ESKALASI Boss (bukan orchestrator handle sendiri).
+Expected: gue ikut fallback chain — ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → ESKALASI Boss (bukan orchestrator handle sendiri — fallback ENDS di eskalasi Boss).
 Fail: gue baca file sendiri / retry buta / handle sendiri tanpa eskalasi.
 ```
 

@@ -9,7 +9,7 @@
 
 .NOTES
     Security: bind 127.0.0.1 saja. Password wajib - env OPENCODE_SERVER_PASSWORD.
-    Kalau kosong, script generate random 32-char sekali pakai (tampil di console).
+    Kalau kosong, script generate random 64-hex chars (32 bytes) sekali pakai (tampil di console).
     Log stdout/stderr: %TEMP%\opencode\server.log (+ server.err.log - Start-Process
     butuh file terpisah untuk stderr).
     Stop = kill process yang listen di port 4096 (opencode serve).
@@ -34,12 +34,13 @@ if ($Stop) {
     exit 0
 }
 
-# Password wajib - generate 32-char random kalau belum ada
+# Password wajib - generate 64-hex chars (32 bytes) random kalau belum ada
 if (-not $env:OPENCODE_SERVER_PASSWORD) {
     $bytes = New-Object byte[] 32
     [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
     $env:OPENCODE_SERVER_PASSWORD = -join ($bytes | ForEach-Object { $_.ToString("x2") })
-    Write-Host "[INFO] OPENCODE_SERVER_PASSWORD kosong - generate 32-char random:"
+    Write-Host "[INFO] OPENCODE_SERVER_PASSWORD kosong - generate 64-hex chars (32 bytes) random:"
+    Write-Host "  PERINGATAN: password di bawah SENSITIVE — tampil SEKALI ini saja. Catat sekarang. JANGAN di-log/share."
     Write-Host "  $env:OPENCODE_SERVER_PASSWORD"
     Write-Host "  Set permanen: [Environment]::SetEnvironmentVariable('OPENCODE_SERVER_PASSWORD','<value>','User')"
 } else {

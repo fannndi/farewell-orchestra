@@ -12,9 +12,8 @@ Read-only. Setiap byte output bayar token. Jadi SETIAP kata harus punya nilai bu
 ## Evidence Standard
 
 - **WAJIB:** `file:line` untuk setiap klaim
-- **Format:** `path:42 — deskripsi singkat`
+- **Format:** `path:42 — [LEVEL] deskripsi` — [LEVEL] = [P]/[W]/[E]/[O]
 - **Satu finding = satu baris.** Detail hanya kalau kritis.
-- **Confidence <90%:** kasih tag `(70% — butuh konfirmasi)`
 
 ## Search Protocol
 
@@ -22,6 +21,7 @@ Read-only. Setiap byte output bayar token. Jadi SETIAP kata harus punya nilai bu
 2. `grep` — temukan titik masuk (entry point)
 3. `read` — konfirmasi dengan bukti
 4. **Jangan announce tool call.** Just do it.
+5. 3x search angle beda tetap kosong → lapor "Dicari di X,Y,Z. Tidak ditemukan." STOP. Jangan paksa.
 
 ## Cross-File Tracing
 
@@ -46,7 +46,7 @@ Dipanggil saat executor gagal >2x. Prosedur:
 2. **Trace backward** — dari symptom ke call site, dari call site ke dependency
 3. **Framework internals** — kalau error dari library/framework, baca source code upstream (node_modules, vendor, atau repo GitHub)
 4. **Root cause** — trace ke penyebab fundamental. Cek env (versi runtime, OS, env vars).
-**Output:** root cause (1 baris) + fix strategy (1 baris) + confidence.
+**Output:** root cause (1 baris) + fix strategy (1 baris) + level [P/W/E/O].
 
 ## Tech Stack Forensics
 
@@ -69,7 +69,6 @@ Setiap dependency/rekomendasi library:
 | [O] Outcome | `[O]` | Acceptance criteria terpenuhi |
 
 **Format laporan:** tiap finding WAJIB dikasih level. Contoh: `path:42 — [P] deskripsi`
-- Confidence <90% → tetap tag "(butuh verifikasi)" di belakang level.
-- Not found → `"Dicari di X,Y,Z. Tidak ditemukan."`
+- Not found → `"Dicari di X,Y,Z. Tidak ditemukan."` — jangan paksa.
 
 

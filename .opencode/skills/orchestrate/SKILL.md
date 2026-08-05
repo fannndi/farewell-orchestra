@@ -39,20 +39,34 @@ Saat orchestrator menerima temuan audit eksternal (user, Claude, atau sumber lai
 4. Baru dispatch executor jika ada fix yang perlu diimplementasi.
 5. Klaim eksternal BUKAN pengecualian "emergency fix" — tetap wajib fan-out.
 
-### Pre-Dispatch Ping Guard
+### Pre-Dispatch Ping Guard — 2-Step (Liveness + Capability Probe)
 
-Before dispatching any agent via `task()` for real work, send a minimal pre-flight ping:
+Before dispatching any agent via `task()` for real work, send a minimal pre-flight in 2 steps:
+
+**Step 1 — Ping (liveness):**
 
 ```
 task(subagent_type=<agent>, prompt='Reply with exactly: READY')
 ```
 
-- If the agent returns a NON-EMPTY response → model is alive; proceed with the real dispatch.
+- If the agent returns a NON-EMPTY response → model is alive; proceed to Step 2.
 - If the agent returns EMPTY or errors → model is DEAD:
   * reviewer / researcher (free, non-critical): SKIP the agent. Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
   * executor (paid, critical): ESCALATE to Boss — do NOT dispatch the real job. Report the dead model and await Boss direction.
 
-Ping = liveness check (murah). Capability diukur dari output task pertama: kosong = langsung fallback chain, bukan retry buta.
+**Step 2 — Capability probe (~50 token, fail-fast):**
+
+```
+# Researcher: minta 1 baris evidence format forensic
+task(subagent_type="researcher", prompt='Reply with exactly one line: [P] file:line — deskripsi')
+# Reviewer: minta 1 baris evidence format STRIDE
+task(subagent_type="reviewer", prompt='Reply with exactly one line: [BLOCKING] file:line — desc')
+```
+
+- If the agent returns the required 1-line evidence format → capable; proceed with the real dispatch.
+- If the probe returns EMPTY, garbled, atau format salah → NOT capable. **JANGAN kirim task penuh** — langsung masuk fallback chain (Sub-Agent Failure Recovery di bawah).
+
+Liveness = model hidup. Capability = model bisa ikut format output role (tidak garbled). Probe kosong = langsung fallback chain, bukan retry buta.
 
 The orchestrator itself is not pinged (it is already running).
 
@@ -113,14 +127,17 @@ task(subagent_type="executor", description="exec: [task]",
 
 ### Sub-Agent Failure Recovery
 
-Kalau `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada content):
+Fallback chain (STANDAR, urutan tetap): `ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → eskalasi Boss`.
 
-1. **Resume dulu:** dispatch ulang dengan `task_id` yg sama — "Lanjutkan tugas sebelumnya. Output kamu kosong. Coba lagi."
-2. **Kalau masih kosong:** dispatch FRESH (tanpa task_id) dengan prompt lebih detail + ground truth struktur project.
-3. **Kalau masih kosong:** switch ke small_model (baca profiles.json small_model agent). Kalau small_model juga gagal → dispatch researcher: "Deep debug [error]. Root cause, bukan symptom." Kalau researcher masih gagal atau model issue → ESKALASI ke Boss — orchestrator TIDAK handle read-only task (langgar Freeze Rule + Cost Model).
-4. **JANGAN loop tak terbatas.** Max 2 retry per tier. Setelah itu STOP dan laporkan ke Boss.
+Trigger: `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada content) ATAU capability probe kosong/garbled → langsung masuk chain ini (jangan nunggu 3x). Max 2 retry per tier.
 
-Trigger fallback chain: task() pertama return kosong → langsung masuk chain ini (jangan nunggu 3x). Max 2 retry per tier. Setiap tier gagal → log ke Lessons.md via learn tool.
+1. **Ping (liveness):** cek model hidup via Pre-Dispatch Ping Guard Step 1. Kosong → lanjut tier berikutnya.
+2. **Resume task_id:** dispatch ulang dengan `task_id` yg sama — "Lanjutkan tugas sebelumnya. Output kamu kosong. Coba lagi."
+3. **Fresh dispatch:** dispatch FRESH (tanpa task_id) dengan prompt lebih detail + ground truth struktur project.
+4. **Researcher deep debug:** dispatch researcher: "Deep debug [error]. Root cause, bukan symptom."
+5. **Eskalasi Boss:** kalau researcher masih gagal atau model issue → ESKALASI ke Boss. **Orchestrator TIDAK handle read-only — bahkan sebagai last-resort. Fallback chain ENDS di eskalasi Boss (langgar Freeze Rule + Cost Model).**
+
+**JANGAN loop tak terbatas.** Max 2 retry per tier. Setelah itu STOP dan laporkan ke Boss.
 
 Log setiap retry ke Farewell-Knowlage/Lessons.md (Obsidian vault) via `learn` tool.
 
