@@ -103,6 +103,31 @@ Verifikasi acceptance criteria. Report 3 baris:
 [what changed] · [verification result] · [residual risk]
 ```
 
+## 10. Session Memory — WAJIB setelah task selesai
+
+Update `sub-project.md` di project target:
+
+```markdown
+## Memori Agent
+
+| Agent | Konteks | File kunci |
+|-------|---------|------------|
+| orchestrator | [1 baris: apa yang terakhir diputuskan] | — |
+| researcher | [1 baris: apa yang terakhir di-investigasi] | [file kunci] |
+| reviewer | [1 baris: apa yang terakhir di-audit] | [file kunci] |
+| executor | [1 baris: apa yang terakhir di-implement] | [file kunci] |
+
+## Keputusan & Konteks
+- [max 5 bullets: keputusan arsitektur, task yg ditunda, temuan penting]
+```
+
+**Kenapa:** LLM lupa context antar session. Memori ini bikin LLM bisa lanjut tanpa mulai dari nol.
+
+**Update trigger:**
+- Task selesai → update executor baris
+- Keputusan arsitektur → update Keputusan & Konteks
+- Temuan penting → update agent yang relevan
+
 ## Failure Recovery
 
 Sub-agent return kosong/garbled:

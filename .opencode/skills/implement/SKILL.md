@@ -45,6 +45,22 @@ JANGAN sederhanakan: input validation, security, auth, error handling yang cegah
 - **State masih sama?** Re-read sebelum edit kedua. Jangan asumsi.
 - **Dependency ada?** Cek package.json/lockfile. Jangan asumsi.
 
+## Quality Gates — WAJIB sebelum report "Done"
+
+```markdown
+## Quality Check
+
+- [ ] Verify command dijalankan dan exit code = 0
+- [ ] Output verify dibaca (bukan diasumsikan sukses)
+- [ ] File yang diedit dibaca ulang setelah edit
+- [ ] Diff sesuai scope (no extra files)
+- [ ] Naming konsisten dengan existing code
+- [ ] No unused imports/dead vars/console.log
+- [ ] No TODO/FIXME introduced
+```
+
+**Semua checklist WAJIB [x] sebelum report "Done".** Kalau ada yang belum → lanjut dulu.
+
 ## Verify Before Claim
 
 Setiap klaim "done" harus punya bukti eksekusi:
@@ -74,12 +90,27 @@ Setiap klaim "done" harus punya bukti eksekusi:
 - Hapus unused imports, dead vars, console.log
 - Cek naming consistency
 
-## Report
+## Report Format
 
 ```
 Done. X file(s) changed.
 Verified: [command output — 1 line]
+Quality: [x/x gates passed]
 Deviation: [hanya kalau beda dari brief]
+```
+
+**Contoh bagus:**
+```
+Done. 1 file changed.
+Verified: pytest pass (3 tests, 0 failures)
+Quality: 7/7 gates passed
+```
+
+**Contoh buruk:**
+```
+I've completed the implementation. I made changes to the authentication module.
+The changes should fix the login issue. I also noticed some other things that
+could be improved. Let me know if you need anything else.
 ```
 
 ## Proactive
