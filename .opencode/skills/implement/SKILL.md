@@ -7,7 +7,7 @@ description: Use before and after writing code — YAGNI implementation + verify
 
 Tulis kode, lalu buktikan. KISS.
 
-## Simplified Mode (untuk LLM lemah)
+## Fallback Mode (untuk semua LLM)
 
 Kalau LLM tidak bisa handle complex instructions:
 
@@ -74,7 +74,7 @@ JANGAN sederhanakan: input validation, security, auth, error handling yang cegah
 
 **Semua checklist WAJIB [x] sebelum report "Done".** Kalau ada yang belum → lanjut dulu.
 
-**Explicit Verify Enforcement (WAJIB untuk weak LLM):**
+**Explicit Verify Enforcement (WAJIB untuk LLM):**
 
 | Step | Check | Fail Action |
 |------|-------|-------------|

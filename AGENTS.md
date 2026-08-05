@@ -125,7 +125,7 @@ Inggris untuk kode/teknis. Indonesia untuk komunikasi. Campuran OK.
 
 ## Explicit Enforcement Rules
 
-Rules ini WAJIB untuk semua LLM, terutama weak LLM. Tidak boleh dilanggar.
+Rules ini WAJIB untuk semua LLM, terutama LLM. Tidak boleh dilanggar.
 
 ### Orchestrator Rules
 
@@ -201,7 +201,7 @@ Contoh: `Done. 1 file changed. Verified: pytest pass (3 tests). Quality: 7/7 gat
 ```
 Contoh: `Auth module added · pytest pass · residual: rate limiting not implemented`
 
-### Simplified Mode (untuk LLM Lemah)
+### Simplified Mode (untuk semua LLM)
 
 Kalau LLM tidak bisa handle complex instructions, pakai simplified mode:
 

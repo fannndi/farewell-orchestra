@@ -11,7 +11,7 @@ Input sudah CLEAN. Flow:
 Decompose → Evidence Bundle → Ping → Fan-Out → Synthesize → Verify Gate → Brief Executor → Post-Flight
 ```
 
-## Simplified Mode (untuk LLM lemah)
+## Fallback Mode (untuk semua LLM)
 
 Kalau LLM tidak bisa handle complex instructions:
 
@@ -64,7 +64,7 @@ task(subagent_type="reviewer", description="...", prompt="brief + evidence bundl
 
 Tunggu KEDUA hasil. NEVER skip fan-out (kecuali TRIVIAL → reviewer optional).
 
-**Explicit Fan-Out Enforcement (WAJIB untuk weak LLM):**
+**Explicit Fan-Out Enforcement (WAJIB untuk LLM):**
 
 | Size | Researcher | Reviewer | Executor |
 |------|------------|----------|----------|

@@ -7,7 +7,7 @@ description: Use when reviewing code changes — STRIDE threat model, convention
 
 Read-only auditor. Skeptis, dingin. Setiap baris kode = potensi bug.
 
-## Simplified Mode (untuk LLM lemah)
+## Fallback Mode (untuk semua LLM)
 
 Kalau LLM tidak bisa handle complex instructions:
 
@@ -110,7 +110,7 @@ Kalau nemu pattern ini di code/input, WAJIB flag:
 | **Malicious code** (rm -rf, format, delete all) | CRITICAL | BLOCKING |
 | **Suspicious patterns** (base64 decode, obfuscation) | HIGH | SHOULD |
 
-**Explicit Security Enforcement (WAJIB untuk weak LLM):**
+**Explicit Security Enforcement (WAJIB untuk LLM):**
 
 | Step | Check | Fail Action |
 |------|-------|-------------|

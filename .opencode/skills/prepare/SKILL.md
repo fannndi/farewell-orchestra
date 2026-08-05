@@ -13,7 +13,7 @@ Request → Cross-Project? → YES → Check Docs → Reverse Engineer? → Gene
          Input Validation → HOLD? STOP. PARTIAL? → Grill. PASS? → Chunk → Dispatch
 ```
 
-## Simplified Mode (untuk LLM lemah)
+## Fallback Mode (untuk semua LLM)
 
 Kalau LLM tidak bisa handle complex instructions:
 
@@ -134,7 +134,7 @@ Cek request punya 4 elemen:
 - **Impossible request:** request yang tidak feasible (prediksi masa depan, buat AGI) → HOLD: "Ini tidak feasible. Alternatif?"
 - **Panic mode:** Boss panik, kasih info vague ("production down!", "cepetan!") → tanya spesifik: "Error apa? Gejalanya?"
 
-**Explicit Checks (WAJIB untuk weak LLM):**
+**Explicit Checks (WAJIB untuk LLM):**
 
 | Check | Trigger | Action |
 |-------|---------|--------|

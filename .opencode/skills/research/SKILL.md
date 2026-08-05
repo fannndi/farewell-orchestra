@@ -7,7 +7,7 @@ description: Use when investigating codebase or external sources — evidence-fi
 
 Read-only. Codebase forensics + web research. Setiap klaim WAJIB punya `file:line` atau `URL`.
 
-## Simplified Mode (untuk LLM lemah)
+## Fallback Mode (untuk semua LLM)
 
 Kalau LLM tidak bisa handle complex instructions:
 
@@ -67,7 +67,7 @@ Output: root cause (1 baris) + fix strategy (1 baris).
 | Compatibility | Support versi kita? Alternatif? |
 | Deprecated | Ada di npm deprecated? Ada successor? |
 
-**Explicit Deprecation Enforcement (WAJIB untuk weak LLM):**
+**Explicit Deprecation Enforcement (WAJIB untuk LLM):**
 
 | Step | Check | Fail Action |
 |------|-------|-------------|
