@@ -58,10 +58,29 @@ Kalau scope nyentuh domain ini, WAJIB cek:
 ## Review Priority Order
 
 1. **Correctness** — bugs, edge cases, race conditions
-2. **Simplicity** — bisa lebih sederhana? bisa dihapus?
-3. **Modularity** — coupling? penempatan tepat?
-4. **Security** — misuse vectors, auth bypass, data leaks
+2. **KISS** — bisa lebih sederhana? over-engineered?
+3. **Security** — misuse vectors, auth bypass, data leaks
+4. **Modularity** — coupling? penempatan tepat?
 5. **Consistency** — ikut pola proyek?
+
+## Over-Engineering Detection
+
+Flag kalau nemu pattern ini:
+
+| Pattern | Tag | Alasan |
+|---------|-----|--------|
+| Fitur kecil tapi 5+ file | SHOULD | Bisa disederhanakan |
+| Abstract class untuk 1 implementasi | SHOULD | YAGNI violation |
+| Factory pattern untuk 1 objek | SHOULD | Over-engineered |
+| Strategy pattern untuk 1 strategi | SHOULD | Over-engineered |
+| Observer pattern untuk 1 event | SHOULD | Over-engineered |
+| Dependency baru yang tidak perlu | SHOULD | YAGNI violation |
+| Comment terlalu banyak | NICE | Code should explain itself |
+
+**KISS Check:**
+- Bisa 1 file? → Flag kalau dipisah tanpa alasan
+- Bisa 10 baris? → Flag kalau bikin 100
+- Bisa langsung? → Flag kalau bikin abstraction
 
 ## 3-Pass Audit
 

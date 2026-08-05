@@ -1,30 +1,44 @@
 # Farewell Orchestra
 
-Multi-agent orchestration system di atas OpenCode. 4 agent, 6 skill, evidence-first pipeline.
+Multi-agent orchestration system di atas OpenCode. 4 agent, 6 skill, 1 pipeline.
 
-## Overview
+**Goal:** Menghasilkan project yang **simple, modular, efisien** (KISS).
 
-Farewell Orchestra mengatur beberapa AI agent untuk bekerja sama menyelesaikan task software engineering. Setiap agent punya peran spesifik dan trust boundary yang ketat.
+## Apa Ini?
+
+Farewell Orchestra mengatur beberapa AI agent untuk bekerja sama menyelesaikan task software engineering. Setiap agent punya peran spesifik:
+
+- **Orchestrator** — Tech Lead. Atur tim, pastikan goal tercapai.
+- **Researcher** — Detektif. Cari bukti, bukan asumsi.
+- **Reviewer** — Auditor. Cari masalah + flag over-engineering.
+- **Executor** — Tukang. Tulis kode KISS, verify, selesai.
+
+## Pipeline
 
 ```
 Request → prepare → [research || review] → orchestrate → implement → report
 ```
 
-## Architecture
+## Filosofi: Output KISS
 
-| Agent | Role | Skill | Boleh Tulis Kode? |
-|-------|------|-------|:-----------------:|
-| **Orchestrator** | Decompose, dispatch, verify, report | prepare + orchestrate | ❌ |
-| **Researcher** | Investigasi codebase + web | research | ❌ |
-| **Reviewer** | STRIDE audit + convention enforcement | review | ❌ |
-| **Executor** | Implementasi kode | implement | ✅ |
+**Farewell Orchestra** boleh kompleks (factory). Tapi **project yang dihasilkan** harus KISS (product).
 
-### Trust Model
+| Component | Complexity | Alasan |
+|-----------|-----------|--------|
+| **Factory** (sistem ini) | Boleh kompleks | Butuh banyak mesin untuk hasilkan produk yang baik |
+| **Product** (output) | Harus KISS | Konsumen mau produk yang simple dan works |
 
-- **Freeze Rule** — Orchestrator tidak pernah menulis kode
-- **Evidence Standard** — Setiap klaim WAJIB punya `file:line`
-- **Trust Boundary** — Sub-agent mampu, jangan ambil alih kerjaan mereka
-- **Verify Gate** — Tidak ada "done" tanpa verifikasi
+### KISS Enforcement
+
+**Executor** menulis kode KISS:
+- 1 file kalau bisa, pisahkan kalau harus
+- 10 baris kalau bisa, jangan bikin 100
+- Hapus yang nggak dipakai
+
+**Reviewer** flag over-engineering:
+- Fitur kecil tapi 5+ file → SHOULD
+- Abstract class untuk 1 implementasi → SHOULD
+- Pattern yang tidak perlu → SHOULD
 
 ## Cara Pakai
 
@@ -38,12 +52,12 @@ Cukup ngomong biasa ke orchestrator:
 
 Tidak perlu command. Orchestrator yang figure out.
 
-## Cross-Project Workflow
+## Cross-Project
 
 Farewell Orchestra bisa handle project lain. Kalau project target belum punya docs:
 
 1. Orchestrator detect cross-project request
-2. Researcher deep scan project (structure, config, code patterns)
+2. Researcher deep scan project
 3. Executor generate 5 core docs + 2 conditional docs
 4. Lanjut kerja sesuai task
 
@@ -60,25 +74,45 @@ Farewell Orchestra bisa handle project lain. Kalau project target belum punya do
 - `Schema.md` — Kalau ada database
 - `API_Contract.md` — Kalau ada API
 
+## Arsitektur
+
+### Roles & Trust Boundary
+
+| Agent | Role | Skill | Tulis Kode? |
+|-------|------|-------|:-----------:|
+| Orchestrator | Atur tim | prepare + orchestrate | ❌ |
+| Researcher | Cari bukti | research | ❌ |
+| Reviewer | Cari masalah | review | ❌ |
+| Executor | Tulis kode | implement | ✅ |
+
+### Trust Model
+
+| Rule | Artinya |
+|------|---------|
+| **Freeze Rule** | Orchestrator tidak nulis kode |
+| **Evidence** | Klaim WAJIB punya file:line |
+| **Trust** | Sub-agent mampu, jangan ambil alih |
+| **Verify** | Tidak ada "done" tanpa bukti |
+
 ## Skills
 
 | Skill | Fungsi |
 |-------|--------|
-| `prepare` | Input validation, cross-project detection, task chunking |
-| `orchestrate` | Decompose, fan-out, synthesize, brief executor |
+| `prepare` | Input validation, cross-project detection |
+| `orchestrate` | Decompose, fan-out, synthesize, brief |
 | `research` | Codebase forensics, web research |
-| `review` | STRIDE threat model, convention enforcement, drift detection |
-| `implement` | YAGNI implementation, verify before claim |
-| `bootstrap-project` | Generate 5+2 docs (reverse engineering mode) |
+| `review` | STRIDE audit, over-engineering detection |
+| `implement` | YAGNI implementation, KISS enforcement |
+| `bootstrap-project` | Generate 5+2 docs (reverse engineering) |
 
 ## Personas
 
-Setiap agent punya identity-driven persona — bukan cuma rules, tapi karakter.
+Setiap agent punya identity-driven persona:
 
-- **Orchestrator** — Conductor. "Gue mikir, bukan ngetik."
-- **Researcher** — Detektif. "Bukti atau nggak ngomong."
-- **Reviewer** — Auditor. "Kode yang aman itu membosankan."
-- **Executor** — Tukang. "Kode paling sederhana adalah kode yang nggak ditulis."
+- **Orchestrator** — "Gue atur tim, bukan nulis kode."
+- **Researcher** — "Gue cari bukti, bukan asumsi."
+- **Reviewer** — "Gue cari masalah + flag over-engineering."
+- **Executor** — "Gue tulis kode KISS, verify, selesai."
 
 ## Setup
 
