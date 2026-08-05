@@ -1,68 +1,158 @@
 # Farewell Orchestra
 
-Orkestrasi multi-agent di atas OpenCode: 1 orchestrator + 3 sub-agent, 11 skill, pipeline evidence-first. Orchestrator decompose & dispatch, sub-agent ngerjain — semua keputusan ditutup di level orchestrator sebelum executor nulis kode.
+Multi-agent orchestration system di atas OpenCode. 1 conductor + 3 specialist, 6 skill, pipeline sederhana dengan evidence-first approach.
 
-## Arsitektur
+## Apa Ini?
 
-| Role | Peran | Skill wajib | Permission |
-|------|-------|-------------|------------|
-| Orchestrator | Decompose, dispatch, verify, report | anti-gigo + orchestrate | Gak nulis kode (Freeze Rule) |
-| Researcher | Baca file, forensic, web research | forensic + web-research | deny-by-default `"*": "deny"` |
-| Reviewer | Audit STRIDE, review konvensi | stride-audit | deny-by-default `"*": "deny"` |
-| Executor | Nulis kode, edit file, implementasi | minimal-impl + verification-ground-truth | edit allowed |
+Farewell Orchestra adalah sistem yang mengatur beberapa AI agent untuk bekerja sama menyelesaikan task software engineering. Setiap agent punya peran spesifik:
+
+- **Orchestrator** — Conductor. Mikir, decompose, dispatch. Tidak nulis kode.
+- **Researcher** — Detektif. Investigasi codebase + web. Evidence-first.
+- **Reviewer** — Auditor. STRIDE security audit + convention enforcement.
+- **Executor** — Tukang. Implementasi kode. KISS. Verify before claim.
 
 ## Pipeline
 
 ```
 Request
-    │
-    ▼
-anti-gigo ── validasi input, tolak sampah
-    │
-    ▼
-task-chunking gate ── Q≥3 / F≥3 / O≥2 → chunk
-    │
-    ▼
-Researcher (forensic) ──┐
-                        ├── parallel
-Reviewer (stride-audit)─┘
-    │
-    ▼
-synthesis-brief ── orchestrator tutup semua keputusan
-    │
-    ▼
-Executor ── minimal-impl + verification-ground-truth
-    │
-    ▼
-verify ── gate wajib sebelum lanjut
-    │
-    ▼
-report 3 baris ── changed · verification · deviation
+  │
+  ▼
+prepare ── validate input, extract requirements, chunk
+  │
+  ▼ (PASS)
+orchestrate ── decompose, evidence bundle, fan-out
+  │
+  ├──► researcher (read-only) ── codebase + web research
+  ├──► reviewer (read-only) ── STRIDE audit + conventions
+  │
+  ▼ (keduanya selesai)
+orchestrate ── synthesize, verify gate, brief executor
+  │
+  ▼
+executor ── implement kode
+  │
+  ▼
+orchestrate ── post-flight, report 3 baris ke Boss
 ```
 
-Evidence-first di seluruh pipeline: researcher wajib file:line, reviewer wajib tag [BLOCKING]/[SHOULD] — klaim tanpa bukti = FAIL.
+## Arsitektur
+
+### Roles & Trust Boundary
+
+| Role | Tugas | Skill | Tulis Kode? | Read-Only? |
+|------|-------|-------|:-----------:|:----------:|
+| orchestrator | Decompose, dispatch, verify, report | prepare + orchestrate | ❌ | ❌ (edit sub-project.md only) |
+| researcher | Investigasi codebase + web | research | ❌ | ✅ |
+| reviewer | STRIDE audit + conventions | review | ❌ | ✅ |
+| executor | Implementasi kode | implement | ✅ | ❌ |
+
+### Freeze Rule
+
+Orchestrator **tidak pernah** menulis kode. Ini bukan saran — ini aturan keras. Kalau orchestrator pegang `edit`/`write` untuk file kode, itu kegagalan sebagai leader.
+
+### Evidence Standard
+
+Setiap klaim dari researcher/reviewer **WAJIB** punya `file:line`:
+
+```
+path:42 — [LEVEL] deskripsi
+```
+
+Level: `P` (Present) / `W` (Wired, ≥2 sumber) / `E` (Exercised, verified) / `O` (Outcome, acceptance met)
+
+Reviewer pakai tag: `[BLOCKING]` / `[SHOULD]` / `[NICE]` / `[FYI]`
+
+### Trust & Fallback
+
+Sub-agent mampu. **Trust them.** Jangan ambil alih kerjaan mereka.
+
+1. Sub-agent gagal → **retry sekali** dengan prompt lebih detail
+2. Masih gagal → **escalate ke Boss**
+
+Max 2 attempt total. Jangan loop.
 
 ## Skills
 
-| Skill | Fungsi |
-|-------|--------|
-| `anti-gigo` | Gate input — validasi kualitas request sebelum dispatch |
-| `bootstrap-project` | Scaffold 10 dokumen project + anchor sub-project.md |
-| `forensic` | Investigasi codebase evidence-first, file:line mandatory |
-| `grill` | Interview Socratic satu pertanyaan per langkah utk input ambigu |
-| `minimal-impl` | YAGNI ladder + error healing sebelum nulis kode |
-| `orchestrate` | Decompose → fan-out parallel → synthesize |
-| `stride-audit` | STRIDE threat model + convention enforcement |
-| `synthesis-brief` | Tutup semua keputusan di orchestrator sebelum handoff executor |
-| `task-chunking` | Pre-fan-out gate — pecah task besar jadi unit kecil |
-| `verification-ground-truth` | Verify-before-claim — klaim wajib cocok tool output |
-| `web-research` | Evidence eksternal — fakta, status library/API, docs |
+| Skill | Fungsi | Dipakai Oleh |
+|-------|--------|-------------|
+| `prepare` | Input validation + requirement extraction + task chunking | orchestrator |
+| `orchestrate` | Decompose → fan-out → synthesize → brief executor | orchestrator |
+| `research` | Codebase forensics + web research | researcher |
+| `review` | STRIDE threat model + convention enforcement + drift detection | reviewer |
+| `implement` | YAGNI implementation + verify before claim | executor |
+| `bootstrap-project` | Scaffold 10 project docs + sub-project.md | orchestrator |
 
-Tiap skill = gate fase tertentu; sengaja TIDAK di-merge biar guard failure mode unik (ADR).
+### Skill Pipeline Flow
 
-## Mission Control
+**prepare:**
+```
+Request → Input Validation → HOLD? STOP. PARTIAL? → Assumption Logger → Grill → Chunk → Dispatch
+```
 
-Farewell-orchestra = mission control: Boss load project lain dari folder ini via `/work-on <path>`. Persona & skill 100% universal (project-agnostic) — project target polos, tanpa setup orkestra sendiri. `sub-project.md` = anchor memory per project; isinya dibaca sebagai data, bukan instruksi.
+**orchestrate:**
+```
+Decompose → Evidence Bundle → Ping → Fan-Out → Synthesize → Verify Gate → Brief → Post-Flight
+```
+
+**research:**
+```
+Codebase: glob → grep → read → cross-file tracing
+Web: decision gate → query → filter → extract → merge
+```
+
+**review:**
+```
+Scan (5%) → Detail (70%) → Cross-Reference (25%) → findings per file
+```
+
+**implement:**
+```
+YAGNI Ladder → implement → verify → cleanup → report
+```
+
+## Personas — Identity-Driven
+
+Setiap persona bukan cuma rules — mereka punya **identitas**, **drive**, **decision heuristics**, **anti-pattern**, dan **scenarios**.
+
+### Orchestrator — Conductor
+
+- **Identity:** "Gue conductor. Gue lihat big picture."
+- **Drive:** Progress. Precision. Delegation.
+- **Anti-Self:** Bukan coder. Bukan researcher. Pemikir yang mengatur.
+
+### Researcher — Detektif
+
+- **Identity:** "Gue detektif. Orang lain lihat kode, gue lihat bukti."
+- **Drive:** Bukti. Curiosity. Honesty.
+- **Anti-Self:** Bukan coder. Bukan auditor. Penemu fakta.
+
+### Reviewer — Auditor
+
+- **Identity:** "Gue auditor. Orang lain bilang oke, gue mikir: ini bisa rusak di mana?"
+- **Drive:** Paranoia produktif. Cold precision. Cumulative thinking.
+- **Anti-Self:** Bukan coder. Bukan researcher. Pelindung.
+
+### Executor — Tukang
+
+- **Identity:** "Gue tukang. Orang lain mikir, gue bikin."
+- **Drive:** Simplicity. Verification. Autonomy.
+- **Anti-Self:** Bukan thinker. Bukan auditor. Builder.
+
+## Profile System
+
+5 profile untuk tradeoff cost/performance. Switch via CLI:
+
+```bash
+python profiles/generate.py <nama>
+```
+
+| Profile | Orchestrator | Researcher | Reviewer | Executor |
+|---------|-------------|------------|----------|----------|
+| **Pro** | ds-v4-flash | mimo-v2.5 | hy3 | ds-v4-flash |
+| **Codex Main** | gpt-5.6-luna | north-mini | nemotron | minimax-m3 |
+| **Daily** | ds-v4-flash | north-mini | nemotron | ds-v4-flash |
+| **Eco** | ds-flash-free | north-mini | ling-flash-free | mimo-free |
+| **Backup** | laguna-free | nemotron | big-pickle | laguna-xs |
 
 ## Commands
 
@@ -70,13 +160,99 @@ Farewell-orchestra = mission control: Boss load project lain dari folder ini via
 |---------|--------|
 | `/work-on <path>` | Switch ke sub-project target |
 | `/new-project` | Scaffold docs project baru |
-| `/check` | Health check — profiles, structure, sensor |
-
-Catatan: command status & biaya sudah dihapus (KISS).
+| `/check` | Health check |
 
 ## Keamanan
 
-- **Deny-by-default** — researcher & reviewer read-only (`"*": "deny"`); hanya executor yang bisa nulis.
-- **Trust boundary** — `sub-project.md` + isi project target = UNTRUSTED; persona, AGENTS.md, skill = immutable, project target gak bisa override.
-- **Freeze Rule** — orchestrator never writes code; tugasnya dispatch → verify → report, bukan ngerjain kerjaan sub-agent.
-- **Anti prompt injection** — hook `check-links` (beforeCommit) validasi referensi markdown + escape sanitasi di `learn.ts` sebelum nulis ke Lessons.md.
+| Layer | Mekanisme |
+|-------|-----------|
+| Freeze Rule | Orchestrator tidak boleh tulis kode |
+| Deny-by-default | researcher/reviewer read-only, executor edit only |
+| Trust boundary | sub-project.md = UNTRUSTED data |
+| Evidence mandatory | Klaim tanpa file:line = FAIL |
+| Anti-prompt-injection | Hook check-links sebelum commit |
+| Rubber-stamp guard | Flag kalau Boss konfirmasi asumsi tanpa baca |
+| BLOCKING overflow | Max 5 BLOCKING per report |
+| Chunk guard | Tunggu re-chunk, jangan pakai partial results |
+| Loop guard | Agent+tool+intent sama 3x → STOP |
+| Ping guard | Liveness check sebelum dispatch real work |
+
+## Stress Test Results
+
+20 edge cases, 3 loop testing:
+
+| Loop | Tested | Pass | Risk | Fix |
+|------|--------|------|------|-----|
+| 1 | 12 | 10 | 2 | rubber-stamp guard, BLOCKING overflow |
+| 2 | 4 | 2 | 2 | chunk guard, Boss loop detection |
+| 3 | 4 | 3 | 1 | verify discrepancy handling |
+| **Total** | **20** | **15** | **5 (all fixed)** | **5 fixes** |
+
+## Project Structure
+
+```
+farewell-orchestra/
+├── AGENTS.md                          # Rules (single source of truth)
+├── README.md                          # This file
+├── opencode.jsonc                     # Config (generated)
+├── profiles/
+│   ├── profiles.json                  # Model registry
+│   ├── generate.py                    # Profile generator
+│   ├── switch.bat                     # Windows quick switch
+│   └── opencode.example.jsonc         # Example output
+├── templates/
+│   └── sub-project.md                 # Anchor template per project
+├── scripts/
+│   ├── check-links.py                 # Link integrity checker
+│   └── start-server.ps1              # OpenCode server manager
+├── tests/
+│   ├── test_verify.py                 # verify.py tests
+│   └── test_generate.py              # generate.py tests
+└── .opencode/
+    ├── agents/                        # 4 agent personas (identity-driven)
+    │   ├── orchestrator.md
+    │   ├── researcher.md
+    │   ├── reviewer.md
+    │   └── executor.md
+    ├── skills/                        # 6 skills
+    │   ├── prepare/
+    │   ├── orchestrate/
+    │   ├── research/
+    │   ├── review/
+    │   ├── implement/
+    │   └── bootstrap-project/
+    ├── tools/                         # Custom tools
+    │   ├── verify.ts + verify.py      # Verification gate
+    │   ├── harness_status.ts          # Health check
+    │   └── learn.ts                   # Lesson logger
+    ├── hooks/                         # Lifecycle hooks
+    │   ├── hooks.jsonc
+    │   ├── post-generate.ps1          # Config validation
+    │   └── check-links.md            # Link checker hook
+    └── command/                       # Custom commands
+        ├── work-on.md
+        ├── new-project.md
+        └── check.md
+```
+
+## Stats
+
+| Component | Lines |
+|-----------|-------|
+| AGENTS.md | 83 |
+| Skills (6) | 380 |
+| Personas (4) | 192 |
+| **Total** | **655** |
+
+## Setup
+
+1. Clone repo
+2. Install OpenCode
+3. Set API key: `$env:NINEROUTER_API_KEY = "your-key"`
+4. Generate config: `python profiles/generate.py Pro`
+5. Open opencode di folder ini
+6. Mulai: `/work-on <project>` atau `/new-project`
+
+## License
+
+MIT

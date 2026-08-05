@@ -7,7 +7,7 @@ description: Use when Boss starts a new sub-project or says 'bikin dokumentasi p
 
 # Bootstrap Project Docs
 
-Dipakai orchestrator SEBELUM kode ditulis. Prasyarat: udah lolos `anti-gigo` (Goal/Scope/Acceptance jelas). Kalau info project belum lengkap (nama, satu-liner, tech stack), tanya dulu — jangan asumsi stack yang nggak disebut Boss.
+Dipakai orchestrator SEBELUM kode ditulis. Prasyarat: udah lolos `prepare` (Goal/Scope/Acceptance jelas). Kalau info project belum lengkap (nama, satu-liner, tech stack), tanya dulu — jangan asumsi stack yang nggak disebut Boss.
 
 ## Konsistensi Wajib
 10 file ini saling rujuk, harus zero-kontradiksi:
@@ -32,7 +32,7 @@ Dipakai orchestrator SEBELUM kode ditulis. Prasyarat: udah lolos `anti-gigo` (Go
 
 1. Info project kurang → tanya Boss (nama, satu-liner, tech stack, target user). Jangan lanjut kalau ambigu.
 2. Draft ke-10 file SEKALIGUS sebagai satu synthesis pass — bukan satu-satu berurutan — biar cross-reference (Schema↔API_Contract, PRD↔Tasks) konsisten sejak awal, bukan ditambal belakangan.
-3. Delegasikan ke **executor** dalam SATU brief: isi lengkap ke-10 file, target path `docs/` di root project aktif (cwd sekarang — BUKAN folder farewell-orchestra), instruksi "tulis persis, jangan ubah struktur". **Pengecualian task-chunking F>=3:** 10 file WAJIB 1 dispatch (bukan di-chunk) demi cross-consistency antar dokumen — orchestrator lain yang baca task-chunking isolated JANGAN "koreksi" alur ini.
+3. Delegasikan ke **executor** dalam SATU brief: isi lengkap ke-10 file, target path `docs/` di root project aktif (cwd sekarang — BUKAN folder farewell-orchestra), instruksi "tulis persis, jangan ubah struktur". **Pengecualian chunking F>=3:** 10 file WAJIB 1 dispatch (bukan di-chunk) demi cross-consistency antar dokumen.
 4. Executor beres → generate `sub-project.md` dari `templates/sub-project.md`. Template source: `{orchestra_root}/templates/sub-project.md` (root repo farewell-orchestra). Orchestrator resolve path absolut SEBELUM dispatch executor. Isi placeholder, tandai semua row docs jadi `[x]` (checkbox — format asli template di `templates/sub-project.md` pakai `[ ]`, bukan string `[PASS]`).
 5. Report ke Boss: "10/10 docs dibuat di {project}/docs/. sub-project.md siap." — 3 baris max.
 

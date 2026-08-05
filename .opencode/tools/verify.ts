@@ -23,7 +23,6 @@ function detectPython(): string {
   )
 }
 
-const pythonCmd = detectPython()
 import path from "path"
 
 export default tool({
@@ -56,6 +55,18 @@ export default tool({
   },
 
   async execute(args, context) {
+    // Lazy detection per-call: module load must never throw — tool stays registered
+    // walau Python tidak terdeteksi. Fail-closed kalau python/python3 tidak ada.
+    let pythonCmd: string | null = null
+    try {
+      pythonCmd = detectPython()
+    } catch {
+      // detectPython() throw saat python/python3 tidak merespons — handle di bawah
+    }
+    if (!pythonCmd) {
+      return "## Verification Gate — ERROR\n\nPython tidak terdeteksi — verify tool butuh python. Install Python atau perbaiki PATH, lalu ulangi verifikasi.\n\nVerify manually."
+    }
+
     const scriptPath = path.join(context.worktree, ".opencode/tools/verify.py")
     const input = JSON.stringify({
       stage: args.stage,
