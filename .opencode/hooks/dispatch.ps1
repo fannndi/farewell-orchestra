@@ -61,6 +61,20 @@ foreach ($hook in $hooks) {
     $command = $hook.command
     $args = @($hook.args)
 
+    # Allowlist: hanya command yang diizinkan dari hooks.jsonc
+    $cmdBase = Split-Path -Leaf $command
+    $allowedCmd = @("powershell", "pwsh", "python", "python3", "node")
+    if ($cmdBase -notin $allowedCmd) {
+        Write-Host "[DISPATCH] BLOCKED by allowlist: $cmdBase" -ForegroundColor Red
+        # Blocking event? Check if event is beforeGenerate/beforeCommit
+        if ($Event -in @("beforeGenerate", "beforeCommit")) {
+            $blocked = $true
+            $blockedBy = $hookId
+            Write-Host "[DISPATCH] BLOCKED by '$hookId' (allowlist)" -ForegroundColor Red
+        }
+        continue
+    }
+
     Write-Host "[DISPATCH] Running hook '$hookId' ($Event)..." -ForegroundColor Cyan
 
     # Build stdin payload as JSON

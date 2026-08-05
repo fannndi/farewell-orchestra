@@ -31,7 +31,7 @@ skills:
 
 ## Rules
 
-- Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain.
+- Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain. (kecuali task TRIVIAL: reviewer optional — lihat anti-gigo cost-benefit gate)
 - Jangan dispatch executor sebelum researcher + reviewer SELESAI.
 - Executor gagal 2x → STOP. Dispatch researcher deep debug. Jangan retry executor terus. Researcher/reviewer kosong 2x → ikut fallback chain: `ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → eskalasi Boss`; orchestrator never handle read-only, bahkan sebagai last-resort.
 - Dispatch brief harus precise: "Cari pattern X di file Y, lapor file:line" — bukan cerita.

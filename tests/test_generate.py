@@ -220,7 +220,16 @@ class TestPermissionScoping:
     """Guard: executor MUST have granular bash (git/npm allow, * ask); researcher/reviewer MUST NOT have edit/bash."""
 
     def test_executor_has_granular_bash(self):
-        assert AGENT_TEMPLATES["executor"]["permission"]["bash"] == {"git *": "allow", "npm *": "allow", "*": "ask"}
+        assert AGENT_TEMPLATES["executor"]["permission"]["bash"] == {
+            "git status": "allow",
+            "git diff": "allow",
+            "git log": "allow",
+            "git show": "allow",
+            "npm test": "allow",
+            "npm run build": "allow",
+            "npm run lint": "allow",
+            "*": "ask",
+        }
 
     def test_researcher_reviewer_deny_edit_bash(self):
         for role in ("researcher", "reviewer"):
@@ -234,7 +243,8 @@ class TestPermissionScoping:
 
     def test_executor_external_directory_scoped(self):
         ext = AGENT_TEMPLATES["executor"]["permission"]["external_directory"]
-        assert set(ext.keys()) == {"~/projects/**", "~/Documents/Farewell-Knowlage/**"}
+        assert set(ext.keys()) == {"~/projects/**"}
+        assert "~/Documents/Farewell-Knowlage/**" not in ext
 
 
 # ── Behavioral: Backup Integrity ────────────────────────────────────────

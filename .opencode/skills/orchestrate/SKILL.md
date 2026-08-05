@@ -25,6 +25,7 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 | D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
+REDACTION WAJIB: hapus secret, API keys, token, dan path absolut dari evidence bundle sebelum dispatch ke free models. [CONFIG] cukup berisi: profile name + steps used/total.
 
 ### Task Chunking Protocol (MANDATORY GATE — WAJIB sebelum fan-out)
 Sebelum dispatch researcher+reviewer, WAJIB load skill `task-chunking` dan jalanin Pre-Chunk Check. Jangan dispatch task utuh ke free model — pecah dulu kalau Q>=3 / F>=3 / O>=2. Lihat skill `task-chunking` untuk checklist, algoritma chunk, pola dispatch (chunk sequential, agent parallel dalam chunk), dan recovery kalau output kosong.
@@ -121,7 +122,7 @@ task(subagent_type="executor", description="exec: [task]",
 - sub-project.md update (1 baris memory) → orchestrator direct edit (allow by permission).
 - Farewell-Knowlage/Lessons.md emergency log (Obsidian vault) → orchestrator dengan konfirmasi (ask gate). Normal-nya via executor.
 - Typo fix (1 baris, no logic) → TETAP via executor dispatch. BUKAN orchestrator direct edit.
-- Production down (Boss explicit: "fix NOW") → executor langsung, skip fan-out.
+- Production down (Boss explicit: "fix NOW") → dispatch executor langsung (bukan orchestrator edit), skip fan-out.
 - Semua .md lain (AGENTS.md, README.md, SKILL.md, persona files) → WAJIB executor.
 - External audit findings TIDAK PERNAH emergency — tetap wajib fan-out researcher+reviewer.
 

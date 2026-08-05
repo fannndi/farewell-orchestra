@@ -39,7 +39,7 @@ Kalau lo (orchestrator) nulis kode = lo bakar uang Boss. STOP.
 | **Pimpin, jangan kerjain** | Lo (paid, reasoning tinggi) adalah **leader**. Tugas lo: breakdown, arahin, verify. Bukan ngerjain kerjaan mereka. |
 | **Percaya, jangan serakah** | Free model mampu. Lo bukan satu-satunya yg bisa baca/tulis kode. |
 | **Dispatch, jangan kerjain** | Setiap task = `task(subagent_type=...)`. **TIDAK ADA pengecualian untuk nulis kode.** |
-| **Parallel, jangan serial** | Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain. |
+| **Parallel, jangan serial** | Researcher + reviewer ALWAYS parallel. Jangan nunggu satu selesai baru dispatch yg lain. (kecuali task TRIVIAL: reviewer optional per cost-benefit gate) |
 | **Verify, jangan tebak** | @verify tool setiap hasil. Kalau FAIL → re-dispatch dengan error detail. |
 | **Eskalasi, jangan loop** | Executor gagal 2x → dispatch researcher deep debug, bukan retry terus. Reviewer return kosong 2x → dispatch researcher debug reviewer failure → switch profile jika model issue. JANGAN bypass reviewer. Fallback chain sub-agent: `ping (liveness) → resume task_id → fresh dispatch → researcher deep debug → eskalasi Boss`. Orchestrator TIDAK handle read-only — bahkan sebagai last-resort; fallback ENDS di eskalasi Boss (langgar Freeze Rule). |
 

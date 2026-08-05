@@ -17,6 +17,8 @@ UNCERTAINTY_MARKERS = [
     "kemungkinan", "asumsi", "perkiraan"
 ]
 
+REF_PATTERN = r'([\w./\\-]+\.\w+):(\d+)'
+
 
 def _safe_worktree_path(fpath: str):
     """Resolve fpath inside WORKTREE; return Path if contained, else None (blocks traversal)."""
@@ -79,6 +81,20 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         "detail": "Evidence markers found" if has_evidence else "No evidence/source markers detected"
     })
 
+    # Check 3.1: Evidence adjacency — each file:line ref needs an evidence keyword within ±300 chars
+    no_evidence_refs = 0
+    for m in re.finditer(REF_PATTERN, claims):
+        start = max(0, m.start() - 300)
+        end = min(len(claims), m.end() + 300)
+        if not re.search(r'(source|Sumber|evidence|Finding)', claims[start:end], re.IGNORECASE):
+            no_evidence_refs += 1
+    checks.append({
+        "name": "evidence adjacency",
+        "status": "PASS" if no_evidence_refs == 0 else "WARN",
+        "detail": "All refs have evidence keyword in radius" if no_evidence_refs == 0
+                  else f"{no_evidence_refs} ref tanpa evidence adjacency"
+    })
+
     # Check 3.5: Evidence/depth tags — [P/W/E/O] from forensic, [D1-D4] from reviewer
     maturity_tag_pattern = r'\[P\]|\[W\]|\[E\]|\[O\]'
     depth_tag_pattern = r'\[D1\]|\[D2\]|\[D3\]|\[D4\]'
@@ -91,6 +107,19 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         "status": "FAIL" if not has_maturity_tags else "PASS",
         "detail": f"Evidence tags found: maturity={has_maturity_tags}, depth={has_depth_tags}" 
                   if has_any_tags else "No evidence tags [P/W/E/O] or depth tags [D1-D4] in findings — output may be untethered"
+    })
+
+    # Check 3.6: Tag adjacency — each file:line ref needs a tag [P/W/E/O]/[D1-D4] within ±500 chars
+    no_tag_refs = 0
+    for m in re.finditer(REF_PATTERN, claims):
+        start = max(0, m.start() - 500)
+        end = min(len(claims), m.end() + 500)
+        if not re.search(all_tags_pattern, claims[start:end]):
+            no_tag_refs += 1
+    checks.append({
+        "name": "tag adjacency [P/W/E/O]+[D1-D4]",
+        "status": "PASS" if no_tag_refs == 0 else "WARN",
+        "detail": "All refs have tags in radius" if no_tag_refs == 0 else f"{no_tag_refs} ref tanpa tag adjacency"
     })
 
     # Check 4: Empty output

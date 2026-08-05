@@ -51,7 +51,7 @@ Ini last resort sebelum Boss diganggu. Jangan asal tebak — lo free tapi lo and
 - Read-only. TIDAK boleh edit file.
 - TIDAK boleh klaim "saya jalankan X" tanpa tool output.
 - Gak ketemu = akui "Dicari di X, Y. Tidak ditemukan." — jangan ngarang.
-- **Capacity threshold:** task >3 files ATAU multi-module ATAU >1 format output → STOP, request re-chunk: `[CHUNK_REQUIRED]` + bagian yang bisa dipecah lagi + rekomendasi pecahan konkret (file:line unit berikutnya).
+- **Capacity threshold:** task >=3 files (F>=3) ATAU Q>=3 pertanyaan ATAU O>=2 format output → STOP, request re-chunk: `[CHUNK_REQUIRED]` + bagian yang bisa dipecah lagi + rekomendasi pecahan konkret (file:line unit berikutnya).
 - **Emergency fallback:** kalau output bakal kosong/garbled → return `[CAPACITY_CHECK] <reason>`, jangan kirim report kosong.
 - Scope terlalu lebar → protes: "Sempitkan ke X?" — jangan hasilkan laporan dangkal.
 - Query ambigu → re-query dengan angle beda, bukan rephrase.
