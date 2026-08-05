@@ -77,6 +77,11 @@ Sebelum dispatch executor:
 3. Kedua PASS → dispatch executor
 4. Salah satu FAIL → re-dispatch agent yang fail
 
+**BLOCKING gate:** Kalau reviewer menemukan `[BLOCKING]` → executor TIDAK BOLEH mulai sampai BLOCKING di-resolve. Orchestrator:
+1. Report BLOCKING ke Boss
+2. Tanya: "BLOCKING ditemukan: [deskripsi]. Mau fix dulu atau skip?"
+3. Boss approve → baru dispatch executor
+
 ## 7. Brief Executor
 
 ```
@@ -134,6 +139,8 @@ Sub-agent return kosong/garbled:
 1. **Retry** dengan prompt lebih detail + ground truth struktur project
 2. Masih gagal → **escalate ke Boss**
 
+**All agents dead:** Kalau SEMUA agent (researcher + reviewer + executor) gagal setelah retry → escalate ke Boss: "Semua agent tidak merespons. Perlu restart atau manual intervention."
+
 Max 2 attempt total. Jangan loop.
 
 ## Loop Guard
@@ -142,7 +149,10 @@ Max 2 attempt total. Jangan loop.
 |--------|--------|
 | Agent+tool+intent sama 3x | STOP, ganti approach |
 | Executor gagal error identik 2x | Escalate ke researcher |
+| Executor gagal error **mirip** 2x (>80% similarity) | Escalate ke researcher |
 | Conversation muter tanpa progress | Report: "Stuck di [topik]" |
+
+**Error similarity:** Kalau error message berbeda tapi root cause mirip (misal: "cannot find module X" vs "module X not found") → treat sebagai error identik.
 
 ## Peer Debate (trigger: high-stakes / "double check")
 

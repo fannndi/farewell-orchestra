@@ -115,6 +115,8 @@ Cek request punya 4 elemen:
 - Ambigu multi-interpretasi ("benerin itu")
 - Kontradiktif dalam satu request
 - Scope liar ("refactor semuanya") tanpa batasan
+- **Contradiction:** request sebelumnya bilang A, sekarang bilang B → flag: "Kontradiksi: [A] vs [B]. Mana yang benar?"
+- **Wrong order:** request minta X sebelum Y padahal Y prerequisite X → flag: "Urutan salah: [Y] harus sebelum [X]?"
 
 **Output decision:**
 - `HOLD [alasan]` → STOP. Tanya Boss.
@@ -158,12 +160,17 @@ Satu `question` tool call = satu pertanyaan. Max 8 pertanyaan, lalu sign-off pak
 
 Trigger chunk kalau: **Q≥3** (pertanyaan) ATAU **F≥3** (file) ATAU **O≥2** (format output).
 
-| Size | Action |
-|------|--------|
-| TRIVIAL/SMALL | 1 chunk, fan-out normal |
-| LARGE | 2-3 chunk |
-| MASSIVE | 3-4 chunk |
+| Size | Action | Chunk Strategy |
+|------|--------|----------------|
+| TRIVIAL/SMALL | 1 chunk, fan-out normal | — |
+| LARGE (F=3-10) | 2-3 chunk | Per module/feature, ≤3 file per chunk |
+| MASSIVE (F>10) | 3-4 chunk | Per layer (FE/BE/DB), ≤3 file per chunk |
 
-Per chunk: ≤2 file, 1 fokus, 1 format. **DALAM chunk:** parallel. **ANTAR chunk:** sequential dengan CONTEXT_SUMMARY.
+Per chunk: ≤3 file, 1 fokus, 1 format. **DALAM chunk:** parallel. **ANTAR chunk:** sequential dengan CONTEXT_SUMMARY.
+
+**Sampling strategy untuk F>50 (large codebase):**
+1. Prioritaskan: entry points → core modules → config → tests
+2. Max 20 file per chunk, fokus ke file yang relevan dengan task
+3. Skip: node_modules, dist, build, vendor, .git
 
 Sub-agent boleh return `[CHUNK_REQUIRED]` kalau task kegedean → re-chunk, bukan gagal.
