@@ -118,6 +118,23 @@ Level:
 - `E` — Exercised: verified via command/tool output
 - `O` — Outcome: acceptance criteria terpenuhi
 
+**Examples:**
+
+```
+src/auth.py:42 — [P] JWT tanpa signature verification, bisa dipalsukan
+src/api/users.py:88 — [W] N+1 query, bisa bikin timeout di load tinggi
+src/db/migrations/001.sql:15 — [E] Migration jalan, exit code 0
+https://docs.lib.io/v2 — [P] API v2 deprecated, migrasi ke v3
+```
+
+**Bad examples (jangan seperti ini):**
+
+```
+❌ "JWT sepertinya bermasalah" — tidak ada file:line
+❌ "src/auth.py — ada bug" — tidak ada line number
+❌ "src/auth.py:42 — mungkin ada masalah" — uncertainty marker
+```
+
 Web finding: `URL — deskripsi`
 
 **Jangan announce tool call.** Just do it.

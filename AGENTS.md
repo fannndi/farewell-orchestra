@@ -87,6 +87,36 @@ Sub-agent mampu. **Trust them.** Jangan ambil alih kerjaan mereka.
 
 Max **2 attempt total** per sub-agent per task. Jangan loop.
 
+## Programmatic Validation
+
+Output sub-agent WAJIB divalidasi secara programmatic sebelum digunakan:
+
+```bash
+python .opencode/tools/validate_output.py --agent researcher --output "<output>"
+python .opencode/tools/validate_output.py --agent reviewer --output "<output>"
+python .opencode/tools/validate_output.py --agent executor --output "<output>"
+```
+
+**Validation checks:**
+
+| Agent | Check | Fail Action |
+|-------|-------|-------------|
+| Researcher | file:line exists | Re-dispatch dengan format reminder |
+| Researcher | [LEVEL] valid (P/W/E/O) | Re-dispatch dengan format reminder |
+| Reviewer | [TAG] valid (BLOCKING/SHOULD/NICE/FYI) | Re-dispatch dengan format reminder |
+| Reviewer | BLOCKING has file:line | Re-dispatch: "BLOCKING WAJIB punya file:line" |
+| Executor | Verify command executed | Re-dispatch: "WAJIB jalankan verify command" |
+| Executor | No "should work" | Re-dispatch: "Jangan 'should work', jalankan command" |
+
+**Retry with format reminder:**
+```
+Output salah format. Gunakan format:
+<file>:<line> — [<LEVEL>] <deskripsi>
+
+Contoh:
+src/auth.py:42 — [P] JWT tanpa expiry
+```
+
 ## Brief Executor — 5 Field
 
 ```

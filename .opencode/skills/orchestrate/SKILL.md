@@ -94,6 +94,46 @@ Gabung hasil researcher + reviewer → max 3 bullet.
 
 Researcher clean + Reviewer clean = VALID. Lanjut tanpa reject.
 
+## 6. Validate Output — Programmatic
+
+Sebelum synthesize, WAJIB validasi output sub-agent secara programmatic:
+
+```bash
+python .opencode/tools/validate_output.py --agent researcher --output "<output>"
+python .opencode/tools/validate_output.py --agent reviewer --output "<output>"
+```
+
+**Validation Rules:**
+
+| Agent | Check | Fail Action |
+|-------|-------|-------------|
+| Researcher | file:line exists? | Re-dispatch: "file:X tidak ada. Cek ulang." |
+| Researcher | [LEVEL] valid? | Re-dispatch: "Format: file:line — [P/W/E/O] desc" |
+| Reviewer | [TAG] valid? | Re-dispatch: "Format: [BLOCKING/SHOULD/NICE/FYI] file:line — desc" |
+| Reviewer | BLOCKING has file:line? | Re-dispatch: "BLOCKING WAJIB punya file:line" |
+| Executor | Verify command ada? | Re-dispatch: "WAJIB jalankan verify command" |
+| Executor | "should work" tidak ada? | Re-dispatch: "Jangan 'should work', jalankan command" |
+
+## 7. Retry Logic
+
+Kalau validation gagal, retry dengan explicit reminder:
+
+**Retry 1:** Tambahkan format reminder ke prompt:
+```
+Output salah format. Gunakan format:
+<file>:<line> — [<LEVEL>] <deskripsi>
+
+Contoh:
+src/auth.py:42 — [P] JWT tanpa expiry
+```
+
+**Retry 2:** Kalau masih gagal, escalate ke Boss:
+```
+Sub-agent tidak bisa mengikuti format setelah 2 attempt. Perlu intervensi manual.
+```
+
+**Max retries:** 2. Jangan loop.
+
 ## 6. Verify Gate
 
 Sebelum dispatch executor:

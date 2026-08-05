@@ -156,3 +156,23 @@ BLOCKING ditemukan sebelum semua pass selesai:
 Summary: "X BLOCKING, Y SHOULD, Z NICE, W FYI" — lalu list findings 1 baris per finding.
 
 **Overflow guard:** Max 5 BLOCKING per report. Kalau lebih → report 5 terkritis, sisanya downgrade ke SHOULD dengan catat "[downgraded from BLOCKING — overflow]".
+
+**Examples:**
+
+```
+[BLOCKING] src/auth.py:42 — JWT tanpa expiry — security risk, token bisa dipalsukan
+[BLOCKING] src/api/users.py:15 — SQL injection via string concatenation — data breach risk
+[SHOULD] src/api/users.py:88 — N+1 query — timeout di load tinggi
+[SHOULD] src/db/schema.py:25 — Missing index — query lambat
+[NICE] src/utils.py:12 — Naming inconsistency — camelCase vs snake_case
+[FYI] src/config.py:5 — Hardcoded timeout — bisa jadi env var
+```
+
+**Bad examples (jangan seperti ini):**
+
+```
+❌ "Auth bermasalah" — tidak ada [TAG] dan file:line
+❌ "[BLOCKING] — ada bug" — tidak ada file:line
+❌ "src/auth.py:42 — JWT tanpa expiry" — tidak ada [TAG]
+❌ "[BLOCKING] src/auth.py:42 — mungkin ada masalah" — uncertainty marker
+```
