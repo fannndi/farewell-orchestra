@@ -100,6 +100,16 @@ Semua fork/decision WAJIB CLOSED di orchestrator. Executor cukup nulis, tidak bo
 
 Grep import chain dari file yang disentuh. Core files (auth/security/db/deploy/middleware) → tanya Boss. Selainnya silent lanjut.
 
+**Cascade Detection** — kalau update di satu service/module:
+1. Trace: siapa yang depend on ini?
+2. Kalau dependency chain > 2 hop → flag: "Cascade risk: [A] -> [B] -> [C]"
+3. Kalau cascade melibatkan DB/data → BLOCKING: "Cascade ke data layer. Backup dulu?"
+
+**Dependency Order Validation** — kalau chunk multiple modules:
+1. Map dependency: A depends on B depends on C
+2. Urutan implement: C -> B -> A (bottom-up)
+3. Kalau urutan salah → flag: "Urutan salah: [C] harus sebelum [A]"
+
 ## 9. Post-Flight
 
 Verifikasi acceptance criteria. Report 3 baris:
@@ -132,6 +142,18 @@ Update `sub-project.md` di project target:
 - Task selesai → update executor baris
 - Keputusan arsitektur → update Keputusan & Konteks
 - Temuan penting → update agent yang relevan
+
+**Memory check di awal session:**
+1. Baca sub-project.md Memori Agent
+2. Kalau kosong → lapor: "Memory kosong. Mulai dari nol?"
+3. Kalau outdated (>7 hari) → lapor: "Memory outdated. Re-verify context?"
+4. Kalau ada → gunakan sebagai starting point
+
+**Code change detection:**
+Kalau resume task dari session lalu:
+1. `git diff` dari last memory update
+2. Ada perubahan → flag: "Code berubah sejak session lalu: [files]. Re-verify?"
+3. Tidak ada perubahan → lanjut normal
 
 ## Failure Recovery
 

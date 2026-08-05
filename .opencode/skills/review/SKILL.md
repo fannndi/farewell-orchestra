@@ -72,8 +72,37 @@ Kalau scope nyentuh domain ini, WAJIB cek:
 | Structural drift | Field ada di file A, hilang di file B |
 | Stale reference | File A nunjuk ke file B yang udah nggak ada |
 | Claim vs reality | Docs bilang X, kenyataannya Y |
+| **Doc inconsistency** | PRD bilang A, Architecture bilang B |
 
 Format: `[TAG] fileA:baris ↔ fileB:baris — apa yang harusnya sama tapi beda`
+
+**Doc Consistency Check** — kalau project baru generate docs:
+1. PRD.md fitur = Tasks.md task
+2. Architecture.md tech stack = Rules.md conventions
+3. Schema.md tabel = API_Contract.md endpoints
+4. Kontradiksi → BLOCKING
+
+## Security Pattern Detection
+
+Kalau nemu pattern ini di code/input, WAJIB flag:
+
+| Pattern | Risk | Tag |
+|---------|------|-----|
+| SQL injection (`' OR 1=1`) | CRITICAL | BLOCKING |
+| XSS (`<script>`) | CRITICAL | BLOCKING |
+| Hardcoded secrets | HIGH | BLOCKING |
+| eval() / exec() | HIGH | BLOCKING |
+| Disabled CORS | MEDIUM | SHOULD |
+| Disabled auth | CRITICAL | BLOCKING |
+| JWT tanpa expiry | HIGH | SHOULD |
+
+## JWT Migration Check
+
+Kalau project pakai JWT dan ada perubahan claim/structure:
+1. Cek: existing tokens masih valid?
+2. Cek: perlu migration script?
+3. Cek: backward compatibility?
+4. Tidak ada migration → BLOCKING: "JWT change breaks existing tokens"
 
 ## Convention Enforcement
 

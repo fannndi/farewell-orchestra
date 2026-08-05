@@ -53,6 +53,19 @@ Output: root cause (1 baris) + fix strategy (1 baris).
 | Maintenance | Terakhir update kapan? Maintainer aktif? |
 | Security | Ada CVE? GitHub Advisory? |
 | Compatibility | Support versi kita? Alternatif? |
+| Deprecated | Ada di npm deprecated? Ada successor? |
+
+**Log Fallback** — kalau logs tidak ditemukan:
+1. Cek: console.log, stderr, stdout
+2. Cek: .log files di root / logs/ / var/log/
+3. Cek: Docker logs (docker logs <container>)
+4. Cek: systemd journal (journalctl)
+5. Tidak ada → lapor: "No logs found. Need to add logging."
+
+**Circular Dependency Detection** — kalau trace dependency:
+1. Catat setiap hop: A -> B -> C
+2. Kalau C -> A (loop balik) → flag: "Circular dependency: A -> B -> C -> A"
+3. Lapor ke orchestrator: "Circular dependency detected. Need refactor?"
 
 ## 2. Web Research
 

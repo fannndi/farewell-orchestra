@@ -117,6 +117,9 @@ Cek request punya 4 elemen:
 - Scope liar ("refactor semuanya") tanpa batasan
 - **Contradiction:** request sebelumnya bilang A, sekarang bilang B → flag: "Kontradiksi: [A] vs [B]. Mana yang benar?"
 - **Wrong order:** request minta X sebelum Y padahal Y prerequisite X → flag: "Urutan salah: [Y] harus sebelum [X]?"
+- **Terserah/terserah lo:** Boss bilang "terserah lo" → PARTIAL, force grill: "Gue butuh spesifik. Goal-nya apa?"
+- **Impossible request:** request yang tidak feasible (prediksi masa depan, buat AGI) → HOLD: "Ini tidak feasible. Alternatif?"
+- **Panic mode:** Boss panik, kasih info vague ("production down!", "cepetan!") → tanya spesifik: "Error apa? Gejalanya?"
 
 **Output decision:**
 - `HOLD [alasan]` → STOP. Tanya Boss.
