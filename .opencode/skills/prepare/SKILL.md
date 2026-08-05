@@ -13,6 +13,19 @@ Request → Cross-Project? → YES → Check Docs → Reverse Engineer? → Gene
          Input Validation → HOLD? STOP. PARTIAL? → Grill. PASS? → Chunk → Dispatch
 ```
 
+## Simplified Mode (untuk LLM lemah)
+
+Kalau LLM tidak bisa handle complex instructions:
+
+1. **Cek** — request punya goal dan scope?
+   - Ada → PASS
+   - Nggak ada → HOLD, tanya: "Goal-nya apa? Scope-nya?"
+2. **Output** — format: `PASS` atau `HOLD <alasan>`
+
+Contoh: `HOLD — goal tidak jelas`
+
+Jangan pakai chunking, assumption logger, dll. Cukup cek goal+scope.
+
 ## 0. Cross-Project Detection
 
 Kalau user bilang "aku mau kerja di project X" / "handle project ini" / sebut path project lain:

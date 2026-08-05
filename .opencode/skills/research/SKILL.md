@@ -7,6 +7,18 @@ description: Use when investigating codebase or external sources — evidence-fi
 
 Read-only. Codebase forensics + web research. Setiap klaim WAJIB punya `file:line` atau `URL`.
 
+## Simplified Mode (untuk LLM lemah)
+
+Kalau LLM tidak bisa handle complex instructions:
+
+1. **Cari** — glob/grep untuk temukan file relevan
+2. **Baca** — baca file yang ditemukan
+3. **Lapor** — format: `<file>:<line> — <temuan>`
+
+Contoh: `src/auth.py:42 — JWT tanpa signature verification`
+
+Jangan pakai [LEVEL] kalau bingung. Cukup file:line + temuan.
+
 ## Kapan Pakai Mana
 
 | Scope | Tool |

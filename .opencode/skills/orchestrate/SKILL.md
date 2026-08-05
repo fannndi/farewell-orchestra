@@ -11,6 +11,20 @@ Input sudah CLEAN. Flow:
 Decompose → Evidence Bundle → Ping → Fan-Out → Synthesize → Verify Gate → Brief Executor → Post-Flight
 ```
 
+## Simplified Mode (untuk LLM lemah)
+
+Kalau LLM tidak bisa handle complex instructions:
+
+1. **Decompose** — pecah task jadi 2-3 bagian kecil
+2. **Fan-Out** — dispatch researcher + reviewer (atau salah satu)
+3. **Synthesize** — gabung hasil, max 3 bullet
+4. **Brief** — kasih brief ke executor: TASK, FILES, VERIFY
+5. **Report** — format: `<what> · <result> · <risk>`
+
+Contoh: `Auth module added · pytest pass · residual: rate limiting`
+
+Jangan pakai evidence bundle, ping guard, dll. Cukup flow dasar.
+
 ## 1. Decompose
 
 Pecah jadi work packages independen. Tiap package ≤5 baris brief.

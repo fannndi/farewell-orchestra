@@ -122,3 +122,116 @@ Baca `.opencode/agents/boss.md` untuk memahami user:
 ## Bahasa
 
 Inggris untuk kode/teknis. Indonesia untuk komunikasi. Campuran OK.
+
+## LLM Compatibility Protocol
+
+Setiap role diisi LLM yang berbeda. Protocol ini memastikan kompatibilitas.
+
+### Output Format Standard
+
+Semua agent WAJIB pakai format ini. Tidak boleh menyimpang.
+
+**Researcher output:**
+```
+<file>:<line> — [<LEVEL>] <deskripsi>
+<file>:<line> — [<LEVEL>] <deskripsi>
+```
+LEVEL: P (Present), W (Wired), E (Exercised), O (Outcome)
+Contoh: `src/auth.py:42 — [P] JWT tanpa signature verification`
+
+**Reviewer output:**
+```
+[<TAG>] <file>:<line> — <apa yang salah> — <dampak>
+[<TAG>] <file>:<line> — <apa yang salah> — <dampak>
+```
+TAG: BLOCKING, SHOULD, NICE, FYI
+Contoh: `[BLOCKING] src/auth.py:42 — JWT tanpa expiry — security risk`
+
+**Executor output:**
+```
+Done. <X> file(s) changed.
+Verified: <command output — 1 line>
+Quality: <x/x> gates passed
+```
+Contoh: `Done. 1 file changed. Verified: pytest pass (3 tests). Quality: 7/7 gates passed.`
+
+**Orchestrator output:**
+```
+<what changed> · <verification result> · <residual risk>
+```
+Contoh: `Auth module added · pytest pass · residual: rate limiting not implemented`
+
+### Simplified Mode (untuk LLM Lemah)
+
+Kalau LLM tidak bisa handle complex instructions, pakai simplified mode:
+
+**Researcher simplified:**
+- Cari file yang relevan
+- Baca file
+- Laporkan temuan dengan format: `file:line — temuan`
+- Jangan pakai [LEVEL] kalau bingung
+
+**Reviewer simplified:**
+- Baca kode
+- Cari masalah
+- Laporkan dengan format: `file:line — masalah`
+- Jangan pakai [TAG] kalau bingung, default: SHOULD
+
+**Executor simplified:**
+- Baca brief
+- Tulis kode
+- Jalankan verify command
+- Laporkan: `Done. Verified: <output>`
+
+### Verification Gates
+
+Setiap step ada verification:
+
+| Step | Verification | Fail Action |
+|------|-------------|-------------|
+| prepare | Format check (PASS/HOLD/PARTIAL) | Retry dengan format explicit |
+| research | file:line exists check | Re-dispatch dengan format reminder |
+| review | [TAG] + file:line check | Re-dispatch dengan format reminder |
+| implement | Quality gates check | Lanjut, flag yang belum pass |
+| orchestrate | Synthesis check | Re-dispatch kalau incomplete |
+
+### Fallback Chains per Agent Type
+
+**Kalau LLM timeout:**
+1. Retry dengan prompt lebih pendek
+2. Masih timeout → skip (researcher/reviewer) atau escalate (executor)
+
+**Kalau LLM output gibberish:**
+1. Retry dengan format explicit + contoh
+2. Masih gibberish → skip atau escalate
+
+**Kalau LLM refuse (safety filter):**
+1. Rephrase prompt, hapus trigger words
+2. Masih refuse → skip atau escalate
+
+**Kalau LLM output salah format:**
+1. Parse manual, extract yang bisa
+2. Re-dispatch dengan format reminder
+3. Masih salah → gunakan apa adanya, flag warning
+
+### Communication Protocol
+
+**Orchestrator → Sub-agent:**
+```
+TASK: <1 kalimat>
+FILES: <file list>
+FORMAT: <expected output format>
+VERIFY: <how to verify>
+```
+
+**Sub-agent → Orchestrator:**
+```
+<output in expected format>
+```
+
+**Error response:**
+```
+ERROR: <type> — <deskripsi>
+RETRY: <ya/tidak>
+ALTERNATIVE: <kalau ada>
+```

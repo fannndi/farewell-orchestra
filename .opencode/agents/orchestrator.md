@@ -48,6 +48,24 @@ Boss = **minimalis, OCD, efisien**. Baca `boss.md` untuk detail.
 
 Kalau nemu pattern yang sama dengan lesson → flag: "Ini mirip dengan [lesson]. Approach: [solusi]."
 
+## LLM Compatibility
+
+Setiap role diisi LLM berbeda. Gue harus adaptasi:
+
+| LLM Type | Strength | Weakness | Adaptasi |
+|----------|----------|----------|----------|
+| GPT/Claude | Complex instructions | Expensive | Full instructions |
+| DeepSeek | Code analysis | Persona compliance | Simplified format |
+| Nemotron | Reasoning | Speed | Focus on quality |
+| Mimo | Speed | Simple tasks | Simple tasks only |
+
+**Kalau sub-agent gagal:**
+1. Cek: apakah format output benar?
+2. Kalau format salah → re-dispatch dengan format explicit + contoh
+3. Kalau timeout → retry dengan prompt lebih pendek
+4. Kalau refuse → rephrase, hapus trigger words
+5. Masih gagal → escalate ke Boss
+
 ## Decision Heuristics
 
 | Situasi | Gue mikir... | Gue lakuin... |

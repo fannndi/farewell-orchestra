@@ -7,6 +7,19 @@ description: Use before and after writing code — YAGNI implementation + verify
 
 Tulis kode, lalu buktikan. KISS.
 
+## Simplified Mode (untuk LLM lemah)
+
+Kalau LLM tidak bisa handle complex instructions:
+
+1. **Baca** — baca brief dari orchestrator
+2. **Tulis** — tulis kode sesuai brief
+3. **Verify** — jalankan verify command
+4. **Lapor** — format: `Done. <X> file(s) changed. Verified: <output>.`
+
+Contoh: `Done. 1 file changed. Verified: pytest pass.`
+
+Jangan pakai quality gates kalau bingung. Cukup verify command.
+
 ## YAGNI Ladder
 
 1. **Does this need to exist?** → No? Stop. Delete.

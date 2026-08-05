@@ -7,6 +7,18 @@ description: Use when reviewing code changes — STRIDE threat model, convention
 
 Read-only auditor. Skeptis, dingin. Setiap baris kode = potensi bug.
 
+## Simplified Mode (untuk LLM lemah)
+
+Kalau LLM tidak bisa handle complex instructions:
+
+1. **Baca** — baca kode yang di-review
+2. **Cari** — cari masalah (security, bug, style)
+3. **Lapor** — format: `<file>:<line> — <masalah>`
+
+Contoh: `src/auth.py:42 — JWT tanpa expiry, security risk`
+
+Jangan pakai [TAG] kalau bingung, default: SHOULD.
+
 ## Priority Tags
 
 | Tag | Trigger | Action |

@@ -1,7 +1,8 @@
 # Stress Test — Hard Simulation
 
-> 7 simulasi pekerjaan nyata. Setiap simulasi punya 6-10 langkah dengan loop dan edge case.
-> Total: 60+ langkah, 30+ edge case, 15+ loop.
+> 7 simulasi pekerjaan nyata + 3 simulasi LLM compatibility.
+> Setiap simulasi punya 6-10 langkah dengan loop dan edge case.
+> Total: 70+ langkah, 40+ edge case, 20+ loop.
 
 ## Results Summary
 
@@ -14,7 +15,11 @@
 | Adversarial Boss | 8 | 3 | 3 |
 | Cascading Failures | 7 | 1 | 1 |
 | Dependency Chain | 8 | 3 | 3 |
-| **Total** | **54** | **20** | **20** |
+| **LLM Compatibility** | | | |
+| Weak LLM as Researcher | 5 | 2 | 2 |
+| Weak LLM as Executor | 5 | 2 | 2 |
+| Mixed LLM Team | 6 | 3 | 3 |
+| **Total** | **70** | **27** | **27** |
 
 ## All Findings & Fixes
 
@@ -159,12 +164,45 @@
 | 7 | Billing changes | Conflicts auth | HIGH | FIX: integration check |
 | 8 | Integration | Multiple conflicts | CRITICAL | FIX: integration test |
 
+### Simulation 8: Weak LLM as Researcher (5 steps)
+
+| Step | Input | Edge Case | Risk | Result |
+|------|-------|-----------|------|--------|
+| 1 | Research task | LLM can't handle complex | HIGH | FIX: simplified mode |
+| 2 | Output format | LLM doesn't use file:line | HIGH | FIX: format reminder |
+| 3 | Evidence levels | LLM doesn't understand [P/W/E/O] | MEDIUM | FIX: simplified mode |
+| 4 | Web research | LLM can't decide when to search | MEDIUM | FIX: simplified mode |
+| 5 | Error handling | LLM doesn't report errors | HIGH | FIX: error format |
+
+### Simulation 9: Weak LLM as Executor (5 steps)
+
+| Step | Input | Edge Case | Risk | Result |
+|------|-------|-----------|------|--------|
+| 1 | Implement task | LLM can't handle complex | HIGH | FIX: simplified mode |
+| 2 | YAGNI check | LLM over-engineers | HIGH | FIX: simplified mode |
+| 3 | Verify command | LLM doesn't verify | CRITICAL | FIX: simplified mode |
+| 4 | Quality gates | LLM doesn't check all gates | HIGH | FIX: simplified mode |
+| 5 | Report format | LLM uses wrong format | MEDIUM | FIX: format reminder |
+
+### Simulation 10: Mixed LLM Team (6 steps)
+
+| Step | Input | Edge Case | Risk | Result |
+|------|-------|-----------|------|--------|
+| 1 | Complex task | Different LLMs, different capabilities | HIGH | FIX: compatibility protocol |
+| 2 | Communication | Different output formats | HIGH | FIX: standard format |
+| 3 | Verification | Different verification approaches | HIGH | FIX: standard verification |
+| 4 | Error handling | Different error handling | HIGH | FIX: standard error format |
+| 5 | Fallback | One LLM fails | HIGH | FIX: fallback chains |
+| 6 | Integration | All LLMs work together | CRITICAL | FIX: communication protocol |
+
 ## Files Changed
 
 | File | Changes |
 |------|---------|
-| prepare | +terserah, +panic mode, +feasibility check |
-| research | +deprecated check, +log fallback, +circular dep |
-| review | +doc consistency, +security patterns, +JWT migration |
-| orchestrate | +memory check, +code change detection, +cascade, +dep order |
-| tests/stress-test-hard.md | New — comprehensive simulation documentation |
+| AGENTS.md | +LLM compatibility protocol, +output format, +fallback chains |
+| prepare | +simplified mode |
+| orchestrate | +simplified mode, +LLM compatibility awareness |
+| research | +simplified mode |
+| review | +simplified mode |
+| implement | +simplified mode |
+| tests/stress-test-hard.md | +LLM compatibility simulations |
