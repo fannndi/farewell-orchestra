@@ -3,7 +3,7 @@ name: bootstrap-project
 description: Use when Boss starts a new sub-project or says 'bikin dokumentasi project baru' — generate 10 interconnected project docs plus sub-project.md anchor.
 ---
 
-> Cost Model: free sub-agent — read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
+> Role: read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
 
 # Bootstrap Project Docs
 

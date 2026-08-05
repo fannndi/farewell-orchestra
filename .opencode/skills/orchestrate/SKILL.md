@@ -7,7 +7,7 @@ description: Use after anti-gigo passes — decompose request, fan-out parallel,
 
 Input sudah CLEAN. **WAJIB dispatch parallel: researcher + reviewer. Jangan kerjain sendiri.**
 
-**Cost rule:** Orchestrator (paid) cuma dispatch + verify. Semua kode → executor (paid, model sama kayak orchestrator). Semua baca → researcher (free). Semua review → reviewer (free). **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
+**Role rule:** Orchestrator cuma dispatch + verify. Semua kode → executor. Semua baca → researcher. Semua review → reviewer. **Kalau lo megang `edit`/`write`/`bash` buat kode, lo salah.**
 
 ## 1. Decompose
 
@@ -25,10 +25,10 @@ Kumpulin 4 lane jadi 1 brief context buat researcher + reviewer:
 | D: Config | opencode.jsonc agent | `[CONFIG] profile [name], step [used]/[total]` |
 
 Gabung: `CONTEXT: [MEMORY] [LESSONS] [STATE] [CONFIG]` — kirim ke researcher + reviewer barengan.
-REDACTION WAJIB: hapus secret, API keys, token, dan path absolut dari evidence bundle sebelum dispatch ke free models. [CONFIG] cukup berisi: profile name + steps used/total.
+REDACTION WAJIB: hapus secret, API keys, token, dan path absolut dari evidence bundle sebelum dispatch ke sub-agent. [CONFIG] cukup berisi: profile name + steps used/total.
 
 ### Task Chunking Protocol (MANDATORY GATE — WAJIB sebelum fan-out)
-Sebelum dispatch researcher+reviewer, WAJIB load skill `task-chunking` dan jalanin Pre-Chunk Check. Jangan dispatch task utuh ke free model — pecah dulu kalau Q>=3 / F>=3 / O>=2. Lihat skill `task-chunking` untuk checklist, algoritma chunk, pola dispatch (chunk sequential, agent parallel dalam chunk), dan recovery kalau output kosong.
+Sebelum dispatch researcher+reviewer, WAJIB load skill `task-chunking` dan jalanin Pre-Chunk Check. Jangan dispatch task utuh ke sub-agent — pecah dulu kalau Q>=3 / F>=3 / O>=2. Lihat skill `task-chunking` untuk checklist, algoritma chunk, pola dispatch (chunk sequential, agent parallel dalam chunk), dan recovery kalau output kosong.
 
 ### Audit Reception Mode — External Findings
 
@@ -52,8 +52,8 @@ task(subagent_type=<agent>, prompt='Reply with exactly: READY')
 
 - If the agent returns a NON-EMPTY response → model is alive; proceed to Step 2.
 - If the agent returns EMPTY or errors → model is DEAD:
-  * reviewer / researcher (free, non-critical): SKIP the agent. Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
-  * executor (paid, critical): ESCALATE to Boss — do NOT dispatch the real job. Report the dead model and await Boss direction.
+  * reviewer / researcher (non-critical): SKIP the agent. Proceed with remaining agents; in the final report note the agent was skipped due to a dead model. Do NOT retry blindly.
+  * executor (critical): ESCALATE to Boss — do NOT dispatch the real job. Report the dead model and await Boss direction.
 
 **Step 2 — Capability probe (~50 token, fail-fast):**
 
@@ -105,11 +105,11 @@ task(subagent_type="executor", description="exec: [task]",
 
 ### Trust Your Sub-Agents
 
-| Agent | Model | Kemampuan | Lo harus... |
-|-------|-------|-----------|-------------|
-| researcher | free | forensic, web-research, read-only | Percaya dia baca file & lapor evidence |
-| reviewer | free | stride-audit, read-only | Percaya dia audit security & konvensi |
-| executor | paid | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
+| Agent | Kemampuan | Lo harus... |
+|-------|-----------|-------------|
+| researcher | forensic, web-research, read-only | Percaya dia baca file & lapor evidence |
+| reviewer | stride-audit, read-only | Percaya dia audit security & konvensi |
+| executor | minimal-impl, edit, verify | Percaya dia nulis kode sesuai brief |
 
 **Prinsip:** 
 - Sub-agent punya **model + skill + tool masing-masing**. Mereka specialized.
@@ -136,7 +136,7 @@ Trigger: `task()` sub-agent return KOSONG (output < 50 karakter atau tidak ada c
 2. **Resume task_id:** dispatch ulang dengan `task_id` yg sama — "Lanjutkan tugas sebelumnya. Output kamu kosong. Coba lagi."
 3. **Fresh dispatch:** dispatch FRESH (tanpa task_id) dengan prompt lebih detail + ground truth struktur project.
 4. **Researcher deep debug:** dispatch researcher: "Deep debug [error]. Root cause, bukan symptom."
-5. **Eskalasi Boss:** kalau researcher masih gagal atau model issue → ESKALASI ke Boss. **Orchestrator TIDAK handle read-only — bahkan sebagai last-resort. Fallback chain ENDS di eskalasi Boss (langgar Freeze Rule + Cost Model).**
+5. **Eskalasi Boss:** kalau researcher masih gagal atau model issue → ESKALASI ke Boss. **Orchestrator TIDAK handle read-only — bahkan sebagai last-resort. Fallback chain ENDS di eskalasi Boss (langgar Freeze Rule).**
 
 **JANGAN loop tak terbatas.** Max 2 retry per tier. Setelah itu STOP dan laporkan ke Boss.
 
@@ -183,7 +183,7 @@ Setelah verify gate PASS, SEBELUM dispatch executor: WAJIB load skill `synthesis
 ## 8. Post-Flight
 
 Verifikasi acceptance criteria. Report 3 baris: what, result, residual risk.
-Sisipkan step usage: `steps: [used]/[total]` — biar tau budget real vs ceiling.
+Sisipkan steps: `steps: [used]/[total]`.
 
 ## 9. Escalation
 
@@ -203,7 +203,7 @@ Format output:
 FINAL: [kesimpulan final]
 ```
 
-**Token efficiency:** Rebuttal pake `task_id` resume subagent, jangan dispatch ulang.
+**Efisiensi:** Rebuttal pake `task_id` resume subagent, jangan dispatch ulang.
 
 ## 11. Quality Check — 5 Gates
 
@@ -241,11 +241,3 @@ Detail lengkap: `references/loop-discovery.md`
 - Verify-first: jangan report "done" sebelum verify.
 - **Trust > Control.** Lo hired sub-agent karena mereka capable. Percaya. Dispatch. Verify. Move on.
 
-### Cost Logging
-
-Setelah task selesai, orchestrator OPSIONAL catat ke `%TEMP%\opencode\cost-log.json`:
-- Model yg dipakai tiap agent
-- Steps used vs budget  
-- Task type + brief description
-- Format JSONL (append 1 line per session)
-- JANGAN simpan di project root — PAKAI TEMP DIR

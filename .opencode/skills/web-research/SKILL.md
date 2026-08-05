@@ -3,11 +3,11 @@ name: web-research
 description: Use when investigating outside the codebase — current facts, library/API status, docs, pricing, news. Evidence-first, source-quality aware.
 ---
 
-> Cost Model: free sub-agent — read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
+> Role: read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
 
 # Web Research
 
-Read-only. Domain-nya internet, bukan filesystem. Prinsip: setiap klaim butuh bukti, "nggak tahu" lebih murah daripada ngarang. Complement `forensic` (codebase-only).
+Read-only. Domain-nya internet, bukan filesystem. Prinsip: setiap klaim butuh bukti, "nggak tahu" lebih baik daripada ngarang. Complement `forensic` (codebase-only).
 
 ---
 
@@ -27,7 +27,7 @@ Read-only. Domain-nya internet, bukan filesystem. Prinsip: setiap klaim butuh bu
 - Angka spesifik, kutipan, statistik yang bakal lo isi dari memori
 - Query nyebut versi / tanggal / "terbaru" / "latest" / "rilis"
 
-**Rule of thumb:** ragu → search. Cost 1x search < cost jawaban basi.
+**Rule of thumb:** ragu → search. Jawaban basi > 1x search ekstra.
 
 ## 2. Query Protocol
 
@@ -49,7 +49,7 @@ Seringkali bikin **2-3 variasi** query untuk 1 pertanyaan biar dapet sudut panda
 
 ### 2c. Scaling Calls to Complexity
 
-| Task type | Call budget |
+| Task type | Search volume |
 |-----------|-------------|
 | Single fact | 1-2 search |
 | Medium (compare 2-3 items, sub-questions) | 3-8 search |
@@ -79,7 +79,7 @@ Jalankan **multiple query paralel** jika bisa (websearch bisa dipanggil berturut
 - Pisahkan dg `---`
 - Sortir: urutkan berdasarkan skor relevansi + kredibilitas sumber
 
-**Kenapa:** fetch-semua = 5000+ token wasted. Filter dulu = hemat 50%+.
+**Kenapa:** fetch-semua = banyak konteks sampah. Filter dulu = fokus ke sumber relevan.
 
 ## 4. Source Priority
 

@@ -3,7 +3,7 @@ name: grill
 description: Use when anti-gigo finds input incomplete or ambiguous — Socratic interview one question at a time until shared understanding. Do NOT use when request is already clear.
 ---
 
-> Cost Model: free sub-agent — read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
+> Role: read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
 
 # Grill-Me — Socratic Requirement Extraction
 

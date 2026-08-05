@@ -76,7 +76,7 @@
   "profiles": [
     {
       "name": "Pro",
-      "label": "Full Paid",
+      "label": "Pro",
       "agents": {
         "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
         "executor": {"model": "9router/ocg/deepseek-v4-flash"},
@@ -96,7 +96,7 @@
     },
     {
       "name": "Daily",
-      "label": "Low Cost | Mixed",
+      "label": "Mixed",
       "agents": {
         "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
         "executor": {"model": "9router/ocg/deepseek-v4-flash"},
@@ -105,8 +105,8 @@
       }
     },
     {
-      "name": "Free 1",
-      "label": "Daily Free",
+      "name": "Eco",
+      "label": "Daily",
       "agents": {
         "orchestrator": {"model": "9router/oc/deepseek-v4-flash-free"},
         "researcher": {"model": "9router/oc/north-mini-code-free"},
@@ -115,8 +115,8 @@
       }
     },
     {
-      "name": "Free 2",
-      "label": "Emergency",
+      "name": "Backup",
+      "label": "Backup",
       "agents": {
         "orchestrator": {"model": "9router/oc/laguna-s-2.1-free"},
         "researcher": {"model": "9router/oc/nemotron-3-ultra-free"},

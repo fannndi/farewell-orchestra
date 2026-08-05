@@ -12,6 +12,9 @@ on:
       - "tests/**"
       - ".github/workflows/ci.yaml"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,5 +26,46 @@ jobs:
           python-version: "3.13"
 
       - run: pip install pytest
+
+      - name: Validate structure
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os, sys
+
+          errors = []
+
+          # .opencode/agents/*.md (exactly 4)
+          agents = sorted(f for f in os.listdir(".opencode/agents") if f.endswith(".md"))
+          if agents != sorted(["executor.md", "orchestrator.md", "researcher.md", "reviewer.md"]):
+              errors.append(f"agents mismatch: {agents}")
+
+          # .opencode/skills/*/SKILL.md (11)
+          skills = sorted(os.listdir(".opencode/skills"))
+          if len(skills) != 11:
+              errors.append(f"skills count != 11: {len(skills)}")
+          for s in skills:
+              if not os.path.isfile(os.path.join(".opencode/skills", s, "SKILL.md")):
+                  errors.append(f"missing .opencode/skills/{s}/SKILL.md")
+
+          # .opencode/command/*.md
+          cmds = sorted(f for f in os.listdir(".opencode/command") if f.endswith(".md"))
+          if not cmds:
+              errors.append("no .md files in .opencode/command")
+
+          # profiles/profiles.json exists + JSON parseable
+          if not os.path.isfile("profiles/profiles.json"):
+              errors.append("missing profiles/profiles.json")
+          else:
+              try:
+                  json.load(open("profiles/profiles.json", encoding="utf-8"))
+              except Exception as e:
+                  errors.append(f"profiles/profiles.json invalid JSON: {e}")
+
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+          print("structure OK")
+          PY
 
       - run: python -m pytest tests/ -q

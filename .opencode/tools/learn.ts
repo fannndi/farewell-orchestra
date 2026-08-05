@@ -20,7 +20,7 @@ export default tool({
     const date = new Date().toISOString().slice(0, 10)
 
     // Escape pipe characters for markdown table
-    const esc = (s: string) => s.replace(/\|/g, "\\|")
+    const esc = (s: string) => s.replace(/\|/g, "\\|").replace(/\r?\n/g, " ")
     const fixPart = args.verification
       ? `${esc(args.fix)} — verify:${args.verified} \`${esc(args.verification)}\``
       : esc(args.fix)

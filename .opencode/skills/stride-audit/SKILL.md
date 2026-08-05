@@ -3,7 +3,7 @@ name: stride-audit
 description: Use when reviewing code changes — STRIDE threat model, cumulative judgment, convention enforcement.
 ---
 
-> Cost Model: free sub-agent — read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
+> Role: read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
 
 # STRIDE Audit
 

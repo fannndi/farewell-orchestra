@@ -1,6 +1,6 @@
 # Project Guide — Farewell Orchestra sebagai Cross-Project Assistant
 
-Repo ini adalah **otak orkestrasi Boss** — satu tempat, semua project. Buka opencode di sini (farewell-orchestra), arahkan ke project target via /work-on atau /new-project. Project target tidak perlu setup orkestra sendiri — persona + skill + cost model TETAP dari sini. Orchestra yg kerja.
+Repo ini adalah **otak orkestrasi Boss** — satu tempat, semua project. Buka opencode di sini (farewell-orchestra), arahkan ke project target via /work-on atau /new-project. Project target tidak perlu setup orkestra sendiri — persona + skill TETAP dari sini. Orchestra yg kerja.
 
 ## Setup Sekali Jalan
 
@@ -76,4 +76,4 @@ Project kecil, sekali pakai, nggak butuh dokumentasi → skip `/new-project`. La
 - Kalau lupa nama project, ketik `/work-on` kosong — orchestrator bakal tanya.
 - `sub-project.md` adalah otak orchestra di project itu. Jangan dihapus.
 - Path dengan spasi: gunakan quotes. Contoh: `/work-on "my app"`
-- Profile (e.g. default, mix, low-cost) dipilih pas `/new-project` atau bisa diganti manual di `sub-project.md`.
+- Profile (e.g. Pro, Daily, Eco) dipilih pas `/new-project` atau bisa diganti manual di `sub-project.md`.

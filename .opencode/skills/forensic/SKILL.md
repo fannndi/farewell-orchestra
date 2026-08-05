@@ -3,11 +3,11 @@ name: forensic
 description: Use when investigating codebase or debugging deep errors — evidence-first, file:line mandatory.
 ---
 
-> Cost Model: free sub-agent — read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
+> Role: read-only, no edits. Writes → dispatch executor. Orchestrator never writes code.
 
 # Forensic Investigation
 
-Read-only. Setiap byte output bayar token. Jadi SETIAP kata harus punya nilai bukti.
+Read-only. SETIAP kata harus punya nilai bukti.
 
 ## Evidence Standard
 

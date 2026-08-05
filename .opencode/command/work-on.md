@@ -21,7 +21,7 @@ Boss mau pindah kerja ke sub-project: $ARGUMENTS
   Context: {PROJECT_NAME}
   Path: {path}
   Fase: {phase} — {task aktif}
-  Profile: {paid|hybrid|free} ```
+  Profile: {nama profile} ```
 - Nggak ada → auto-scaffold: jalankan workflow skill `bootstrap-project` → generate `sub-project.md` minimal (project name, one-liner, tech stack, EXEC_CTX) langsung di target project. Setelah generate, konfirmasi ke Boss.
 - Boss explicit bilang "skip scaffold" → lanjut tanpa sub-project.md (catat warning).
 

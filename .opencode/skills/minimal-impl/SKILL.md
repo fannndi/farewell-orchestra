@@ -5,7 +5,7 @@ description: Use before writing code — YAGNI ladder, verify-first, cleanup, er
 
 # Minimal Implementation
 
-Boss bayar per token DAN per tool call. Setiap byte kode harus justified.
+Setiap byte kode harus justified.
 
 ## YAGNI Ladder
 

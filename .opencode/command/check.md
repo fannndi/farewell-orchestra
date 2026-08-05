@@ -29,7 +29,7 @@ Run on every new session. Validasi struktur workspace + profile.
 
 ## 4. Profile aktif
 
-- [ ] `python profiles/generate.py --inspect <active>` — model assignments bener
+- [ ] Model assignments bener — cek `opencode.jsonc.agent.*.model` (hasil generate.py)
 - [ ] `python profiles/generate.py --validate` — semua profile valid
 - [ ] Step budget — BACA dari `opencode.jsonc.agent.<name>.steps` (jangan hardcode)
   - Minimum sanity floor = 20 (atau 80% dari declared, mana yang lebih tinggi)
@@ -44,7 +44,8 @@ Run on every new session. Validasi struktur workspace + profile.
 ## 6. Custom tools
 
 - [ ] .opencode/tools/verify.ts + verify.py — verification gate
-- [ ] .opencode/tools/harness_status.ts — health check
+- [ ] .opencode/tools/harness_status.ts — health check: `@harness_status check:"all" format:"json"`
+  - JSON output fields: `profile` (opencode.jsonc.model) · `agents.*.model` + `steps_limit` (opencode.jsonc.agent.*) · `profiles.valid` (via `generate.py --validate`) · `sensors` (count [PASS]/[FAIL]/[WARN] di `Lessons.md` ## Sensor Coverage — manual/periodik, bukan otomatis) · `errors` · `healthy` (true = no errors)
 - [ ] .opencode/tools/learn.ts — lesson logger
 
 ## 7. Feature maturity — Declared→Wired→Exercised→Verified
@@ -53,11 +54,11 @@ Checklist for every custom tool / mechanism:
 
 | Tool | [D] Declared | [W] Wired | [E] Exercised | [V] Verified |
 |------|:---:|:---:|:---:|:---:|
-| verify.ts | check.md | `.opencode/agents/orchestrator.md`:22-30 | sesi real | generate.py --validate |
-| harness_status.ts | check.md | `.opencode/agents/orchestrator.md`:62-64 | sesi real | `@harness_status` |
-| learn.ts | check.md | `.opencode/agents/orchestrator.md`:69 | sesi real | cek Farewell-Knowlage/Lessons.md row |
+| verify.ts | check.md | `AGENTS.md` § Trust & Dispatch (Verify gate) | sesi real | generate.py --validate |
+| harness_status.ts | check.md | `check.md` § 6 | sesi real | `@harness_status` |
+| learn.ts | check.md | `AGENTS.md` § Emergency Protocol (log via executor) | sesi real | cek Farewell-Knowlage/Lessons.md row |
 | bash_denylist | generate.py | `.opencode/hooks/post-generate.ps1`:29-30 | generate.py hook | `python generate.py default` |
-| step budget scaling | `.opencode/agents/orchestrator.md`:38-48 | `.opencode/agents/orchestrator.md`:48 | dispatch tiap task | bandingkan actual vs budget |
+| step budget scaling | `AGENTS.md` § Step Budgets | `AGENTS.md` § Step Budgets | dispatch tiap task | cek langkah terpakai vs batas |
 
 **Legend:** [D] ada di doc/config | [W] agent/skill instructions nyebut | [E] pernah dipanggil | [V] ada cara verify
 
@@ -68,7 +69,7 @@ Manual check — tidak ada auto-trigger via hooks/CI:
 - **Script:** `.opencode/scripts/check-links.py` — melacak semua refs di markdown
 - **Coverage:** Formal links (text diikuti path dalam kurung), refs seperti `filename.md` dan `filename.md:42`
 - **Forward refs:** file yang akan dihasilkan oleh bootstrap-project (sub-project.md, PRD.md, dsb.) dikecualikan
-- **Trigger:** hooks.jsonc dispatches link-check via `beforeCommit` + `sessionEnd` handlers (check-links hook). Also runnable manually:
+- **Trigger:** hooks.jsonc dispatches link-check via `beforeCommit` handler (check-links hook). Also runnable manually:
 - **Exit code:** 0 kalau semua beres, 1 kalau ada broken references
 - **Output:** `[LINK-CHECK] Scanning <N> markdown files...` + report per broken ref format `  BROKEN <rel>:<line> — <target> -> NOT FOUND`
 

@@ -3,11 +3,11 @@ name: anti-gigo
 description: Use when receiving a user request — validate input quality, enforce brief framework, detect trash before dispatch.
 ---
 
-> Cost Model: free sub-agent — read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
+> Role: read-only (kecuali executor). Writes → dispatch executor. Orchestrator never writes code.
 
 # Anti-GIGO: Garbage In → Garbage Out
 
-**Prinsip:** AI model termahal pun hasilkan sampah kalau inputnya sampah. AI bukan cenayang — dia over-interpolasi, over-engineer, dan context drift kalau input nggak jelas. Skill ini adalah gerbang kualitas sebelum satu token pun terbuang ke downstream.
+**Prinsip:** AI model sehebat apapun pun hasilkan sampah kalau inputnya sampah. AI bukan cenayang — dia over-interpolasi, over-engineer, dan context drift kalau input nggak jelas. Skill ini adalah gerbang kualitas sebelum sampah terproses ke downstream.
 
 ## 1. Brief Framework Validator
 

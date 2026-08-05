@@ -1,16 +1,9 @@
 // Hooks configuration — event-driven lifecycle hooks
 // Architecture: Zero-inspired. command+args[] separate, stdin JSON payload, exit codes
-// Events: beforeGenerate, afterGenerate, beforeCommit, sessionStart, sessionEnd, subagentStart, subagentStop
+// Events: afterGenerate, beforeCommit
 {
   "enabled": true,
   "hooks": [
-    {
-      "id": "pre-generate",
-      "event": "beforeGenerate",
-      "command": "powershell",
-      "args": ["-NoProfile", "-File", ".opencode/hooks/pre-generate.ps1"],
-      "enabled": true
-    },
     {
       "id": "post-generate",
       "event": "afterGenerate",
@@ -23,20 +16,6 @@
       "event": "beforeCommit",
       "command": "python",
       "args": [".opencode/scripts/check-links.py"],
-      "enabled": true
-    },
-    {
-      "id": "check-links-session-end",
-      "event": "sessionEnd",
-      "command": "python",
-      "args": [".opencode/scripts/check-links.py"],
-      "enabled": true
-    },
-    {
-      "id": "usage-report-capture",
-      "event": "sessionEnd",
-      "command": "powershell",
-      "args": ["-NoProfile", "-File", ".opencode/hooks/session-end.ps1"],
       "enabled": true
     }
   ]

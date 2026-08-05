@@ -4,7 +4,7 @@ description: Use when a task spans 3+ questions, 3+ files, or 2+ output formats,
 ---
 
 # Core Rule
-Chunking bukan opsional - ini GATE sebelum fan-out. Kalau free model (researcher/reviewer) dikasih task kegedean, outputnya kosong/garbled/mislabel. Orchestrator WAJIB jalanin Pre-Chunk Check dan dispatch per hasilnya.
+Chunking bukan opsional - ini GATE sebelum fan-out. Kalau sub-agent dikasih task kegedean, outputnya kosong/garbled/mislabel. Orchestrator WAJIB jalanin Pre-Chunk Check dan dispatch per hasilnya.
 
 # Pre-Chunk Checklist (HARD thresholds - jalanin SEBELUM fan-out)
 Hitung untuk task yang mau di-dispatch:

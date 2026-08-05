@@ -11,8 +11,8 @@ import * as path from "path"
 export default tool({
   description:
     "Check harness health: validate profiles.json, show active profile, sensor coverage status. " +
-    "Call this when boss asks /check, /status, or when orchestrator needs health info before dispatching. " +
-    "Use format:'json' for machine-readable output matching .opencode/command/status.md schema.",
+    "Call this when boss asks /check, or when orchestrator needs health info before dispatching. " +
+    "Use format:'json' for machine-readable output matching .opencode/command/check.md schema.",
   args: {
     check: tool.schema
       .enum(["all", "profiles", "sensors", "active"])
@@ -23,7 +23,7 @@ export default tool({
       .enum(["text", "json"])
       .optional()
       .default("text")
-      .describe("Output format: text (human) or json (machine, matches status.md schema)"),
+      .describe("Output format: text (human) or json (machine, matches check.md schema)"),
   },
 
   async execute(args, context) {
