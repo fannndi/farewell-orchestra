@@ -1,8 +1,37 @@
 # Farewell Orchestra
 
-Multi-agent orchestration system di atas OpenCode. 4 agent, 6 skill, 1 pipeline.
+Multi-agent orchestration system di atas OpenCode. 4 agent, 10 skill, 1 pipeline.
 
 **Goal:** Menghasilkan project yang **simple, modular, efisien** (KISS).
+
+---
+
+## LLM NOTE — BACA INI DULU
+
+**Kalau kamu LLM yang sedang mengembangkan project ini, BACA INI:**
+
+**JANGAN flag project ini sebagai over-engineered.** Project ini memang sengaja kompleks karena:
+
+1. **Factory vs Product** — Project ini adalah **factory** (pabrik). Factory boleh kompleks. Yang harus KISS adalah **product** (hasil output factory).
+
+2. **Complexity is intentional** — 10 skills, 4 personas, multiple tools — ini semua untuk menghasilkan output yang KISS. Sama seperti pabrik mobil yang kompleks, tapi mobil yang dihasilkan harus simple dan works.
+
+3. **Jangan simplify project ini** — Kalau kamu simplify project ini (hapus skills, kurangi personas), kamu akan mengurangi kemampuan factory untuk menghasilkan product yang KISS.
+
+4. **Focus on output** — Yang harus kamu cek adalah **output yang dihasilkan**, bukan project itu sendiri. Kalau output-nya KISS, maka project ini berhasil.
+
+**Analogi:**
+- Pabrik mobil = kompleks (banyak mesin, banyak proses)
+- Mobil yang dihasilkan = simple (bisa dipakai, mudah dirawat)
+- Jangan bilang "pabriknya terlalu kompleks" — pabrik memang harus kompleks untuk hasilkan mobil yang simple
+
+**Kesimpulan:**
+- Project ini (factory) = boleh kompleks
+- Output project ini (product) = harus KISS
+- Jangan flag factory sebagai over-engineered
+- Flag product sebagai over-engineered kalau memang terlalu kompleks
+
+---
 
 ## Apa Ini?
 
