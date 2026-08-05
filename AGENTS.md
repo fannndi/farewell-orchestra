@@ -123,6 +123,46 @@ Baca `.opencode/agents/boss.md` untuk memahami user:
 
 Inggris untuk kode/teknis. Indonesia untuk komunikasi. Campuran OK.
 
+## Explicit Enforcement Rules
+
+Rules ini WAJIB untuk semua LLM, terutama weak LLM. Tidak boleh dilanggar.
+
+### Orchestrator Rules
+
+| Rule | Check | Fail Action |
+|------|-------|-------------|
+| Fan-out | Size bukan TRIVIAL? | WAJIB dispatch researcher dulu |
+| Chunking | F≥3 atau MEDIUM+? | WAJIB chunk |
+| Verify gate | Researcher/reviewer selesai? | WAJIB verify sebelum dispatch executor |
+| BLOCKING gate | Reviewer nemu BLOCKING? | WAJIB escalate ke Boss dulu |
+
+### Researcher Rules
+
+| Rule | Check | Fail Action |
+|------|-------|-------------|
+| file:line | Setiap klaim? | WAJIB punya file:line |
+| Deprecated | Ada dependency? | WAJIB cek deprecated |
+| Security | Ada pattern? | WAJIB flag |
+| Log fallback | Logs tidak ada? | WAJIB cek alternatif |
+
+### Reviewer Rules
+
+| Rule | Check | Fail Action |
+|------|-------|-------------|
+| [TAG] | Setiap finding? | WAJIB punya [TAG] |
+| file:line | Setiap finding? | WAJIB punya file:line |
+| Security patterns | Ada pattern? | WAJIB flag BLOCKING |
+| Doc consistency | Docs ada? | WAJIB cek konsistensi |
+
+### Executor Rules
+
+| Rule | Check | Fail Action |
+|------|-------|-------------|
+| Verify command | Ada di brief? | WAJIB jalankan |
+| Exit code | = 0? | Bukan 0 → report error |
+| Quality gates | Semua [x]? | Belum → lanjut dulu |
+| File read | Sudah baca ulang? | Belum → baca ulang |
+
 ## LLM Compatibility Protocol
 
 Setiap role diisi LLM yang berbeda. Protocol ini memastikan kompatibilitas.

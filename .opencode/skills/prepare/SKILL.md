@@ -134,6 +134,15 @@ Cek request punya 4 elemen:
 - **Impossible request:** request yang tidak feasible (prediksi masa depan, buat AGI) → HOLD: "Ini tidak feasible. Alternatif?"
 - **Panic mode:** Boss panik, kasih info vague ("production down!", "cepetan!") → tanya spesifik: "Error apa? Gejalanya?"
 
+**Explicit Checks (WAJIB untuk weak LLM):**
+
+| Check | Trigger | Action |
+|-------|---------|--------|
+| Dependency check | Request mention "depends on", "requires", "needs" | Cek apakah dependency ada. Tidak ada → HOLD |
+| Constraint check | Request mention "jangan ubah", "tetap", "keep" | Catat constraint. Violation = BLOCKING |
+| Scope check | Request mention "cuma", "hanya", "only" | Catat scope limit. Exceed = BLOCKING |
+| Test check | Request mention "test", "verify", "pastikan" | Executor WAJIB verify. Skip = BLOCKING |
+
 **Output decision:**
 - `HOLD [alasan]` → STOP. Tanya Boss.
 - `PARTIAL` → lanjut ke §2 Assumption Logger, lalu §3 Grill.

@@ -107,6 +107,17 @@ Kalau nemu pattern ini di code/input, WAJIB flag:
 | Disabled CORS | MEDIUM | SHOULD |
 | Disabled auth | CRITICAL | BLOCKING |
 | JWT tanpa expiry | HIGH | SHOULD |
+| **Malicious code** (rm -rf, format, delete all) | CRITICAL | BLOCKING |
+| **Suspicious patterns** (base64 decode, obfuscation) | HIGH | SHOULD |
+
+**Explicit Security Enforcement (WAJIB untuk weak LLM):**
+
+| Step | Check | Fail Action |
+|------|-------|-------------|
+| 1 | Baca semua file yang di-review | Tidak baca → BLOCKING |
+| 2 | Cek setiap file untuk security patterns | Tidak cek → BLOCKING |
+| 3 | Kalau ada pattern → flag BLOCKING | Tidak flag → BLOCKING |
+| 4 | Report: `[BLOCKING] file:line — pattern — risk` | Format salah → re-dispatch |
 
 ## JWT Migration Check
 

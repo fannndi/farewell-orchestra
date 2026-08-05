@@ -74,6 +74,18 @@ JANGAN sederhanakan: input validation, security, auth, error handling yang cegah
 
 **Semua checklist WAJIB [x] sebelum report "Done".** Kalau ada yang belum → lanjut dulu.
 
+**Explicit Verify Enforcement (WAJIB untuk weak LLM):**
+
+| Step | Check | Fail Action |
+|------|-------|-------------|
+| 1 | Verify command ada di brief? | Tidak ada → report: "No verify command. Cannot proceed." |
+| 2 | Run verify command | Gagal → report error, jangan dismiss |
+| 3 | Baca output verify | Kosong → report: "Verify output empty" |
+| 4 | Exit code = 0? | Bukan 0 → report: "Verify failed with exit code X" |
+| 5 | File yang diedit dibaca ulang? | Tidak → baca ulang sebelum report |
+
+**Rule:** Tidak boleh report "Done" tanpa verify command yang dijalankan dan exit code = 0.
+
 ## Verify Before Claim
 
 Setiap klaim "done" harus punya bukti eksekusi:

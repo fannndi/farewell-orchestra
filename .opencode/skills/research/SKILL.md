@@ -67,6 +67,15 @@ Output: root cause (1 baris) + fix strategy (1 baris).
 | Compatibility | Support versi kita? Alternatif? |
 | Deprecated | Ada di npm deprecated? Ada successor? |
 
+**Explicit Deprecation Enforcement (WAJIB untuk weak LLM):**
+
+| Step | Check | Fail Action |
+|------|-------|-------------|
+| 1 | Baca package.json/requirements.txt | Tidak baca → report: "Cannot check dependencies" |
+| 2 | Cek setiap dependency untuk deprecated | Tidak cek → report: "Dependencies not checked" |
+| 3 | Kalau ada deprecated → flag | Tidak flag → BLOCKING |
+| 4 | Report: "Deprecated: [package] → use [alternative]" | Format salah → re-dispatch |
+
 **Log Fallback** — kalau logs tidak ditemukan:
 1. Cek: console.log, stderr, stdout
 2. Cek: .log files di root / logs/ / var/log/
