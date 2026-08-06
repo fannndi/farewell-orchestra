@@ -1,11 +1,9 @@
 """
 auto-load-skills.py — Auto-load critical skills AND persona at session start.
-Dipanggil dari hook afterSessionStart atau afterGenerate.
-
-Memuat skill + persona content ke memory sehingga agent tidak perlu manual load.
+Generates compact context files for performance.
 """
 
-import os, sys, json
+import os, sys, json, re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -18,13 +16,10 @@ def get_agent_skills(agent_name):
     agent_file = AGENTS_DIR / f"{agent_name}.md"
     if not agent_file.exists():
         return []
-
     content = agent_file.read_text(encoding="utf-8")
-    import re
-
-    match = re.search(r"skills:\s*\n((?:\s+-\s+\S+\n?)+)", content)
+    match = re.search(r"skills:\s*\[(.*?)\]", content)
     if match:
-        return re.findall(r"-\s+(\S+)", match.group(1))
+        return [s.strip() for s in match.group(1).split(",")]
     return []
 
 
@@ -44,42 +39,39 @@ def load_persona_content(agent_name):
     return agent_file.read_text(encoding="utf-8")
 
 
+def extract_key_rules(content, max_lines=30):
+    """Extract only key rules from content."""
+    lines = content.split("\n")
+    key_lines = []
+    for line in lines[:max_lines]:
+        # Skip empty lines and comments
+        if line.strip() and not line.startswith("#"):
+            key_lines.append(line)
+    return "\n".join(key_lines)
+
+
 def generate_skill_context(agent_name):
-    """Generate combined skill context for an agent."""
+    """Generate compact skill context for an agent."""
     skills = get_agent_skills(agent_name)
     context_parts = []
 
     for skill_name in skills:
         content = load_skill_content(skill_name)
         if content:
-            # Extract key rules (first 50 lines or until ## section)
-            lines = content.split("\n")
-            key_lines = []
-            for line in lines[:50]:
-                key_lines.append(line)
-                if line.startswith("## ") and len(key_lines) > 5:
-                    break
-
-            context_parts.append(
-                f"=== SKILL: {skill_name} ===\n" + "\n".join(key_lines)
-            )
+            # Extract only key rules (first 20 lines)
+            key_content = extract_key_rules(content, max_lines=20)
+            context_parts.append(f"=== {skill_name} ===\n{key_content}")
 
     return "\n\n".join(context_parts)
 
 
 def generate_persona_context(agent_name):
-    """Generate persona context for an agent."""
+    """Generate compact persona context for an agent."""
     content = load_persona_content(agent_name)
     if not content:
         return ""
-
-    # Extract key sections (first 100 lines)
-    lines = content.split("\n")
-    key_lines = []
-    for line in lines[:100]:
-        key_lines.append(line)
-
-    return "\n".join(key_lines)
+    # Extract only key sections (first 50 lines)
+    return extract_key_rules(content, max_lines=50)
 
 
 def main():
@@ -92,25 +84,17 @@ def main():
         skill_file = ROOT / ".opencode" / "tools" / f"skill-context-{agent}.md"
 
         with open(skill_file, "w", encoding="utf-8") as f:
-            f.write(f"# Auto-loaded Skills for {agent}\n\n")
-            f.write("This file is auto-generated. Do not edit manually.\n\n")
-            f.write(skill_context)
-
-        print(
-            f"[AUTO-LOAD] Generated skill context for {agent}: {len(skill_context)} chars"
-        )
+            f.write(f"# Skills: {agent}\n\n{skill_context}")
 
         # Generate persona context
         persona_context = generate_persona_context(agent)
         persona_file = ROOT / ".opencode" / "tools" / f"persona-context-{agent}.md"
 
         with open(persona_file, "w", encoding="utf-8") as f:
-            f.write(f"# Auto-loaded Persona for {agent}\n\n")
-            f.write("This file is auto-generated. Do not edit manually.\n\n")
-            f.write(persona_context)
+            f.write(f"# Persona: {agent}\n\n{persona_context}")
 
         print(
-            f"[AUTO-LOAD] Generated persona context for {agent}: {len(persona_context)} chars"
+            f"[AUTO-LOAD] {agent}: skill={len(skill_context)}c, persona={len(persona_context)}c"
         )
 
 
