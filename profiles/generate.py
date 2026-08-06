@@ -324,6 +324,8 @@ def generate(profile_name, to_stdout=False):
                 "task-priority": "allow",
                 "quality-gates": "allow",
                 "agent-monitor": "allow",
+                "kiss-automation": "allow",
+                "edge-cases": "allow",
             },
         },
         "references": {

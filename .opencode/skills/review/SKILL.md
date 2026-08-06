@@ -115,18 +115,44 @@ Format: `[TAG] fileA:baris ↔ fileB:baris — apa yang harusnya sama tapi beda`
 3. Schema.md tabel = API_Contract.md endpoints
 4. Kontradiksi → BLOCKING
 
-## Security Pattern Detection
+## Security Pattern Detection — WAJIB CEK
 
 Kalau nemu pattern ini di code/input, WAJIB flag:
 
-| Pattern | Risk | Tag |
-|---------|------|-----|
-| SQL injection (`' OR 1=1`) | CRITICAL | BLOCKING |
-| XSS (`<script>`) | CRITICAL | BLOCKING |
-| Hardcoded secrets | HIGH | BLOCKING |
-| eval() / exec() | HIGH | BLOCKING |
-| Disabled CORS | MEDIUM | SHOULD |
-| Disabled auth | CRITICAL | BLOCKING |
+### Critical (BLOCKING)
+| Pattern | Risk | Contoh |
+|---------|------|--------|
+| SQL injection | CRITICAL | `' OR 1=1`, `UNION SELECT`, `DROP TABLE` |
+| XSS | CRITICAL | `<script>`, `onerror=`, `javascript:` |
+| Command injection | CRITICAL | `os.system()`, `subprocess.call(shell=True)` |
+| Hardcoded secrets | CRITICAL | API keys, passwords, tokens in code |
+| eval() / exec() | CRITICAL | Code execution from user input |
+| Disabled auth | CRITICAL | `@app.route(..., auth=False)` |
+| Path traversal | CRITICAL | `../../../etc/passwd` |
+| SSRF | CRITICAL | `requests.get(user_input)` |
+
+### High (BLOCKING)
+| Pattern | Risk | Contoh |
+|---------|------|--------|
+| Weak crypto | HIGH | MD5, SHA1 for passwords |
+| No input validation | HIGH | Direct user input to DB |
+| No rate limiting | HIGH | Login without rate limit |
+| CORS wildcard | HIGH | `Access-Control-Allow-Origin: *` |
+| Debug mode prod | HIGH | `DEBUG=True` in production |
+
+### Medium (SHOULD)
+| Pattern | Risk | Contoh |
+|---------|------|--------|
+| Missing CSRF | MEDIUM | Forms without CSRF token |
+| No HTTPS redirect | MEDIUM | HTTP allowed |
+| Verbose errors | MEDIUM | Stack trace in response |
+| No logging | MEDIUM | Security events not logged |
+
+### Detection Rules
+1. **Baca semua file** yang di-review
+2. **Cek setiap file** untuk patterns di atas
+3. **Kalau ada** → flag dengan [BLOCKING] + file:line + dampak
+4. **Kalau tidak ada** → report "Security scan clean"
 | JWT tanpa expiry | HIGH | SHOULD |
 | **Malicious code** (rm -rf, format, delete all) | CRITICAL | BLOCKING |
 | **Suspicious patterns** (base64 decode, obfuscation) | HIGH | SHOULD |
