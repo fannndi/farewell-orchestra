@@ -5,45 +5,40 @@ All notable changes to Farewell Orchestra.
 ## [Unreleased]
 
 ### Added
-- Auto-load system for skills AND personas (3 layer enforcement)
-- progress-tracker skill — persistent task tracking
-- error-handler skill — error classification + recovery
-- context-manager skill — context prioritization
-- Interrupt handler — BLOCKING = escalate langsung
-- persona-context-*.md — auto-generated persona files
-- skill-context-*.md — auto-generated skill files
+- 8 new LLM-centric skills: session-state, task-decomposer, agent-protocol, feedback-loop, context-window, task-priority, quality-gates, agent-monitor
+- soul.md — project identity (bukan persona agent)
+- Cross-project workflow with reverse engineering
 
-### Changed
-- AGENTS.md — complete rewrite to reflect current state (13 skills, auto-load system)
-- Agent prompts — now reference persona context files
-- auto-load-skills.py — now generates persona context
+### Removed
+- templates/ folder (redundant with cross-project/)
 
 ## [2026-08-06]
 
 ### Added
-- check-consistency.py — automated drift detection (skills, agents, permissions)
-- test_integration.py — golden-path integration tests for all profiles
-- CHANGELOG.md — this file
-- KISS output philosophy — factory vs product
-- 4 new KISS skills: kiss-checklist, anti-patterns, simplification, complexity-budget
-- Skills per role assignment
-- LLM NOTE in README — prevent false-flagging as over-engineered
+- 5 skills from mattpocock/skills synthesis: tdd, code-review, diagnose-bugs, handoff, domain-modeling
+- Auto-load system for skills AND personas (3 layer enforcement)
+- 4 KISS skills: kiss-checklist, anti-patterns, simplification, complexity-budget
+- 3 management skills: progress-tracker, error-handler, context-manager
+- Interrupt handler (BLOCKING = escalate langsung)
+- LLM NOTE in README
+- check-consistency.py — automated drift detection
+- test_integration.py — golden-path integration tests
+- CHANGELOG.md
 
 ### Fixed
-- test_generate.py — updated imports to match current API
-- ci.yaml — updated to expect 13 skills, 5 agents
-- generate.py — added all skills to permission allowlist
-- verify.py — added evidence tag adjacency checks
-- check-links.py — strip code blocks before regex
-- post-generate.py — ported PowerShell hook to Python
-- verify.py — fixed syntax error (leftover elif)
+- test_generate.py — updated imports
+- ci.yaml — updated to 26 skills, 5 agents
+- generate.py — all skills in permission allowlist
+- verify.py — evidence tag adjacency checks
+- check-links.py — strip code blocks
+- post-generate.py — ported to Python
+- switch.bat — interactive menu with dynamic profiles
 
 ### Removed
-- Orphan dispatch templates (audit.md, fix.md, implement.md, research.md)
-
-### Changed
-- Personas enhanced with KISS focus
-- README reworked with KISS philosophy
+- Orphan dispatch templates
+- Windows-only scripts (except switch.bat)
+- .codenomad/ leftover
+- Stress test documentation files
 
 ## [2026-08-05]
 
@@ -56,7 +51,6 @@ All notable changes to Farewell Orchestra.
 ### Changed
 - Simplified personas (identity-driven)
 - Simplified skills (purpose + steps + format)
-- AGENTS.md streamlined
 
 ## [2026-08-04]
 
