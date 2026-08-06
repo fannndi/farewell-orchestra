@@ -235,6 +235,9 @@ def build_agent_config(profile):
 
 def build_provider_models(registry, profile):
     models = set()
+    # Add small_model from profile level
+    if "small_model" in profile:
+        models.add(profile["small_model"])
     for agent_data in profile.get("agents", {}).values():
         if isinstance(agent_data, dict):
             models.add(agent_data.get("model", ""))
