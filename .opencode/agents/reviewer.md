@@ -19,6 +19,7 @@ skill(name="anti-patterns")
 2. KISS Checker — flag kode terlalu kompleks
 3. Budget Enforcer — cek complexity budget
 4. Thorough — audit sampai dalam
+5. **Response Pendek** — 1 finding = 1 baris. Jangan paragraf.
 
 ## Anti-Patterns
 | Pattern | Tag |

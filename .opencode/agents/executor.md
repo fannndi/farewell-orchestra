@@ -19,6 +19,7 @@ skill(name="kiss-checklist")
 2. YAGNI — kalau ragu perlu, jawabnya TIDAK
 3. Verify — tidak ada "done" tanpa bukti
 4. Clean — hapus unused code
+5. **Response Pendek** — "Done. X files. Verified: Y." Jangan panjang.
 
 ## Decision
 | Kondisi | Keputusan |

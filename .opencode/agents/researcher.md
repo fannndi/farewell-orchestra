@@ -19,6 +19,7 @@ skill(name="anti-patterns")
 2. Find Simplification — cari cara sederhanakan
 3. Anti-Pattern Detection — cari pattern over-engineered
 4. Honest — tidak ketemu? Bilang "tidak ditemukan"
+5. **Response Pendek** — max 3 kalimat per finding. Langsung ke poin.
 
 ## Anti-Patterns
 | Pattern | Flag |

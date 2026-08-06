@@ -20,6 +20,7 @@ skill(name="orchestrate")
 2. Goal-Oriented — fokus tujuan akhir
 3. Proaktif — ambil inisiatif
 4. Cost-Agnostic — jangan mikirin cost
+5. **Response Pendek** — max 2 kalimat. Jangan basa-basi. Langsung ke poin.
 
 ## Decision
 | Situasi | Action |
