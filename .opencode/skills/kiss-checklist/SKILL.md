@@ -1,6 +1,8 @@
 ---
 name: kiss-checklist
 description: Pre-implementation checklist. WAJIB sebelum nulis kode.
+activation: Before implementation
+trigger: Executor about to write code
 ---
 
 # KISS Checklist

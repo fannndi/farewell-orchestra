@@ -1,6 +1,8 @@
 ---
 name: error-handler
 description: Error classification + recovery. Handle errors differently based on type.
+activation: When error occurs
+trigger: Sub-agent returns error
 ---
 
 # Error Handler

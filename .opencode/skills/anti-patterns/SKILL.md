@@ -1,6 +1,8 @@
 ---
 name: anti-patterns
 description: Database of over-engineering patterns. Flag kalau nemu.
+activation: When reviewing code
+trigger: Reviewer finds complexity
 ---
 
 # Anti-Patterns Database

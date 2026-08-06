@@ -1,6 +1,8 @@
 ---
 name: tdd
 description: Test-driven development. Red-green-refactor loop.
+activation: When writing tests
+trigger: Executor writes tests
 ---
 
 # TDD — Test-Driven Development

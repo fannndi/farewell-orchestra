@@ -1,6 +1,8 @@
 ---
 name: code-review
 description: Two-axis review: Standards + Spec. Parallel sub-agents.
+activation: When reviewing PR
+trigger: PR/branch exists
 ---
 
 # Code Review

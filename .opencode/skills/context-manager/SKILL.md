@@ -1,6 +1,8 @@
 ---
 name: context-manager
 description: Context prioritization. Manage context across sessions.
+activation: When context full
+trigger: Context window full
 ---
 
 # Context Manager

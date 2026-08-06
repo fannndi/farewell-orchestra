@@ -1,6 +1,8 @@
 ---
 name: session-state
 description: Track session progress and state across interactions.
+activation: At session start
+trigger: Session start
 ---
 
 # Session State

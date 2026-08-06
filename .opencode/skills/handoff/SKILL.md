@@ -1,6 +1,8 @@
 ---
 name: handoff
 description: Compact conversation into handoff document for session continuity.
+activation: When session ends
+trigger: Session????
 ---
 
 # Handoff

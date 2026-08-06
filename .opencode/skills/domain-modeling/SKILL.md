@@ -1,6 +1,8 @@
 ---
 name: domain-modeling
 description: Build and sharpen project domain model.
+activation: When domain unclear
+trigger: Terms undefined
 ---
 
 # Domain Modeling

@@ -1,6 +1,8 @@
 ---
 name: complexity-budget
 description: Limit complexity per feature. Kalau melebihi, pecah atau sederhanakan.
+activation: When checking limits
+trigger: Reviewer checks budget
 ---
 
 # Complexity Budget

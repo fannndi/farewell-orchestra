@@ -1,6 +1,8 @@
 ---
 name: feedback-loop
 description: Learn from results and improve over time.
+activation: After task complete
+trigger: Task selesai
 ---
 
 # Feedback Loop

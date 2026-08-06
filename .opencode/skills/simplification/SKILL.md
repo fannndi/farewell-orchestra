@@ -1,6 +1,8 @@
 ---
 name: simplification
 description: Guide untuk menyederhanakan kode yang sudah ada.
+activation: When code is complex
+trigger: Reviewer flags complexity
 ---
 
 # Simplification Guide

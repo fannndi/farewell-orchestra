@@ -1,6 +1,8 @@
 ---
 name: progress-tracker
 description: Persistent task tracking. Track progress across sessions.
+activation: After task completion
+trigger: Task selesai
 ---
 
 # Progress Tracker

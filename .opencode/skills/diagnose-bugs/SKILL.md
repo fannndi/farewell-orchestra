@@ -1,6 +1,8 @@
 ---
 name: diagnose-bugs
 description: Disciplined diagnosis loop for hard bugs.
+activation: When debugging
+trigger: Bug reported
 ---
 
 # Diagnose Bugs

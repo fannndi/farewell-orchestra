@@ -1,6 +1,8 @@
 ---
 name: agent-protocol
 description: Communication standard between agents.
+activation: When agents communicate
+trigger: Agent dispatch
 ---
 
 # Agent Protocol

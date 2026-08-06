@@ -1,6 +1,8 @@
 ---
 name: task-priority
 description: Prioritize tasks based on impact and urgency.
+activation: When multiple tasks
+trigger: Multiple tasks
 ---
 
 # Task Priority

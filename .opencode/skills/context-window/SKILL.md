@@ -1,6 +1,8 @@
 ---
 name: context-window
 description: Optimize context window usage for LLM efficiency.
+activation: When context full
+trigger: Context >80%
 ---
 
 # Context Window

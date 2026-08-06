@@ -1,6 +1,8 @@
 ---
 name: quality-gates
 description: Quality checks before marking task as done.
+activation: Before reporting done
+trigger: Executor selesai
 ---
 
 # Quality Gates

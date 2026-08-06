@@ -1,6 +1,8 @@
 ---
 name: bootstrap-project
 description: Use when starting work on a sub-project — generate docs via reverse engineering or update existing.
+activation: When project has no docs
+trigger: No docs found
 ---
 
 # Bootstrap Project Docs

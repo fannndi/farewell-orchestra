@@ -1,6 +1,8 @@
 ---
 name: agent-monitor
 description: Track agent performance and identify improvements.
+activation: When checking performance
+trigger: Performance check
 ---
 
 # Agent Monitor
