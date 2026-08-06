@@ -278,9 +278,7 @@ def generate(profile_name, to_stdout=False):
         "instructions": ["AGENTS.md", "cross-project/guide.md", ".opencode/soul.md"],
         "subagent_depth": 2,
         "share": "disabled",
-        "shell": "pwsh",
         "snapshot": True,
-        "enabled_providers": ["9router"],
         "permission": {
             "doom_loop": "deny",
             "edit": "ask",
