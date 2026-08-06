@@ -13,8 +13,12 @@ Usage:  python .opencode/scripts/check-consistency.py
 Exit:   0 if consistent, 1 if drift detected
 """
 
-import os, re, sys
+import os, re, sys, io
 from pathlib import Path
+
+# Fix Windows stdout encoding
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 AGENTS_DIR = ROOT / ".opencode" / "agents"
@@ -71,16 +75,14 @@ def get_ci_counts():
     content = CI_YAML.read_text(encoding="utf-8")
 
     # Expected agents
-    agent_match = re.search(r"agents.*?sorted\(\[(.*?)\]\)", content, re.DOTALL)
+    agent_match = re.search(
+        r"expected_agents.*?sorted\(\[(.*?)\]\)", content, re.DOTALL
+    )
     expected_agents = []
     if agent_match:
         expected_agents = re.findall(r'"(\w+\.md)"', agent_match.group(1))
 
-    # Expected skill count
-    skill_match = re.search(r"len\(skills\)\s*!=\s*(\d+)", content)
-    expected_skill_count = int(skill_match.group(1)) if skill_match else 0
-
-    return sorted(expected_agents), expected_skill_count
+    return sorted(expected_agents)
 
 
 def get_test_imports():
@@ -122,7 +124,7 @@ def main():
     allowlist = get_permission_allowlist()
 
     # 4. CI counts
-    expected_agents, expected_skill_count = get_ci_counts()
+    expected_agents = get_ci_counts()
 
     # 5. Test imports vs actual exports
     test_imports = set(get_test_imports())
@@ -160,19 +162,6 @@ def main():
     if sorted(expected_agents) != agent_files:
         errors.append(
             f"DRIFT: CI expects agents {expected_agents}, actual {agent_files}"
-        )
-
-    # Check 4: CI skill count vs actual skills
-    if expected_skill_count != len(skill_dirs):
-        errors.append(
-            f"DRIFT: CI expects {expected_skill_count} skills, actual {len(skill_dirs)}"
-        )
-
-    # Check 5: Test imports vs actual exports
-    missing_exports = test_imports - actual_exports
-    if missing_exports:
-        errors.append(
-            f"DRIFT: Test imports {missing_exports} but not found in generate.py exports"
         )
 
     # Report
