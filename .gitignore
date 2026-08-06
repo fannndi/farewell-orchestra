@@ -53,3 +53,6 @@ profiles/backups/
 
 # Generated config (not tracked)
 /opencode.jsonc
+
+# Leftover tools
+.codenomad/
