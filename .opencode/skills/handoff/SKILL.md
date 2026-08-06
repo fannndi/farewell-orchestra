@@ -86,3 +86,51 @@ IN_PROGRESS
 2. Add refresh token mechanism
 3. Write integration tests
 ```
+
+## Cross-Project Handoff
+
+Kalau handoff melibatkan project lain:
+
+### Additional Fields
+```markdown
+## Project Context
+- **Project Path:** [absolute path]
+- **Project Type:** [Flutter/Node/Python/Rust/Go]
+- **Tech Stack:** [framework, language, packages]
+- **Docs Status:** [5/5 core, 3/5 core, etc.]
+
+## Permission Status
+- [ ] Path di external_directory
+- [ ] Sub-agents bisa akses
+- [ ] Executor punya bash commands
+
+## Session Memory
+- sub-project.md updated? [yes/no]
+- Agent memory updated? [yes/no]
+```
+
+### Handoff Checklist
+- [ ] sub-project.md updated dengan latest context
+- [ ] Agent memory updated (1 baris per agent)
+- [ ] Decisions documented
+- [ ] Next steps spesifik
+- [ ] Permission status documented
+
+## Auto-Handoff Triggers
+
+1. Context window > 80% full
+2. Session > 30 menit
+3. Task selesai → report + handoff
+4. Blocker ditemukan → handoff dengan blocker info
+
+## Handoff File Location
+
+Save handoff to:
+```
+<project>/docs/handoff-<date>.md
+```
+
+Or if no docs directory:
+```
+<project>/HANDOFF.md
+```

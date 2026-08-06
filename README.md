@@ -157,6 +157,39 @@ farewell-orchestra/
 | Hooks | 3 |
 | Tools | 6 |
 
+## Cross-Project Support
+
+Farewell Orchestra can handle projects outside its own directory:
+
+### Supported Project Types
+- **Flutter/Dart** — pubspec.yaml, flutter test, flutter build
+- **Node.js** — package.json, npm test, npm run build
+- **Python** — requirements.txt/pyproject.toml, pytest, python -m build
+- **Rust** — Cargo.toml, cargo test, cargo build
+- **Go** — go.mod, go test, go build
+
+### Automation Scripts
+- `verify-docs.ps1` — Check docs completeness
+- `project-health.ps1` — Project health score
+- `project-dashboard.ps1` — Project overview
+- `generate-sub-project.ps1` — Auto-generate sub-project.md
+- `detect-project-type.ps1` — Detect project type
+- `auto-deps.ps1` — Auto-install dependencies
+- `auto-test.ps1` — Auto-run tests
+
+### Templates
+- `.opencode/templates/flutter/` — Flutter architecture + docs
+- `.opencode/templates/nodejs/` — Node.js architecture
+- `.opencode/templates/python/` — Python architecture
+- `.opencode/templates/rust/` — Rust architecture
+- `.opencode/templates/go/` — Go architecture
+
+### Checklists
+- `.opencode/checklists/cross-project.md` — Pre-flight + docs gen
+
+### Lessons Learned
+- `.opencode/lessons/git-watcher-2026-08-06.md` — First cross-project experience
+
 ## License
 
 MIT

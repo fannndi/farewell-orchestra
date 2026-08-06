@@ -96,3 +96,45 @@ Track performa agent dan identifikasi improvement.
 1. Add TDD skill untuk executor
 2. Improve search strategy untuk researcher
 ```
+
+## Cross-Project Agent Monitoring
+
+### Agent Performance Tracking
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Success rate | >90% | Tasks completed / tasks attempted |
+| Avg time | <5min | Time from dispatch to completion |
+| Error rate | <10% | Errors / total tasks |
+| Permission issues | <5% | Permission errors / total tasks |
+
+### Agent Health Check
+
+Before dispatching:
+1. Check agent is alive (ping)
+2. Check agent has correct permissions
+3. Check agent has required skills loaded
+4. Check context window is not full
+
+### Performance Issues
+
+| Issue | Symptom | Fix |
+|-------|---------|-----|
+| Slow response | >5min timeout | Reduce scope, re-chunk |
+| High error rate | >20% errors | Check prompts, add examples |
+| Permission errors | Frequent blocks | Update external_directory |
+| Context overflow | Agent crashes | Prune context, compress |
+
+### Agent Improvement Log
+
+Track improvements over time:
+```
+[date] — [agent] — [improvement] — [result]
+```
+
+Example:
+```
+2026-08-06 — researcher — Added permission pre-check — 0 permission errors
+2026-08-06 — reviewer — Added file access patterns — Faster reviews
+2026-08-06 — executor — Added Flutter commands — Can test Flutter projects
+```

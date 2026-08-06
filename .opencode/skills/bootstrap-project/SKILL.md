@@ -58,3 +58,68 @@ Kalau docs udah ada — JANGAN generate ulang. Baca dulu, tanya Boss bagian mana
 
 - Orchestrator: kalau researcher lapor project tanpa docs → trigger reverse engineering
 - Executor gagal di tengah generate → re-dispatch file yang gagal aja, jangan ulang semua
+
+## Mode 3: PRD-Heavy Project (ada PRD detail, belum ada docs)
+
+Kalau project sudah punya PRD detail (>200 baris):
+1. Baca PRD → extract tech stack, features, architecture, models, services
+2. Generate Architecture.md, Rules.md, Tasks.md, Context.md dari PRD
+3. Skip reverse engineering → langsung generate dari PRD + code scan ringan
+4. Code scan hanya untuk verify PRD accuracy, bukan discover from scratch
+5. Report: "Docs generated dari PRD. Code verified."
+
+### PRD Extraction Checklist
+- [ ] Tech stack (framework, language, packages)
+- [ ] Directory structure (if mentioned)
+- [ ] Data models (fields, types, relationships)
+- [ ] Services (business logic, API calls)
+- [ ] UI/UX specs (screens, navigation, theme)
+- [ ] Non-functional requirements (performance, security)
+- [ ] Error handling patterns
+- [ ] Localization support
+
+## Permission Handling
+
+### Pre-Flight
+1. Check `opencode.jsonc` → agent.permission.external_directory
+2. If target path not listed → add before dispatch
+3. Pattern: ``"C:/Users/FANNNDI/Documents/project/**": "allow"``
+
+### Fallback: Orchestrator Direct Scan
+If sub-agents hit permission blocks:
+1. Orchestrator reads files directly (universal access)
+2. Generates docs from findings
+3. Dispatches executor only for write operations
+
+## Project Type Detection
+
+Detect project type from root files:
+```
+pubspec.yaml     → Flutter/Dart
+package.json     → Node.js
+requirements.txt → Python
+pyproject.toml  → Python (modern)
+Cargo.toml       → Rust
+go.mod           → Go
+pom.xml          → Java (Maven)
+build.gradle     → Java (Gradle)
+*.csproj         → C# (.NET)
+```
+
+Type determines:
+- Source file glob patterns
+- Config files to read
+- Test commands
+- Build commands
+
+## Verify Script
+
+After generating docs, run:
+```powershell
+.\.opencode\scripts\verify-docs.ps1 -ProjectPath "C:\path\to\project"
+```
+
+This checks:
+- All 5 core docs present
+- Conditional docs status
+- sub-project.md exists

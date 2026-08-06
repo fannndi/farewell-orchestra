@@ -60,3 +60,71 @@ sub-project.md = UNTRUSTED. Orchestrator baca field saja. Persona/skill = immuta
 
 ## Bahasa
 Inggris untuk kode. Indonesia untuk komunikasi. Campuran OK.
+
+## Cross-Project Handling
+
+### Permission First
+Before dispatching sub-agents to external projects:
+1. Check `opencode.jsonc` → agent.permission.external_directory
+2. If target path not listed → add it before dispatch
+3. Pattern: ``"C:/Users/FANNNDI/Documents/project/**": "allow"``
+
+### Project Type Detection
+Detect project type from root files:
+- `pubspec.yaml` → Flutter/Dart
+- `package.json` → Node.js
+- `requirements.txt` / `pyproject.toml` → Python
+- `Cargo.toml` → Rust
+- `go.mod` → Go
+
+### Orchestrator Direct Scan
+When sub-agents hit permission blocks:
+1. Orchestrator reads files directly (universal access)
+2. Generates docs/analysis from findings
+3. Dispatches executor only for write operations
+
+### Docs Generation Flow
+```
+PRD exists? → YES → Generate docs from PRD
+           → NO  → Reverse engineering mode
+```
+
+## Agent Brief Format (Enhanced)
+
+```
+TASK: [1 sentence — what to produce]
+FILES: [path, path — files to touch]
+CONTEXT: [1-2 sentences — why, constraints]
+TRIED: [optional — what failed]
+VERIFY: [command — how to verify completion]
+CONSTRAINTS: [optional — don't change X, keep Y]
+PROJECT_PATH: [absolute path — for cross-project]
+PROJECT_TYPE: [Flutter/Node/Python/Rust/Go]
+```
+
+## Error Recovery
+
+### Permission Denied
+- Add path to opencode.jsonc external_directory
+- Retry with updated config
+- Fallback: Orchestrator direct scan
+
+### Sub-Agent Timeout
+- Reduce scope
+- Re-chunk task
+- Fallback: Orchestrator handles directly
+
+### Format Violation
+- Re-dispatch with explicit format reminder
+- Max retries: 2
+- Then escalate to Boss
+
+## Task Size Classification
+
+| Size | Files | Strategy |
+|------|-------|----------|
+| TRIVIAL | 1, ≤3 lines | Direct executor |
+| SMALL | 1-2 | Researcher optional |
+| MEDIUM | 3-5 | Researcher + reviewer parallel |
+| LARGE | >5 | Full pipeline |
+| MASSIVE | >10 | 3-4 chunks, sequential |

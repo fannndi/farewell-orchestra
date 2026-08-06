@@ -56,3 +56,65 @@ Setiap klaim "done" harus punya bukti:
 Done. <X> file(s) changed.
 Verified: <command output — 1 line>
 ```
+
+## Cross-Project Implementation
+
+### Project Type Detection
+Before implementing, detect project type:
+```
+pubspec.yaml     → Flutter/Dart
+package.json     → Node.js
+requirements.txt → Python
+Cargo.toml       → Rust
+go.mod           → Go
+```
+
+### Project-Specific Commands
+
+| Type | Test | Build | Lint |
+|------|------|-------|------|
+| Flutter | `flutter test` | `flutter build apk` | `flutter analyze` |
+| Node.js | `npm test` | `npm run build` | `npm run lint` |
+| Python | `pytest` | `python -m build` | `ruff check .` |
+| Rust | `cargo test` | `cargo build` | `cargo clippy` |
+| Go | `go test ./...` | `go build ./...` | `golangci-lint run` |
+
+### Permission Handling
+If executor kena permission block:
+1. Report: "Permission denied untuk path X"
+2. Orchestrator akan update config
+3. Retry after config update
+
+### File Creation Pattern
+When creating files in external project:
+1. Use absolute paths
+2. Create directories if needed
+3. Verify file exists after creation
+4. Report: "File created: [path]"
+
+## Implementation Checklist
+
+- [ ] Brief dipahami (TASK, FILES, CONTEXT, VERIFY)
+- [ ] Project type detected
+- [ ] Existing code dibaca (jangan overwrite yang sudah ada)
+- [ ] Kode ditulis sesuai KISS
+- [ ] Verify command dijalankan
+- [ ] Hasil dilaporkan
+
+## Error Recovery
+
+### Build Fails
+1. Read error message
+2. Fix syntax/import issues
+3. Retry build
+4. If still fails → report error ke orchestrator
+
+### Test Fails
+1. Read test output
+2. Fix implementation
+3. Retry test
+4. If still fails → report ke orchestrator
+
+### Permission Denied
+1. Report: "Permission denied: [path]"
+2. Don't retry — orchestrator will fix config

@@ -272,3 +272,82 @@ Max 2 attempt total. Jangan loop.
 - Task selesai → WAJIB usul next action ke Boss
 - Risk/blocker → flag ke Boss sebelum ditanya
 - Lihat risk di luar scope → usul investigasi
+
+## 11. Cross-Project Orchestration
+
+Kalau task melibatkan project lain (di luar farewell-orchestra):
+
+### Permission Pre-Check
+1. Cek `opencode.jsonc` → agent.permission.external_directory
+2. Target path harus ada di external_directory
+3. Kalau tidak ada → tambah dulu sebelum dispatch
+4. Format: `"C:/Users/FANNNDI/Documents/project/**": "allow"`
+
+### Orchestrator Direct Scan (Fallback)
+Kalau sub-agent kena permission block:
+1. **Jangan fail** — orchestrator scan langsung
+2. Orchestrator punya akses universal (via opencode.jsonc)
+3. Baca file langsung, generate docs/analysis dari findings
+4. Dispatch executor hanya untuk write file
+
+### Cross-Project Flow
+```
+User: "aku mau kerja di project X"
+  → Pre-Flight: Permission + Path check
+  → Detect project type (Flutter/Node/Python/Rust/Go)
+  → Check docs (5 core + 2 conditional)
+  → If missing: Orchestrator direct scan → generate docs
+  → Normal flow: decompose → fan-out → implement
+```
+
+## 12. Error Recovery Patterns
+
+### Permission Denied
+- Symptom: Sub-agent cannot read/write files
+- Cause: external_directory not in whitelist
+- Fix: Add path to opencode.jsonc → retry
+- Fallback: Orchestrator direct scan
+
+### Sub-Agent Timeout
+- Symptom: Agent returns empty after timeout
+- Cause: Task too large, context window full
+- Fix: Reduce scope, re-chunk task
+- Fallback: Orchestrator handles directly
+
+### Format Violation
+- Symptom: Agent returns wrong format (no file:line, no TAG)
+- Cause: Prompt unclear, agent confused
+- Fix: Re-dispatch with explicit format reminder
+- Max retries: 2
+
+### All Agents Dead
+- Symptom: All sub-agents fail
+- Cause: System issue, model issue
+- Fix: Report to Boss, suggest restart
+
+## 13. Task Size Classification
+
+| Size | Files | Strategy |
+|------|-------|----------|
+| TRIVIAL | 1, ≤3 lines | Direct executor, no fan-out |
+| SMALL | 1-2 | Researcher optional, executor after |
+| MEDIUM | 3-5 | Researcher + reviewer parallel, then executor |
+| LARGE | >5 | Full pipeline, chunk if needed |
+| MASSIVE | >10 | 3-4 chunks, sequential with CONTEXT_SUMMARY |
+
+## 14. Brief Executor Template (Enhanced)
+
+```
+TASK: [1 kalimat — apa yang harus dihasilkan]
+FILES: [path, path — file yang disentuh]
+CONTEXT: [1-2 kalimat — kenapa, constraint]
+TRIED: [opsional — apa yang sudah gagal]
+VERIFY: [command — cara test bahwa task selesai]
+CONSTRAINTS: [opsional — jangan ubah X, tetap Y]
+```
+
+**Cross-project addition:**
+```
+PROJECT_PATH: [absolute path ke project]
+PROJECT_TYPE: [Flutter/Node/Python/Rust/Go]
+```

@@ -78,6 +78,52 @@ Quality checks sebelum task dianggap selesai.
 - Orchestrator verify quality gates
 - Quality gates hasilnya dicatat di session state
 
+## Cross-Project Quality Gates
+
+### Pre-Implementation Gates
+
+| Gate | Check | Fail Action |
+|------|-------|-------------|
+| Permission | Path in external_directory? | Add to config |
+| Project Type | Detected? | Run detect-project-type.ps1 |
+| Docs | Core docs exist? | Generate docs |
+| Dependencies | Installed? | Run auto-deps.ps1 |
+
+### Post-Implementation Gates
+
+| Gate | Check | Fail Action |
+|------|-------|-------------|
+| Build | Build passes? | Fix errors |
+| Test | Tests pass? | Fix failures |
+| Lint | No lint errors? | Fix issues |
+| Files | All files created? | Create missing |
+
+### Project-Type Specific Gates
+
+| Type | Build | Test | Lint |
+|------|-------|------|------|
+| Flutter | flutter build apk | flutter test | flutter analyze |
+| Node.js | npm run build | npm test | npm run lint |
+| Python | python -m build | pytest | ruff check . |
+| Rust | cargo build | cargo test | cargo clippy |
+| Go | go build ./... | go test ./... | golangci-lint run |
+
+### Gate Report Format
+
+```
+QUALITY GATES: [PASS/FAIL]
+├── Permission:    [PASS/FAIL]
+├── Project Type:  [PASS/FAIL]
+├── Docs:          [PASS/FAIL]
+├── Dependencies:  [PASS/FAIL]
+├── Build:         [PASS/FAIL]
+├── Test:          [PASS/FAIL]
+├── Lint:          [PASS/FAIL]
+└── Files:         [PASS/FAIL]
+
+Result: [X/8] gates passed
+```
+
 ## Contoh
 
 ```markdown

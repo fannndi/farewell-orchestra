@@ -101,3 +101,46 @@ Error classification + recovery. Handle errors differently based on type.
 [ERROR] Permission denied ke production database
 [ESCALATE] Butuh akses database dari Boss
 ```
+
+## Cross-Project Error Handling
+
+### Permission Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| "Permission denied" | Path not in whitelist | Add to opencode.jsonc external_directory |
+| "Cannot access" | Invalid path | Verify path exists |
+| "Access denied" | File locked | Wait and retry |
+
+### Agent Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| Agent timeout | Task too large | Reduce scope, re-chunk |
+| Agent empty response | Model issue | Retry once, then escalate |
+| Agent wrong format | Prompt unclear | Re-dispatch with format reminder |
+| Agent crash | System issue | Report to Boss |
+
+### File Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| File not found | Wrong path | Verify path, retry |
+| File exists | Already created | Skip or overwrite |
+| Directory not found | Missing parent | Create directory first |
+
+### Recovery Strategy
+
+1. **Permission errors** — fix config, retry
+2. **Agent errors** — retry once, then escalate
+3. **File errors** — fix path/permissions, retry
+4. **System errors** — report to Boss, suggest restart
+
+### Error Reporting Format
+
+```
+[ERROR] [type] — [description]
+  Cause: [root cause]
+  Fix: [solution]
+  Status: [fixed/needs attention/escalated]
+```

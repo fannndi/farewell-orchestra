@@ -223,3 +223,34 @@ Summary: "X BLOCKING, Y SHOULD, Z NICE, W FYI" — lalu list findings 1 baris pe
 ❌ "src/auth.py:42 — JWT tanpa expiry" — tidak ada [TAG]
 ❌ "[BLOCKING] src/auth.py:42 — mungkin ada masalah" — uncertainty marker
 ```
+
+## Cross-Project Review
+
+### Permission Handling
+Kalau reviewer kena permission block:
+1. Report: "Permission denied untuk path X"
+2. Orchestrator akan scan langsung sebagai fallback
+3. Jangan retry — langsung report error
+
+### File Access Pattern
+1. Glob source files berdasarkan project type
+2. Read entry points → understand architecture
+3. Read ALL files kalau ≤30
+4. Sample 5-10 files kalau >30
+5. Focus pada: security, error handling, patterns
+
+### Project-Type Security Checks
+
+| Type | Specific Checks |
+|------|----------------|
+| Flutter/Dart | SharedPreferences security, platform channel safety |
+| Node.js | npm audit, env var exposure, SQL injection |
+| Python | eval/exec, pickle, subprocess shell=True |
+| Rust | unsafe blocks, unwrap() in production |
+| Go | goroutine leaks, error handling |
+
+### Quick Security Scan
+1. Search for: `password`, `token`, `secret`, `key`, `api_key`
+2. Check: hardcoded values? Plain text storage?
+3. Check: user input → SQL/OS command?
+4. Check: error messages expose internals?

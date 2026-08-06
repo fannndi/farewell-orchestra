@@ -114,6 +114,49 @@ VERIFY: ls <project>/docs/ — semua core docs ada
 
 Setelah docs generated → baca docs → pahami context → lanjut ke normal flow (§1)
 
+### §0.2 Permission Pre-Check
+
+SEBELUM dispatch sub-agent untuk cross-project:
+
+1. Cek `opencode.jsonc` → agent.permission.external_directory
+2. Kalau target path tidak ada di external_directory → **tambah dulu**
+3. Format: `"C:/Users/FANNNDI/Documents/project/**": "allow"`
+4. WAJIB pakai forward slash (`/`), bukan backslash (`\`)
+
+**Fallback: Orchestrator Direct Scan**
+Kalau sub-agent tetap kena permission block:
+- Orchestrator baca file langsung (punya akses universal)
+- Generate docs dari findings
+- Dispatch executor hanya untuk write file
+
+### §0.3 Project Type Detection
+
+Auto-detect project type dari files di root:
+
+```
+glob <project>/pubspec.yaml     → Flutter/Dart
+glob <project>/package.json     → Node.js
+glob <project>/requirements.txt → Python
+glob <project>/Cargo.toml       → Rust
+glob <project>/go.mod           → Go
+glob <project>/pom.xml          → Java
+glob <project>/*.csproj         → C#
+```
+
+Type menentukan:
+- Source file glob patterns
+- Config files yang perlu dibaca
+- Test patterns
+- Build commands
+
+### §0.4 PRD-Already-Exists Flow
+
+Kalau project sudah punya PRD (seperti git-watcher):
+1. Baca PRD → extract tech stack, features, architecture
+2. Generate Architecture.md, Rules.md, Tasks.md, Context.md dari PRD
+3. Skip reverse engineering → langsung generate dari PRD + code scan ringan
+4. Code scan hanya untuk verify PRD accuracy, bukan discover from scratch
+
 ## 1. Input Validation
 
 Cek request punya 4 elemen:

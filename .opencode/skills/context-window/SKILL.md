@@ -86,3 +86,51 @@ Kalau context penuh:
 - Context manager gunakan skill ini
 - Orchestrator compress context sebelum dispatch
 - Sub-agents dapat context sesuai budget
+
+## Cross-Project Context Management
+
+### Context Priority
+When working on cross-project tasks:
+
+1. **Project info** — path, type, tech stack (always keep)
+2. **Current task** — what is being worked on (always keep)
+3. **Agent status** — what each agent is doing (keep latest)
+4. **File contents** — only keep relevant files (prune old)
+5. **Error messages** — keep until resolved, then prune
+
+### Context Compression Strategy
+
+| Context Type | Keep | Prune |
+|--------------|------|-------|
+| Project path | Always | Never |
+| Current task | Always | Never |
+| Agent status | Latest only | Old status |
+| File contents | Relevant only | Old files |
+| Error messages | Until resolved | After fix |
+| Debug output | Never | Always |
+
+### Cross-Project Context Switch
+
+When switching between projects:
+1. Save current project context to sub-project.md
+2. Load new project context from sub-project.md
+3. Clear old file contents from context
+4. Keep: project path, task, agent status
+
+### Context Window Size Estimation
+
+| Content Type | Size (tokens) |
+|--------------|---------------|
+| Project path | ~10 |
+| Task description | ~50-100 |
+| Agent status (1) | ~20 |
+| File content (100 lines) | ~500 |
+| Error message | ~50-100 |
+| Full codebase (26 files) | ~15000 |
+
+### Auto-Prune Rules
+
+1. File contents > 1000 lines → summarize
+2. Error messages > 5 → keep latest 3
+3. Agent status > 3 → keep latest
+4. Debug output → always prune
