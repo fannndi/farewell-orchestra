@@ -1,9 +1,16 @@
 // Hooks configuration — event-driven lifecycle hooks
 // Architecture: Zero-inspired. command+args[] separate, stdin JSON payload, exit codes
-// Events: afterGenerate, beforeCommit
+// Events: afterGenerate, beforeCommit, afterSessionStart
 {
   "enabled": true,
   "hooks": [
+    {
+      "id": "auto-load-skills",
+      "event": "afterSessionStart",
+      "command": "python",
+      "args": [".opencode/tools/auto-load-skills.py"],
+      "enabled": true
+    },
     {
       "id": "post-generate",
       "event": "afterGenerate",
