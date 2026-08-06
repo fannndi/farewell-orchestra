@@ -274,7 +274,7 @@ def generate(profile_name, to_stdout=False):
     config = {
         "$schema": "https://opencode.ai/config.json",
         "default_agent": "orchestrator",
-        "instructions": ["AGENTS.md"],
+        "instructions": ["AGENTS.md", "cross-project/guide.md", ".opencode/soul.md"],
         "subagent_depth": 2,
         "share": "disabled",
         "permission": {
@@ -396,8 +396,22 @@ def generate(profile_name, to_stdout=False):
                 "max_base64_bytes": 5242880,
             }
         },
-        "lsp": False,
-        "formatter": True,
+        "lsp": {
+            "typescript": {
+                "command": "typescript-language-server",
+                "args": ["--stdio"],
+            },
+        },
+        "formatter": {
+            "default": "prettier",
+            "languages": {
+                "typescript": "prettier",
+                "javascript": "prettier",
+                "json": "prettier",
+                "markdown": "prettier",
+                "python": "black",
+            },
+        },
         "model": model,
         "agent": build_agent_config(profile),
     }
