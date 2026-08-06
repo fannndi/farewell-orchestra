@@ -5,11 +5,13 @@ on:
     paths:
       - "profiles/**"
       - "tests/**"
+      - ".opencode/**"
       - ".github/workflows/ci.yaml"
   pull_request:
     paths:
       - "profiles/**"
       - "tests/**"
+      - ".opencode/**"
       - ".github/workflows/ci.yaml"
 
 permissions:
@@ -27,6 +29,9 @@ jobs:
 
       - run: pip install pytest
 
+      - name: Consistency check (drift detection)
+        run: python .opencode/scripts/check-consistency.py
+
       - name: Validate structure
         shell: bash
         run: |
@@ -35,16 +40,14 @@ jobs:
 
           errors = []
 
-          # .opencode/agents/*.md (5 — termasuk boss.md sebagai reference)
+          # .opencode/agents/*.md
           agents = sorted(f for f in os.listdir(".opencode/agents") if f.endswith(".md"))
           expected_agents = sorted(["boss.md", "executor.md", "orchestrator.md", "researcher.md", "reviewer.md"])
           if agents != expected_agents:
               errors.append(f"agents mismatch: {agents}")
 
-          # .opencode/skills/*/SKILL.md (10)
+          # .opencode/skills/*/SKILL.md
           skills = sorted(os.listdir(".opencode/skills"))
-          if len(skills) != 10:
-              errors.append(f"skills count != 10: {len(skills)}")
           for s in skills:
               if not os.path.isfile(os.path.join(".opencode/skills", s, "SKILL.md")):
                   errors.append(f"missing .opencode/skills/{s}/SKILL.md")
@@ -54,7 +57,7 @@ jobs:
           if not cmds:
               errors.append("no .md files in .opencode/command")
 
-          # profiles/profiles.json exists + JSON parseable
+          # profiles/profiles.json
           if not os.path.isfile("profiles/profiles.json"):
               errors.append("missing profiles/profiles.json")
           else:
