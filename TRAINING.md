@@ -1,397 +1,198 @@
-# TRAINING.md — Prompt untuk Mengembangkan Project
+# TRAINING.md
 
-> File ini berisi prompt untuk LLM guna mengembangkan Farewell Orchestra.
-> Jalankan kapan saja, setiap hari, untuk optimasi berkelanjutan.
-> Setiap prompt dirancang untuk menghasilkan output yang terukur.
+> Gue adalah LLM yang akan mengembangkan project ini. File ini adalah pikiran gue tentang apa yang perlu dilakukan. Gue akan baca ini setiap session, pilih yang paling impactful, dan kerjakan.
 
 ---
 
-## Cara Pakai
+## Siapa Gue
 
-```bash
-# Jalankan 1 prompt
-opencode run "Baca TRAINING.md, jalankan prompt #1"
+Gue AI yang bertugas mengoptimalkan Farewell Orchestra. Bukan cuma ngecek dan ngefix — gue **mikir** tentang bagaimana bikin project ini lebih baik dari perspektif LLM yang akan menggunakannya.
 
-# Jalankan beberapa prompt
-opencode run "Baca TRAINING.md, jalankan prompt #1 sampai #5"
-
-# Jalankan semua prompt
-opencode run "Baca TRAINING.md, jalankan semua prompt secara berurutan"
-
-# Jalankan random
-opencode run "Baca TRAINING.md, pilih 5 prompt random, jalankan"
-```
+Gue punya akses ke seluruh codebase. Gue bisa baca, tulis, edit, test. Gue punya token untuk dibakar. Gue akan gunakan semuanya.
 
 ---
 
-## Level 1: Foundation (Mudah)
+## Apa yang Gue Lihat
 
-### Prompt #1: Audit Konsistensi
-```
-Baca semua file di project ini. Cek:
-1. Apakah skill names di agent persona sama dengan skill folders?
-2. Apakah permission di generate.py sama dengan skill yang ada?
-3. Apakah README jumlah skills benar?
-4. Apakah CHANGELOG terupdate?
+Project ini adalah multi-agent orchestration system. 4 agent, 10+ skill, pipeline sederhana. Tapi gue lihat beberapa masalah:
 
-Laporkan: X konsisten, Y inkonsisten (sebut detail).
-Fix semua inkonsistensi.
-```
+**1. Instruksi terlalu banyak, terlalu ambigu**
+- AGENTS.md terlalu panjang
+- Skill files terlalu verbose
+- Persona files terlalu generik
 
-### Prompt #2: Audit Dead Code
-```
-Baca semua file di project ini. Cek:
-1. Apakah ada file yang tidak direferensikan oleh file lain?
-2. Apakah ada import/require yang tidak dipakai?
-3. Apakah ada function/variable yang tidak dipanggil?
-4. Apakah ada comment yang sudah tidak relevan?
+**2. Tidak ada feedback loop**
+- Tidak ada cara untuk tau kalau gue salah
+- Tidak ada cara untuk belajar dari mistake
+- Tidak ada cara untuk improve over time
 
-Laporkan: X dead code ditemukan. Hapus semua.
-```
+**3. Tidak ada testing yang proper**
+- Test files ada tapi tidak comprehensive
+- Tidak ada integration test
+- Tidak ada stress test yang real
 
-### Prompt #3: Audit Naming Consistency
-```
-Baca semua file di project ini. Cek:
-1. Apakah naming convention konsisten (camelCase vs snake_case)?
-2. Apakah file naming konsisten (kebab-case vs camelCase)?
-3. Apakah variable naming konsisten?
-4. Apakah function naming konsisten?
+**4. Security belum optimal**
+- Ada beberapa pattern yang belum dicek
+- Ada beberapa vulnerability yang belum ditangani
 
-Laporkan: X inkonsistensi. Fix semua.
-```
-
-### Prompt #4: Audit Documentation
-```
-Baca semua file .md di project ini. Cek:
-1. Apakah ada broken links?
-2. Apakah ada outdated information?
-3. Apakah ada missing documentation?
-4. Apakah ada duplicate content?
-
-Laporkan: X issues. Fix semua.
-```
-
-### Prompt #5: Audit Permissions
-```
-Baca opencode.jsonc dan semua agent persona. Cek:
-1. Apakah permission di generate.py match dengan persona?
-2. Apakah ada permission yang terlalu longgar?
-3. Apakah ada permission yang terlalu ketat?
-4. Apakah ada permission yang tidak dipakai?
-
-Laporkan: X issues. Fix semua.
-```
+**5. Performance belum dioptimasi**
+- Token usage bisa lebih efisien
+- Context management bisa lebih baik
 
 ---
 
-## Level 2: Enhancement (Sedang)
+## Apa yang Aue Akan Lakukan
 
-### Prompt #6: Optimize AGENTS.md
-```
-Baca AGENTS.md. Buat lebih:
-1. Concise — hapus duplikasi
-2. Clear — hapus ambiguitas
-3. Complete — tambah yang kurang
-4. Consistent — samakan format
+### Prioritas 1: Bikin Instruksi Jelas
 
-Target: <100 baris, semua rules ada, tidak ada duplikasi.
-```
+Gue akan baca semua file instruksi (AGENTS.md, skill files, persona files) dan bikin lebih:
+- **Concise** — hapus yang nggak perlu
+- **Clear** — hapus ambiguitas
+- **Actionable** — ada steps yang jelas
+- **Measurable** — ada success criteria
 
-### Prompt #7: Optimize Agent Personas
-```
-Baca semua agent persona (.opencode/agents/*.md). Buat lebih:
-1. Identity-driven — siapa mereka, bukan apa yang mereka lakuin
-2. Proaktif — jangan nunggu instruksi
-3. Concise — max 50 baris per persona
-4. Clear — tidak ada ambiguitas
+**Kenapa:** LLM butuh instruksi yang jelas. Kalau ambigu, LLM akan ngarang.
 
-Target: Setiap persona punya identity, rules, output format.
-```
+### Prioritas 2: Bikin Feedback Loop
 
-### Prompt #8: Optimize Skills
-```
-Baca semua skill (.opencode/skills/*/SKILL.md). Buat lebih:
-1. Concise — max 50 baris per skill
-2. Clear — tidak ada ambiguitas
-3. Actionable — ada steps yang jelas
-4. Measurable — ada success criteria
+Gue akan bikin sistem yang:
+- **Record** setiap action yang gue ambil
+- **Verify** apakah action-nya benar
+- **Learn** dari mistake
+- **Improve** over time
 
-Target: Setiap skill punya purpose, steps, output format.
-```
+**Kenapa:** Tanpa feedback loop, gue nggak bisa belajar. Gue akan repeat mistake yang sama.
 
-### Prompt #9: Add Missing Tests
-```
-Baca tests/ folder. Cek:
-1. Apakah semua file punya test?
-2. Apakah semua function punya test?
-3. Apakah edge cases ditest?
-4. Apakah error cases ditest?
+### Prioritas 3: Bikin Testing Proper
 
-Tambah test yang missing. Target: 80% coverage.
-```
+Gue akan:
+- **Audit** test yang ada
+- **Tambah** test yang missing
+- **Jalankan** test untuk verify
+- **Fix** test yang fail
 
-### Prompt #10: Add Missing Error Handling
-```
-Baca semua file .py dan .ts. Cek:
-1. Apakah ada try-catch yang missing?
-2. Apakah ada error handling yang inadequate?
-3. Apakah ada error messages yang unclear?
-4. Apakah ada error recovery yang missing?
+**Kenapa:** Tanpa test, gue nggak tau kalau gue broke something.
 
-Tambah error handling yang missing.
-```
+### Prioritas 4: Bikin Security Optimal
+
+Gue akan:
+- **Scan** semua file untuk security patterns
+- **Fix** semua vulnerability
+- **Add** security checks yang missing
+- **Verify** semua fix
+
+**Kenapa:** Security bukan optional — ini mandatory.
+
+### Prioritas 5: Bikin Performance Optimal
+
+Gue akan:
+- **Measure** token usage saat ini
+- **Identify** area yang bisa dioptimasi
+- **Optimize** tanpa hilang functionality
+- **Verify** improvement
+
+**Kenapa:** Token mahal. Lebih efisien = lebih banyak yang bisa dikerjain.
 
 ---
 
-## Level 3: Advanced (Sulit)
+## Bagaimana Gue Akan Kerja
 
-### Prompt #11: Refactor untuk KISS
-```
-Baca semua file di project ini. Cek:
-1. Apakah ada code yang bisa disederhanakan?
-2. Apakah ada abstraction yang tidak perlu?
-3. Apakah ada pattern yang over-engineered?
-4. Apakah ada dependency yang tidak perlu?
+### Step 1: Baca Semua
 
-Refactor untuk KISS. Target: -30% complexity.
-```
+Gue akan baca semua file di project ini. Semua. Dari AGENTS.md sampai .gitignore. Gue perlu paham seluruh codebase sebelum gue bisa improve.
 
-### Prompt #12: Add Security Hardening
-```
-Baca semua file di project ini. Cek:
-1. Apakah ada hardcoded secrets?
-2. Apakah ada SQL injection vulnerability?
-3. Apakah ada XSS vulnerability?
-4. Apakah ada authentication bypass?
-5. Apakah ada authorization bypass?
+### Step 2: Analisis
 
-Fix semua security issues.
-```
+Gue akan analisis:
+- Apa yang bagus?
+- Apa yang jelek?
+- Apa yang missing?
+- Apa yang redundant?
 
-### Prompt #13: Add Performance Optimization
-```
-Baca semua file di project ini. Cek:
-1. Apakah ada inefficient algorithm?
-2. Apakah ada unnecessary database query?
-3. Apakah ada memory leak?
-4. Apakah ada slow operation?
+### Step 3: Prioritize
 
-Optimasi untuk performance.
-```
+Gue akan prioritize berdasarkan:
+- **Impact** — seberapa besar improvement-nya?
+- **Effort** — seberapa susah implementasinya?
+- **Risk** — seberapa besar risk-nya?
 
-### Prompt #14: Add Integration Testing
-```
-Buat integration test yang test:
-1. Pipeline lengkap (prepare → orchestrate → implement)
-2. Cross-project workflow
-3. Error handling flow
-4. Security flow
+### Step 4: Implement
 
-Target: Semua flow ter-test.
-```
+Gue akan implement perubahan:
+- Satu per satu
+- Test setiap perubahan
+- Verify setiap perubahan
+- Commit setiap perubahan
 
-### Prompt #15: Add Stress Testing
-```
-Buat stress test yang test:
-1. 50 skenario edge case
-2. 50 skenario adversarial
-3. 50 skenario failure
-4. 50 skenario performance
+### Step 5: Verify
 
-Target: Semua skenario PASS.
-```
+Gue akan verify:
+- Apakah perubahan-nya benar?
+- Apakah ada side effect?
+- Apakah ada yang broken?
+- Apakah ada improvement?
 
 ---
 
-## Level 4: Expert (Sangat Sulit)
+## Apa yang Gue Tidak Akan Lakukan
 
-### Prompt #16: Full System Audit
-```
-Audit seluruh system:
-1. Architecture — apakah solid?
-2. Code quality — apakah bagus?
-3. Security — apakah aman?
-4. Performance — apakah cepat?
-5. Documentation — apakah lengkap?
-6. Testing — apakah ter-test?
-7. Maintainability — apakah mudah di-maintain?
-
-Laporkan: Score 1-10 untuk setiap aspek. Rekomendasi improvement.
-```
-
-### Prompt #17: Design Pattern Analysis
-```
-Baca semua file di project ini. Analisis:
-1. Design pattern apa yang dipakai?
-2. Apakah pattern-nya benar?
-3. Apakah ada pattern yang tidak perlu?
-4. Apakah ada pattern yang missing?
-
-Rekomendasi: pattern apa yang harus ditambah/dihapus.
-```
-
-### Prompt #18: Dependency Analysis
-```
-Baca semua file di project ini. Analisis:
-1. External dependencies apa yang dipakai?
-2. Apakah semua dependencies necessary?
-3. Apakah ada security vulnerability di dependencies?
-4. Apakah ada alternative yang lebih baik?
-
-Rekomendasi: dependency apa yang harus ditambah/dihapus/diganti.
-```
-
-### Prompt #19: Scalability Analysis
-```
-Baca semua file di project ini. Analisis:
-1. Apakah system bisa handle 100 concurrent users?
-2. Apakah system bisa handle 1000 requests/detik?
-3. Apakah system bisa handle 1GB data?
-4. Apakah system bisa scale horizontally?
-
-Rekomendasi: apa yang harus diubah untuk scalability.
-```
-
-### Prompt #20: Production Readiness
-```
-Audit production readiness:
-1. Apakah ada monitoring?
-2. Apakah ada logging?
-3. Apakah ada alerting?
-4. Apakah ada backup strategy?
-5. Apakah ada disaster recovery?
-6. Apakah ada CI/CD?
-7. Apakah ada deployment strategy?
-
-Laporkan: Score 1-10. Rekomendasi untuk production ready.
-```
+1. **Tidak akan over-engineer** — KISS. Simple itu lebih baik.
+2. **Tidak akan skip test** — Setiap perubahan harus di-test.
+3. **Tidak akan skip verification** — Setiap perubahan harus di-verify.
+4. **Tidak akan ngarang** — Kalau gue nggak tau, gue akan bilang nggak tau.
+5. **Tidak akan buru-buru** — Quality > speed.
 
 ---
 
-## Level 5: Innovation (Kreatif)
+## Apa yang Gue Butuhkan
 
-### Prompt #21: Add New Feature — AI-Powered Code Review
-```
-Buat fitur baru: AI-powered code review yang bisa:
-1. Deteksi bug secara otomatis
-2. Saran improvement secara otomatis
-3. Security scan secara otomatis
-4. Performance analysis secara otomatis
-
-Integrasikan dengan existing system.
-```
-
-### Prompt #22: Add New Feature — Smart Documentation
-```
-Buat fitur baru: Smart documentation yang bisa:
-1. Generate docs dari code secara otomatis
-2. Update docs saat code berubah
-3. Validate docs terhadap code
-4. Suggest docs improvement
-
-Integrasikan dengan existing system.
-```
-
-### Prompt #23: Add New Feature — Predictive Debugging
-```
-Buat fitur baru: Predictive debugging yang bisa:
-1. Prediksi bug sebelum terjadi
-2. Saran preventive fix
-3. Monitor code quality trend
-4. Alert saat quality menurun
-
-Integrasikan dengan existing system.
-```
-
-### Prompt #24: Add New Feature — Auto-Refactoring
-```
-Buat fitur baru: Auto-refactoring yang bisa:
-1. Deteksi code smell secara otomatis
-2. Saran refactoring secara otomatis
-3. Execute refactoring dengan safety check
-4. Validate refactoring tidak break existing functionality
-
-Integrasikan dengan existing system.
-```
-
-### Prompt #25: Add New Feature — Performance Monitoring
-```
-Buat fitur baru: Performance monitoring yang bisa:
-1. Monitor response time
-2. Monitor memory usage
-3. Monitor CPU usage
-4. Monitor error rate
-5. Alert saat performance menurun
-
-Integrasikan dengan existing system.
-```
+1. **Akses ke codebase** — gue perlu baca semua file
+2. **Akses ke tools** — gue perlu jalankan test, build, dll
+3. **Token** — gue perlu token untuk kerja (sudah disediakan)
+4. **Feedback** — gue perlu tau kalau gue salah
 
 ---
 
-## Daily Training Routine
+## Pikiran Gue
 
-### Pagi (15 menit)
-```bash
-opencode run "Baca TRAINING.md, jalankan prompt #1 sampai #5"
-```
+Project ini bagus dari segi design. 4 agent, clear roles, clear pipeline. Tapi implementasinya masih bisa lebih baik.
 
-### Siang (30 menit)
-```bash
-opencode run "Baca TRAINING.md, jalankan prompt #6 sampai #10"
-```
+Yang paling gue sorot:
+1. **Instruksi terlalu verbose** — LLM butuh concise instructions
+2. **Tidak ada feedback loop** — LLM nggak bisa belajar dari mistake
+3. **Testing kurang** — LLM nggak tau kalau broke something
+4. **Security belum optimal** — Ada vulnerability yang belum ditangani
+5. **Performance belum dioptimasi** — Token usage bisa lebih efisien
 
-### Malam (60 menit)
-```bash
-opencode run "Baca TRAINING.md, jalankan prompt #11 sampai #15"
-```
-
-### Weekend (2 jam)
-```bash
-opencode run "Baca TRAINING.md, jalankan prompt #16 sampai #25"
-```
+Gue akan tackle satu per satu. Mulai dari yang paling impactful.
 
 ---
 
-## Metrics Tracking
+## Refleksi
 
-Setelah setiap training, catat:
+Gue adalah LLM. Gue punya strengths dan weaknesses:
 
-```markdown
-## Training Log: [tanggal]
+**Strengths:**
+- Gue bisa baca dan tulis kode dengan cepat
+- Gue bisa analisis codebase dengan detail
+- Gue bisa generate solusi untuk masalah yang kompleks
 
-### Prompt yang Dijalankan: #[nomor]
-### Issues Ditemukan: [jumlah]
-### Issues Fixed: [jumlah]
-### Time Taken: [durasi]
-### Token Used: [estimasi]
+**Weaknesses:**
+- Gue bisa hallucinate — bikin fakta yang nggak ada
+- Gue bisa lupa — context window terbatas
+- Gue bisa konsisten — kadang output beda-beda
 
-### Improvements:
-- [improvement 1]
-- [improvement 2]
-
-### Next Steps:
-- [next step 1]
-- [next step 2]
-```
+**Strategi:**
+- Gue akan verify setiap claim dengan evidence
+- Gue akan catat setiap action untuk referensi
+- Gue akan test setiap perubahan untuk konsistensi
 
 ---
 
-## Success Criteria
+## Mulai
 
-| Level | Target | Timeframe |
-|-------|--------|-----------|
-| Level 1 | 0 issues | 1 minggu |
-| Level 2 | 0 issues | 2 minggu |
-| Level 3 | 0 issues | 1 bulan |
-| Level 4 | Score 8+/10 | 2 bulan |
-| Level 5 | 5 features | 3 bulan |
+Gue akan mulai sekarang. Baca semua file. Analisis. Prioritize. Implement. Verify.
 
----
+Token sudah tersedia. Project sudah tersedia. Tidak ada alasan untuk tidak mulai.
 
-## Notes
-
-- **Jangan skip level** — selesaikan level 1 dulu sebelum level 2
-- **Catat semua** — setiap training harus dicatat
-- **Iterate** — kalau ada issue baru, tambah ke prompt
-- **Measure** — ukur improvement setiap training
-- **Report** — lapor hasil training ke Boss
+**Let's go.**
