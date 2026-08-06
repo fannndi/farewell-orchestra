@@ -295,12 +295,15 @@ def generate(profile_name, to_stdout=False):
             "skill": {
                 "*": "deny",
                 "prepare": "allow",
+                "orchestrate": "allow",
                 "research": "allow",
                 "review": "allow",
                 "implement": "allow",
-                "orchestrate": "allow",
                 "bootstrap-project": "allow",
-                "customize-opencode": "allow",
+                "kiss-checklist": "allow",
+                "anti-patterns": "allow",
+                "simplification": "allow",
+                "complexity-budget": "allow",
             },
         },
         "references": {

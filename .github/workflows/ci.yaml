@@ -35,15 +35,16 @@ jobs:
 
           errors = []
 
-          # .opencode/agents/*.md (exactly 4)
+          # .opencode/agents/*.md (5 — termasuk boss.md sebagai reference)
           agents = sorted(f for f in os.listdir(".opencode/agents") if f.endswith(".md"))
-          if agents != sorted(["executor.md", "orchestrator.md", "researcher.md", "reviewer.md"]):
+          expected_agents = sorted(["boss.md", "executor.md", "orchestrator.md", "researcher.md", "reviewer.md"])
+          if agents != expected_agents:
               errors.append(f"agents mismatch: {agents}")
 
-          # .opencode/skills/*/SKILL.md (11)
+          # .opencode/skills/*/SKILL.md (10)
           skills = sorted(os.listdir(".opencode/skills"))
-          if len(skills) != 11:
-              errors.append(f"skills count != 11: {len(skills)}")
+          if len(skills) != 10:
+              errors.append(f"skills count != 10: {len(skills)}")
           for s in skills:
               if not os.path.isfile(os.path.join(".opencode/skills", s, "SKILL.md")):
                   errors.append(f"missing .opencode/skills/{s}/SKILL.md")

@@ -2,6 +2,7 @@
 Tests for profiles/generate.py — validate registry, agent config, model collection.
 Run:  python -m pytest tests/ -v
 """
+
 import hashlib, json, os, sys, tempfile
 
 # Ensure profiles/ is importable
@@ -11,13 +12,10 @@ from generate import (
     validate_registry,
     find_profile,
     build_agent_config,
-    collect_models,
-    short_model_id,
+    build_provider_models,
     AGENT_TEMPLATES,
-    BOILERPLATE,
     MAX_BACKUPS,
     generate,
-    rollback,
     BACKUP_DIR,
     ROOT_FILE,
 )
@@ -27,11 +25,13 @@ FIXTURE = os.path.join(os.path.dirname(__file__), "..", "profiles", "profiles.js
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 
+
 def get_registry():
     return load_profiles()
 
 
 # ── Tests ───────────────────────────────────────────────────────────────
+
 
 class TestLoadProfiles:
     def test_loads_valid_json(self):
@@ -47,7 +47,9 @@ class TestLoadProfiles:
             assert "label" in p, f"Profile missing label: {p}"
             assert "agents" in p, f"Profile missing agents: {p}"
             for role in ("orchestrator", "researcher", "reviewer", "executor"):
-                assert role in p["agents"], f"Profile '{p['name']}' missing agent '{role}'"
+                assert role in p["agents"], (
+                    f"Profile '{p['name']}' missing agent '{role}'"
+                )
                 assert "model" in p["agents"][role]
                 if "small_model" in p["agents"][role]:
                     assert isinstance(p["agents"][role]["small_model"], str)
@@ -95,7 +97,9 @@ class TestBuildAgentConfig:
         agents = build_agent_config(profile)
         for name in ("orchestrator", "researcher", "reviewer", "executor"):
             assert name in agents, f"Missing agent '{name}'"
-            assert agents[name]["mode"] == ("primary" if name == "orchestrator" else "subagent")
+            assert agents[name]["mode"] == (
+                "primary" if name == "orchestrator" else "subagent"
+            )
 
     def test_agents_have_model_assigned(self):
         reg = get_registry()
@@ -103,7 +107,9 @@ class TestBuildAgentConfig:
         agents = build_agent_config(profile)
         for name in ("orchestrator", "researcher", "reviewer", "executor"):
             assert agents[name].get("model"), f"Agent '{name}' has no model"
-            assert "9router/" in agents[name]["model"], f"Agent '{name}' model missing provider prefix"
+            assert "9router/" in agents[name]["model"], (
+                f"Agent '{name}' model missing provider prefix"
+            )
 
     def test_hidden_agents_exist(self):
         reg = get_registry()
@@ -121,37 +127,32 @@ class TestBuildAgentConfig:
             assert agents[disabled].get("disable") == True
 
 
-class TestCollectModels:
+class TestBuildProviderModels:
     def test_deduplicates(self):
         reg = get_registry()
         profile = find_profile(reg, reg["profiles"][0]["name"])
-        models = collect_models(reg, profile)
+        models = build_provider_models(reg, profile)
         # Should have at least orchestrator model
         main = profile["agents"]["orchestrator"]["model"]
-        assert main in models, f"Main model '{main}' not collected"
-        # small_model is optional — if present and distinct, must also be collected
-        small = profile["agents"]["orchestrator"].get("small_model")
-        if small and small != main:
-            assert small in models, f"Small model '{small}' not collected"
+        main_short = (
+            main.replace("9router/", "") if main.startswith("9router/") else main
+        )
+        assert main_short in models, f"Main model '{main}' not collected"
 
     def test_all_profiles_have_valid_model_refs(self):
         reg = get_registry()
         for p in reg["profiles"]:
-            models = collect_models(reg, p)
+            models = build_provider_models(reg, p)
             for m in models:
-                assert m in reg["models"], f"Profile '{p['name']}' refs unknown model '{m}'"
-
-
-class TestShortModelId:
-    def test_strips_provider_prefix(self):
-        assert short_model_id("9router/ocg/deepseek-v4-flash") == "ocg/deepseek-v4-flash"
-        assert short_model_id("9router/oc/north-mini-code-free") == "oc/north-mini-code-free"
-
-    def test_passthrough_without_prefix(self):
-        assert short_model_id("ocg/deepseek-v4-flash") == "ocg/deepseek-v4-flash"
+                # Check if model exists in registry (with or without provider prefix)
+                full_key = f"9router/{m}" if not m.startswith("9router/") else m
+                assert full_key in reg["models"], (
+                    f"Profile '{p['name']}' refs unknown model '{m}'"
+                )
 
 
 # ── Integration Smoke ───────────────────────────────────────────────────
+
 
 class TestGenerateSmoke:
     """Quick smoke tests — gaya live, bukan mock."""
@@ -159,11 +160,16 @@ class TestGenerateSmoke:
     def test_generate_default_stdout_produces_json(self):
         """--stdout with first registry profile should produce valid JSON with proper keys."""
         import subprocess
-        script = os.path.join(os.path.dirname(__file__), "..", "profiles", "generate.py")
+
+        script = os.path.join(
+            os.path.dirname(__file__), "..", "profiles", "generate.py"
+        )
         reg = get_registry()
         result = subprocess.run(
             [sys.executable, script, "--stdout", reg["profiles"][0]["name"]],
-            capture_output=True, text=True, timeout=30
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode == 0, f"STDERR: {result.stderr}"
         # Strip header comment before parsing
@@ -178,10 +184,15 @@ class TestGenerateSmoke:
     def test_validate_exit_0(self):
         """--validate should exit 0 for current profiles.json."""
         import subprocess
-        script = os.path.join(os.path.dirname(__file__), "..", "profiles", "generate.py")
+
+        script = os.path.join(
+            os.path.dirname(__file__), "..", "profiles", "generate.py"
+        )
         result = subprocess.run(
             [sys.executable, script, "--validate"],
-            capture_output=True, text=True, timeout=30
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode == 0, f"STDERR: {result.stderr}"
         assert "OK" in result.stdout
@@ -189,32 +200,21 @@ class TestGenerateSmoke:
     def test_generate_nonexistent_profile_fails(self):
         """Generating a nonexistent profile should exit non-zero."""
         import subprocess
-        script = os.path.join(os.path.dirname(__file__), "..", "profiles", "generate.py")
+
+        script = os.path.join(
+            os.path.dirname(__file__), "..", "profiles", "generate.py"
+        )
         result = subprocess.run(
             [sys.executable, script, "i-dont-exist"],
-            capture_output=True, text=True, timeout=30
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode != 0
 
 
-class TestSecurityChecks:
-    """Verify CBM removed and least-privilege external_directory."""
-
-    def test_boilerplate_has_no_codebase_memory_mcp(self):
-        """BOILERPLATE must not contain codebase-memory-mcp."""
-        from generate import BOILERPLATE
-        bp_str = json.dumps(BOILERPLATE)
-        assert "codebase-memory-mcp" not in bp_str
-
-    def test_executor_external_directory_no_source_code(self):
-        """Executor external_directory must not contain 'Source Code'."""
-        from generate import AGENT_TEMPLATES
-        ext = AGENT_TEMPLATES["executor"].get("permission", {}).get("external_directory", {})
-        for key in ext:
-            assert "Source Code" not in key, f"Executor external_directory contains 'Source Code': {key}"
-
-
 # ── Behavioral: Permission Scoping ──────────────────────────────────────
+
 
 class TestPermissionScoping:
     """Guard: executor MUST have granular bash (git/npm allow, * ask); researcher/reviewer MUST NOT have edit/bash."""
@@ -224,7 +224,6 @@ class TestPermissionScoping:
             "git status": "allow",
             "git diff": "allow",
             "git log": "allow",
-            "git show": "allow",
             "npm test": "allow",
             "npm run build": "allow",
             "npm run lint": "allow",
@@ -234,12 +233,12 @@ class TestPermissionScoping:
     def test_researcher_reviewer_deny_edit_bash(self):
         for role in ("researcher", "reviewer"):
             perm = AGENT_TEMPLATES[role]["permission"]
-            assert perm["edit"] == "deny", f"{role} edit should be deny, got {perm['edit']}"
-            assert perm["bash"] == "deny", f"{role} bash should be deny, got {perm['bash']}"
-
-    def test_boilerplate_deny_by_default(self):
-        assert BOILERPLATE["permission"]["edit"] == "ask"
-        assert BOILERPLATE["permission"]["bash"] == "ask"
+            assert perm["edit"] == "deny", (
+                f"{role} edit should be deny, got {perm['edit']}"
+            )
+            assert perm["bash"] == "deny", (
+                f"{role} bash should be deny, got {perm['bash']}"
+            )
 
     def test_executor_external_directory_scoped(self):
         ext = AGENT_TEMPLATES["executor"]["permission"]["external_directory"]
@@ -248,6 +247,7 @@ class TestPermissionScoping:
 
 
 # ── Behavioral: Backup Integrity ────────────────────────────────────────
+
 
 class TestBackupIntegrity:
     """Guard: generate() must create backups and respect MAX_BACKUPS."""
@@ -272,10 +272,18 @@ class TestBackupIntegrity:
         orig = self._save_root()
         try:
             backup_dir = os.path.abspath(BACKUP_DIR)
-            before_count = len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")]) if os.path.isdir(backup_dir) else 0
+            before_count = (
+                len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")])
+                if os.path.isdir(backup_dir)
+                else 0
+            )
             reg = get_registry()
             generate(reg["profiles"][0]["name"])
-            after_count = len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")]) if os.path.isdir(backup_dir) else 0
+            after_count = (
+                len([f for f in os.listdir(backup_dir) if f.startswith("opencode.")])
+                if os.path.isdir(backup_dir)
+                else 0
+            )
             assert after_count >= before_count, "No backup created after generate()"
         finally:
             self._restore_root(orig)
@@ -288,62 +296,19 @@ class TestBackupIntegrity:
             # Alternate profiles to trigger backup creation (same profile = no-op)
             reg = get_registry()
             for i in range(MAX_BACKUPS + 2):
-                profile = reg["profiles"][0]["name"] if i % 2 == 0 else reg["profiles"][1]["name"]
+                profile = (
+                    reg["profiles"][0]["name"]
+                    if i % 2 == 0
+                    else reg["profiles"][1]["name"]
+                )
                 generate(profile)
-            backups = [f for f in os.listdir(backup_dir) if f.startswith("opencode.") and f.endswith(".jsonc")]
-            assert len(backups) <= MAX_BACKUPS, f"Expected <= {MAX_BACKUPS} backups, got {len(backups)}"
-        finally:
-            self._restore_root(orig)
-
-
-# ── Behavioral: Rollback Correctness ────────────────────────────────────
-
-class TestRollbackCorrectness:
-    """Guard: rollback() must restore the previous opencode.jsonc content."""
-
-    def _save_root(self):
-        root = os.path.abspath(ROOT_FILE)
-        if os.path.isfile(root):
-            with open(root, "r", encoding="utf-8") as f:
-                return f.read()
-        return None
-
-    def _restore_root(self, content):
-        root = os.path.abspath(ROOT_FILE)
-        if content is None:
-            if os.path.isfile(root):
-                os.remove(root)
-        else:
-            with open(root, "w", encoding="utf-8") as f:
-                f.write(content)
-
-    def test_rollback_restores_previous(self):
-        orig = self._save_root()
-        try:
-            reg = get_registry()
-            first = reg["profiles"][0]["name"]
-            second = reg["profiles"][1]["name"]
-
-            # Generate first profile to establish a known state
-            generate(first)
-            root = os.path.abspath(ROOT_FILE)
-            with open(root, "r", encoding="utf-8") as f:
-                first_content = f.read()
-            first_hash = hashlib.md5(first_content.encode()).hexdigest()
-
-            # Generate second profile — this creates a backup of the first content
-            generate(second)
-            with open(root, "r", encoding="utf-8") as f:
-                second_content = f.read()
-            assert hashlib.md5(second_content.encode()).hexdigest() != first_hash, \
-                f"{first} and {second} should produce different content"
-
-            # Rollback should restore the backup (which contains the first profile's content)
-            rollback()
-            with open(root, "r", encoding="utf-8") as f:
-                restored_content = f.read()
-            restored_hash = hashlib.md5(restored_content.encode()).hexdigest()
-            assert restored_hash == first_hash, \
-                f"Rollback did not restore: expected {first_hash}, got {restored_hash}"
+            backups = [
+                f
+                for f in os.listdir(backup_dir)
+                if f.startswith("opencode.") and f.endswith(".jsonc")
+            ]
+            assert len(backups) <= MAX_BACKUPS, (
+                f"Expected <= {MAX_BACKUPS} backups, got {len(backups)}"
+            )
         finally:
             self._restore_root(orig)

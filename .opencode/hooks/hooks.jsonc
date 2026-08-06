@@ -7,8 +7,8 @@
     {
       "id": "post-generate",
       "event": "afterGenerate",
-      "command": "powershell",
-      "args": ["-NoProfile", "-File", ".opencode/hooks/post-generate.ps1"],
+      "command": "python",
+      "args": [".opencode/hooks/post-generate.py"],
       "enabled": true
     },
     {

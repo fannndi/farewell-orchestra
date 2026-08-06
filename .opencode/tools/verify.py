@@ -96,6 +96,27 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         }
     )
 
+    # 4. Evidence tags [P/W/E/O]
+    evidence_tags = re.findall(r"\[([PWOE])\]", claims)
+    if evidence_tags:
+        checks.append(
+            {
+                "name": "evidence tags",
+                "status": "PASS",
+                "detail": f"Found {len(evidence_tags)} tags: {evidence_tags[:5]}",
+            }
+        )
+    else:
+        # Only warn if there are file:line references but no tags
+        if refs:
+            checks.append(
+                {
+                    "name": "evidence tags",
+                    "status": "WARN",
+                    "detail": "file:line found but no [P/W/E/O] tags",
+                }
+            )
+
     return checks
 
 
