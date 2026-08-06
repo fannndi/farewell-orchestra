@@ -145,8 +145,7 @@ farewell-orchestra/
     ├── skills/                  # 26 skills
     ├── tools/                   # verify, auto-load, etc.
     ├── hooks/                   # Lifecycle hooks
-    ├── scripts/                 # check-links, check-consistency
-    └── command/                 # work-on, new-project, check
+    └── scripts/                 # check-links, check-consistency
 ```
 
 ## Stats
@@ -157,7 +156,6 @@ farewell-orchestra/
 | Skills | 26 |
 | Hooks | 3 |
 | Tools | 6 |
-| Commands | 3 |
 
 ## License
 
