@@ -73,6 +73,7 @@
     {
       "name": "Pro",
       "label": "Pro",
+      "small_model": "9router/ocg/deepseek-v4-flash",
       "agents": {
         "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
         "executor": {"model": "9router/ocg/deepseek-v4-flash"},
@@ -83,6 +84,7 @@
     {
       "name": "Unlimited",
       "label": "MIMO",
+      "small_model": "9router/mimo/mimo-v2.5-pro",
       "agents": {
         "orchestrator": {"model": "9router/mimo/mimo-v2.5-pro"},
         "researcher": {"model": "9router/mimo/mimo-v2.5-pro"},
@@ -93,6 +95,7 @@
     {
       "name": "Codex Main",
       "label": "Codex = orchestrator | Minimax = executor",
+      "small_model": "9router/cx/gpt-5.6-luna",
       "agents": {
         "orchestrator": {"model": "9router/cx/gpt-5.6-luna"},
         "executor": {"model": "9router/ollama/minimax-m3"},
@@ -103,6 +106,7 @@
     {
       "name": "Daily",
       "label": "Mixed",
+      "small_model": "9router/ocg/deepseek-v4-flash",
       "agents": {
         "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
         "executor": {"model": "9router/ocg/deepseek-v4-flash"},
@@ -113,6 +117,7 @@
     {
       "name": "Eco",
       "label": "Daily",
+      "small_model": "9router/oc/deepseek-v4-flash-free",
       "agents": {
         "orchestrator": {"model": "9router/oc/deepseek-v4-flash-free"},
         "researcher": {"model": "9router/oc/north-mini-code-free"},
@@ -123,6 +128,7 @@
     {
       "name": "Backup",
       "label": "Backup",
+      "small_model": "9router/oc/laguna-s-2.1-free",
       "agents": {
         "orchestrator": {"model": "9router/oc/laguna-s-2.1-free"},
         "researcher": {"model": "9router/oc/nemotron-3-ultra-free"},

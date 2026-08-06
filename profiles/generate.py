@@ -270,6 +270,7 @@ def generate(profile_name, to_stdout=False):
     # Build config
     orch = profile["agents"].get("orchestrator", {})
     model = orch["model"] if isinstance(orch, dict) else orch
+    small_model = profile.get("small_model", model)
 
     config = {
         "$schema": "https://opencode.ai/config.json",
@@ -416,7 +417,7 @@ def generate(profile_name, to_stdout=False):
             },
         },
         "model": model,
-        "small_model": model,
+        "small_model": small_model,
         "watcher": {
             "ignore": [
                 ".git/**",
