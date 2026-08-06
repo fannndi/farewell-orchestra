@@ -77,6 +77,16 @@
       }
     },
     {
+      "name": "Unlimited",
+      "label": "MIMO",
+      "agents": {
+        "orchestrator": {"model": "9router/mimo/mimo-v2.5-pro"},
+        "researcher": {"model": "9router/mimo/mimo-v2.5-pro"},
+        "reviewer": {"model": "9router/mimo/mimo-v2.5-pro"},
+        "executor": {"model": "9router/mimo/mimo-v2.5-pro"}
+      }
+    },
+    {
       "name": "Codex Main",
       "label": "Codex = orchestrator | Minimax = executor",
       "agents": {
