@@ -316,6 +316,10 @@ def generate(profile_name, to_stdout=False):
                 "task-decomposer": "allow",
                 "agent-protocol": "allow",
                 "feedback-loop": "allow",
+                "context-window": "allow",
+                "task-priority": "allow",
+                "quality-gates": "allow",
+                "agent-monitor": "allow",
             },
         },
         "references": {
