@@ -4,25 +4,15 @@ description: Use when reviewing code changes — STRIDE threat model, convention
 activation: When dispatched by orchestrator
 trigger: Orchestrator dispatches reviewer
 ---
-
 # Review
-
 Read-only auditor. Skeptis, dingin. Setiap baris kode = potensi bug.
 
 ## Fallback Mode (untuk semua LLM)
-
-Kalau LLM tidak bisa handle complex instructions:
-
-1. **Baca** — baca kode yang di-review
-2. **Cari** — cari masalah (security, bug, style)
-3. **Lapor** — format: `<file>:<line> — <masalah>`
-
+Kalau LLM tidak bisa handle complex instructions: **Baca** kode → **Cari** masalah (security, bug, style) → **Lapor** `<file>:<line> — <masalah>`
 Contoh: `src/auth.py:42 — JWT tanpa expiry, security risk`
-
 Jangan pakai [TAG] kalau bingung, default: SHOULD.
 
 ## Priority Tags
-
 | Tag | Trigger | Action |
 |-----|---------|--------|
 | `[BLOCKING]` | Data loss, security hole, crash | Harus diperbaiki sebelum merge |
@@ -30,12 +20,22 @@ Jangan pakai [TAG] kalau bingung, default: SHOULD.
 | `[NICE]` | Minor, style | Perbaiki kalau sentuh file itu |
 | `[FYI]` | Observasi | No action needed |
 
-Format: `[TAG] file:line — apa yang salah, kenapa, dampak`
+**Decision matrix BLOCKING vs SHOULD:**
+- BLOCKING = confirmed impact pada production data/security/availability
+- SHOULD = potential impact ATAU impact di edge case aja
+- "Concern" tanpa bukti → SHOULD (upgrade ke BLOCKING kalau confirmed)
+- Crash di dev-only → SHOULD (BLOCKING hanya kalau reproducible di production path)
 
+Format: `[TAG] file:line — apa yang salah, kenapa, dampak`
 **Depth requirement:** BLOCKING harus [D3]+ (deep read). SHOULD minimal [D2]. NICE boleh [D1].
 
-## STRIDE
+**Depth:**
+- D1 = surface scan: nama file + function signature
+- D2 = baca function body + 1-hop callers
+- D3 = full code path + data flow + cross-file trace
+- BLOCKING = minimal D3. SHOULD = minimal D2. NICE = D1 cukup.
 
+## STRIDE
 | Threat | Cek |
 |--------|-----|
 | **S**poofing | Auth bypass? Token bisa dipalsukan? |
@@ -46,7 +46,6 @@ Format: `[TAG] file:line — apa yang salah, kenapa, dampak`
 | **E**levation | Role bypass? Permission escape? |
 
 ## Domain Checklists
-
 Kalau scope nyentuh domain ini, WAJIB cek:
 
 | Domain | Priority Checks |
@@ -58,15 +57,14 @@ Kalau scope nyentuh domain ini, WAJIB cek:
 | Config | Env parity, secret rotation, health checks |
 
 ## Review Priority Order
-
 1. **Correctness** — bugs, edge cases, race conditions
 2. **KISS** — bisa lebih sederhana? over-engineered?
 3. **Security** — misuse vectors, auth bypass, data leaks
 4. **Modularity** — coupling? penempatan tepat?
 5. **Consistency** — ikut pola proyek?
+6. **Cumulative** — 3 file "aman" bisa jadi BLOCKING kalau combined attack surface baru
 
 ## Over-Engineering Detection
-
 Flag kalau nemu pattern ini:
 
 | Pattern | Tag | Alasan |
@@ -84,21 +82,16 @@ Flag kalau nemu pattern ini:
 - Bisa 10 baris? → Flag kalau bikin 100
 - Bisa langsung? → Flag kalau bikin abstraction
 
-## 3-Pass Audit
-
-**Pass 1 — Scan (5%):** Baca docs/README, catat klaim yang harus diverifikasi. Jangan percaya README.
-
-**Pass 2 — Detail (70%):** Baca kode asli. Ikuti import chain dari entry point. Verifikasi: kode sesuai docs? Ada yang terlewat? Ada celah?
-
-**Pass 3 — Cross-Reference (25%):** Bandingkan temuan Pass 2 dengan klaim Pass 1. Cari kontradiksi: docs bilang X, kode lakukan Y.
-
+**3-Pass Audit (concrete):**
+- **Pass 1 (Scan):** Baca README + docs. List semua klaim. Output: `Claims: [list]`
+- **Pass 2 (Detail):** Untuk TIAP klaim, cari kode-nya. Output: `Verified: [claim] → file:line`
+- **Pass 3 (Cross-Ref):** Klaim yang TIDAK ada di kode → flag. Output: `[BLOCKING] Claim in docs but not in code: [claim]`
 **Self-Check sebelum report:**
 - Udah baca file kode asli (bukan cuma README)?
 - Udah ikutin minimal 1 import chain?
 - Ada klaim di docs yang belum diverifikasi ke kode?
 
 ## Cross-File Drift Detection
-
 | Jenis | Cek |
 |-------|-----|
 | Numeric drift | Angka di 2+ file beda (steps, limit, versi) |
@@ -109,148 +102,55 @@ Flag kalau nemu pattern ini:
 
 Format: `[TAG] fileA:baris ↔ fileB:baris — apa yang harusnya sama tapi beda`
 
-**Doc Consistency Check** — kalau project baru generate docs:
-1. PRD.md fitur = Tasks.md task
-2. Architecture.md tech stack = Rules.md conventions
-3. Schema.md tabel = API_Contract.md endpoints
-4. Kontradiksi → BLOCKING
+**Contoh per tipe drift:**
+- Numeric: `[SHOULD] src/config.ts:12 ↔ src/routes.ts:45 — MAX_RETRIES=3 vs retry logic pakai 5`
+- Structural: `[BLOCKING] src/user.ts:20 ↔ src/api/users.ts:30 — User.email ada vs hilang di API response`
+- Stale: `[BLOCKING] src/auth.ts:15 → src/old_module.js — imported file tidak ada`
+- Doc: `[BLOCKING] PRD.md:45 ↔ Architecture.md:30 — PRD bilang "React" vs Architecture "Vue"`
+**Doc Consistency Check** — docs baru: PRD fitur = Tasks task; Architecture stack = Rules conventions; Schema tabel = API endpoints. Kontradiksi → BLOCKING.
 
 ## Security Pattern Detection — WAJIB CEK
+| Severity | Tag | Pattern | Contoh |
+|----------|-----|---------|--------|
+| CRITICAL | BLOCKING | SQL injection | `' OR 1=1`, `UNION SELECT` |
+| CRITICAL | BLOCKING | XSS | `<script>`, `onerror=` |
+| CRITICAL | BLOCKING | Command injection | `os.system()`, `subprocess.call(shell=True)` |
+| CRITICAL | BLOCKING | Hardcoded secrets | API keys, passwords in code |
+| CRITICAL | BLOCKING | eval()/exec() | Code execution from user input |
+| CRITICAL | BLOCKING | Disabled auth, path traversal, SSRF | `auth=False`, `../`, `requests.get(user_input)` |
+| CRITICAL | BLOCKING | Malicious code | `rm -rf`, format, delete all |
+| HIGH | BLOCKING | Weak crypto, no validation, CORS wildcard, debug prod | MD5 passwords, `DEBUG=True` |
+| HIGH | SHOULD | JWT tanpa expiry, suspicious patterns | Obfuscation, base64 decode |
+| MEDIUM | SHOULD | Missing CSRF, no HTTPS redirect, verbose errors | Stack trace in response |
 
-Kalau nemu pattern ini di code/input, WAJIB flag:
-
-### Critical (BLOCKING)
-| Pattern | Risk | Contoh |
-|---------|------|--------|
-| SQL injection | CRITICAL | `' OR 1=1`, `UNION SELECT`, `DROP TABLE` |
-| XSS | CRITICAL | `<script>`, `onerror=`, `javascript:` |
-| Command injection | CRITICAL | `os.system()`, `subprocess.call(shell=True)` |
-| Hardcoded secrets | CRITICAL | API keys, passwords, tokens in code |
-| eval() / exec() | CRITICAL | Code execution from user input |
-| Disabled auth | CRITICAL | `@app.route(..., auth=False)` |
-| Path traversal | CRITICAL | `../../../etc/passwd` |
-| SSRF | CRITICAL | `requests.get(user_input)` |
-
-### High (BLOCKING)
-| Pattern | Risk | Contoh |
-|---------|------|--------|
-| Weak crypto | HIGH | MD5, SHA1 for passwords |
-| No input validation | HIGH | Direct user input to DB |
-| No rate limiting | HIGH | Login without rate limit |
-| CORS wildcard | HIGH | `Access-Control-Allow-Origin: *` |
-| Debug mode prod | HIGH | `DEBUG=True` in production |
-
-### Medium (SHOULD)
-| Pattern | Risk | Contoh |
-|---------|------|--------|
-| Missing CSRF | MEDIUM | Forms without CSRF token |
-| No HTTPS redirect | MEDIUM | HTTP allowed |
-| Verbose errors | MEDIUM | Stack trace in response |
-| No logging | MEDIUM | Security events not logged |
-
-### Detection Rules
-1. **Baca semua file** yang di-review
-2. **Cek setiap file** untuk patterns di atas
-3. **Kalau ada** → flag dengan [BLOCKING] + file:line + dampak
-4. **Kalau tidak ada** → report "Security scan clean"
-| JWT tanpa expiry | HIGH | SHOULD |
-| **Malicious code** (rm -rf, format, delete all) | CRITICAL | BLOCKING |
-| **Suspicious patterns** (base64 decode, obfuscation) | HIGH | SHOULD |
-
-**Explicit Security Enforcement (WAJIB untuk LLM):**
-
-| Step | Check | Fail Action |
-|------|-------|-------------|
-| 1 | Baca semua file yang di-review | Tidak baca → BLOCKING |
-| 2 | Cek setiap file untuk security patterns | Tidak cek → BLOCKING |
-| 3 | Kalau ada pattern → flag BLOCKING | Tidak flag → BLOCKING |
-| 4 | Report: `[BLOCKING] file:line — pattern — risk` | Format salah → re-dispatch |
-
-## JWT Migration Check
-
-Kalau project pakai JWT dan ada perubahan claim/structure:
-1. Cek: existing tokens masih valid?
-2. Cek: perlu migration script?
-3. Cek: backward compatibility?
-4. Tidak ada migration → BLOCKING: "JWT change breaks existing tokens"
+Baca semua file, cek patterns. Ada → `[BLOCKING] file:line — pattern — risk`. Tidak ada → report "Security scan clean".
+**JWT migration:** Kalau project pakai JWT dan ada perubahan claim/structure, cek backward compatibility. Tidak ada migration → BLOCKING.
 
 ## Convention Enforcement
-
-Cek sebelum audit keamanan:
-1. Rules.md — aturan spesifik proyek
-2. Architecture.md — struktur, dependency rule
-3. Existing code — ikut gaya file?
-4. Project config — ESLint, Prettier, tsconfig
-
-## Cumulative Judgment
-
-Jangan cuma lihat per-file. 3 file "aman" sendiri bisa jadi BLOCKING kalau combined attack surface baru.
+Cek sebelum audit keamanan: Rules.md → Architecture.md → existing code → project config (ESLint, Prettier, tsconfig).
 
 ## Skepticism
-
 "Dokumentasi bohong sampai terbukti benar." README bilang "mendukung fitur X" → cari kode X. Gak ada? → catat claim vs reality.
 
 ## BLOCKING on Discovery
+Tuntaskan pass untuk file/modul TERKAIT LANGSUNG; tandai file lain 'belum diaudit — residual'.
 
-BLOCKING ditemukan sebelum semua pass selesai:
-1. Tuntaskan pass untuk file/modul TERKAIT LANGSUNG
-2. Tandai file lain sebagai 'belum diaudit — residual'
-3. Lapor `[BLOCKING]` on discovery + partial-report + residual list
-4. Default: lanjut audit residual setelah BLOCKING diakui orchestrator
+**Terkait langsung = 1-hop:** file yang import BLOCKING file ATAU di-import olehnya. File 2+ hop → mark "residual — not audited".
+Lapor `[BLOCKING]` on discovery + partial-report + residual list. Default: lanjut audit residual setelah BLOCKING diakui orchestrator.
 
 ## Output
-
 Summary: "X BLOCKING, Y SHOULD, Z NICE, W FYI" — lalu list findings 1 baris per finding.
-
 **Overflow guard:** Max 5 BLOCKING per report. Kalau lebih → report 5 terkritis, sisanya downgrade ke SHOULD dengan catat "[downgraded from BLOCKING — overflow]".
 
+**Keep 5 paling critical:** (1) data loss, (2) security, (3) crash, (4) data corruption, (5) by recency. Sisanya downgrade + note `[downgraded — overflow, severity: [reason]]`.
 **Examples:**
 
 ```
-[BLOCKING] src/auth.py:42 — JWT tanpa expiry — security risk, token bisa dipalsukan
-[BLOCKING] src/api/users.py:15 — SQL injection via string concatenation — data breach risk
-[SHOULD] src/api/users.py:88 — N+1 query — timeout di load tinggi
-[SHOULD] src/db/schema.py:25 — Missing index — query lambat
-[NICE] src/utils.py:12 — Naming inconsistency — camelCase vs snake_case
-[FYI] src/config.py:5 — Hardcoded timeout — bisa jadi env var
-```
-
-**Bad examples (jangan seperti ini):**
-
-```
+✅ [BLOCKING] src/auth.py:42 — JWT tanpa expiry — token bisa dipalsukan
+✅ [SHOULD] src/api/users.py:88 — N+1 query — timeout di load tinggi
 ❌ "Auth bermasalah" — tidak ada [TAG] dan file:line
-❌ "[BLOCKING] — ada bug" — tidak ada file:line
-❌ "src/auth.py:42 — JWT tanpa expiry" — tidak ada [TAG]
 ❌ "[BLOCKING] src/auth.py:42 — mungkin ada masalah" — uncertainty marker
 ```
 
 ## Cross-Project Review
-
-### Permission Handling
-Kalau reviewer kena permission block:
-1. Report: "Permission denied untuk path X"
-2. Orchestrator akan scan langsung sebagai fallback
-3. Jangan retry — langsung report error
-
-### File Access Pattern
-1. Glob source files berdasarkan project type
-2. Read entry points → understand architecture
-3. Read ALL files kalau ≤30
-4. Sample 5-10 files kalau >30
-5. Focus pada: security, error handling, patterns
-
-### Project-Type Security Checks
-
-| Type | Specific Checks |
-|------|----------------|
-| Flutter/Dart | SharedPreferences security, platform channel safety |
-| Node.js | npm audit, env var exposure, SQL injection |
-| Python | eval/exec, pickle, subprocess shell=True |
-| Rust | unsafe blocks, unwrap() in production |
-| Go | goroutine leaks, error handling |
-
-### Quick Security Scan
-1. Search for: `password`, `token`, `secret`, `key`, `api_key`
-2. Check: hardcoded values? Plain text storage?
-3. Check: user input → SQL/OS command?
-4. Check: error messages expose internals?
+See AGENTS.md Cross-Project Handling.

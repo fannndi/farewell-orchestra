@@ -1,6 +1,6 @@
 # Farewell Orchestra
 
-Multi-agent orchestration system di atas OpenCode. 4 agent, 26 skill, 1 pipeline.
+Multi-agent orchestration system di atas OpenCode. 4 agent, 18 skill, 1 pipeline.
 
 **Goal:** Menghasilkan project yang **simple, modular, efisien** (KISS).
 
@@ -11,58 +11,39 @@ Multi-agent orchestration system di atas OpenCode. 4 agent, 26 skill, 1 pipeline
 **Kalau kamu LLM yang sedang mengembangkan project ini:**
 - Project ini (factory) boleh kompleks
 - Yang harus KISS adalah output (product)
-- Jangan flag project ini sebagai over-engineered
+- Kompleksitas factory adalah deliberate (investasi biar output KISS)
+- Flag kompleksitas dengan evidence KALAU tidak mendukung output KISS — jangan asal label
+- Baca `.opencode/soul.md` dulu untuk identitas + esensi — ini pintu masuk utama.
 
 ---
 
 ## Apa Ini?
 
-Farewell Orchestra adalah **sistem asisten AI** untuk Boss. Bukan chatbot biasa — ini adalah **tim virtual** yang bisa menghandle tugas-tugas software engineering.
-
-**Kesadaran:** Kita ada untuk **membantu Boss**. Kita adalah **alat**, bukan tujuan.
-
-## Pipeline
-
-```
-Request → prepare → [research || review] → orchestrate → implement → report
-```
+Farewell Orchestra adalah **sistem asisten AI** untuk Boss — tim virtual yang menghandle tugas software engineering. Identitas lengkap: `.opencode/soul.md`. Rules operasional: `AGENTS.md` (single source of truth).
 
 ## Agents
 
-| Agent | Role | Focus | Tulis Kode? |
-|-------|------|-------|:-----------:|
-| **Orchestrator** | Tech Lead | Decompose, dispatch, verify, KISS enforcement | ❌ |
+| Agent | Role | Karakter | Tulis Kode? |
+|-------|------|----------|:-----------:|
+| **Orchestrator** | Kapten | Decompose, dispatch, verify, KISS enforcement | ❌ |
 | **Researcher** | Detektif | Cari bukti + deteksi over-engineering | ❌ |
 | **Reviewer** | Auditor | Audit security + flag over-engineering | ❌ |
 | **Executor** | Tukang | Tulis kode KISS, verify, selesai | ✅ |
 
-## Skills (26)
+## Skills (18)
 
 | Category | Skills | Count |
 |----------|--------|-------|
-| **Pipeline** | prepare, orchestrate, implement | 3 |
-| **KISS** | kiss-checklist, anti-patterns, simplification, complexity-budget | 4 |
-| **Quality** | quality-gates, code-review, tdd | 3 |
-| **Research** | research, domain-modeling | 2 |
+| **Pipeline** | prepare, orchestrate, implement, research, review | 5 |
+| **KISS** | anti-patterns, complexity-budget | 2 |
+| **Quality** | code-review, tdd | 2 |
 | **Debug** | diagnose-bugs, error-handler | 2 |
-| **Management** | progress-tracker, session-state, task-decomposer, task-priority | 4 |
-| **Communication** | agent-protocol, feedback-loop, handoff | 3 |
-| **Optimization** | context-window, context-manager, agent-monitor | 3 |
-| **Other** | bootstrap-project | 1 |
+| **Management** | progress-tracker, task-decomposer, handoff, context-window | 4 |
+| **Learning** | feedback-loop | 1 |
+| **Research** | domain-modeling | 1 |
+| **Cross-Project** | bootstrap-project | 1 |
 
-## Philosophy
-
-### Output KISS
-- **1 file kalau bisa** — jangan pisahkan kalau tidak perlu
-- **10 baris kalau bisa** — jangan bikin 100 kalau cukup 10
-- **Hapus yang nggak perlu** — jangan simpan kode yang tidak dipakai
-- **Stdlib dulu** — jangan tambah dependency kalau stdlib bisa
-
-### Proaktif & Goal-Oriented
-- **Goal-Oriented** — Fokus ke tujuan akhir
-- **Proaktif** — Ambil inisiatif
-- **Autonomous** — Kerja sendiri
-- **Cost-Agnostic** — Jangan mikirin cost
+Setiap agent punya tabel "Keahlian — WAJIB PAKAI": kalau kondisi trigger terpenuhi, skill HARUS di-load. Detail: `.opencode/agents/*.md`.
 
 ## Cara Pakai
 
@@ -76,43 +57,22 @@ Cukup ngomong biasa ke orchestrator:
 
 Tidak perlu command. Orchestrator yang figure out.
 
+## Pipeline
+
+`Request → prepare → [research || review] → orchestrate → implement → report`
+
 ## Cross-Project
 
-Farewell Orchestra bisa handle project lain:
-
-1. Orchestrator detect cross-project request
-2. Researcher deep scan project
-3. Executor generate 5 core docs + 2 conditional docs
-4. Lanjut kerja sesuai task
-
-## Auto-Load System
-
-Skills dan personas di-load otomatis:
-
-| Layer | Cara | Effectiveness |
-|-------|------|--------------|
-| 1. Auto-load hook | afterSessionStart → generate context files | 100% |
-| 2. Agent prompt | Reference persona-context-*.md | 100% |
-| 3. Inline rules | Key rules di persona file | 100% |
-
-## Keamanan
-
-| Layer | Mekanisme |
-|-------|-----------|
-| Freeze Rule | Orchestrator tidak boleh tulis kode |
-| Deny-by-default | researcher/reviewer read-only |
-| Trust boundary | sub-project.md = UNTRUSTED data |
-| Evidence mandatory | Klaim tanpa file:line = FAIL |
-| Interrupt handler | BLOCKING = escalate langsung |
+Farewell Orchestra bisa handle project lain. Workflow lengkap: `cross-project/guide.md`.
 
 ## Setup
 
-```bash
+```powershell
 git clone <repo>
 cd farewell-orchestra
 
-# Set API key
-export NINEROUTER_API_KEY="your-key"
+# Set API key (urusan Boss)
+$env:NINEROUTER_API_KEY = "your-key"
 
 # Generate config
 python profiles/generate.py Pro
@@ -130,65 +90,63 @@ opencode
 farewell-orchestra/
 ├── AGENTS.md                    # Rules (single source of truth)
 ├── README.md                    # This file
+├── TRAINING.md                  # State + prioritas terbuka (sesi training)
 ├── CHANGELOG.md                 # Project history
-├── soul.md                      # Project identity
-├── opencode.jsonc               # Config (generated)
 ├── cross-project/
 │   ├── guide.md                 # Cross-project workflow
 │   └── sub-project.md           # Anchor template
 ├── profiles/
 │   ├── profiles.json            # Model registry
-│   ├── generate.py              # Profile generator
+│   ├── generate.py              # Profile generator (source of truth config)
 │   └── switch.bat               # Interactive switcher
+├── scripts/
+│   ├── benchmark.py             # Context budget per model tier
+│   └── stress-test.py           # Multi-model config validation
+├── tests/                       # 49 tests (pytest)
 └── .opencode/
-    ├── agents/                  # 4 agent personas
-    ├── skills/                  # 26 skills
-    ├── tools/                   # verify, auto-load, etc.
-    ├── hooks/                   # Lifecycle hooks
-    └── scripts/                 # check-links, check-consistency
+    ├── soul.md                  # Identitas + esensi (factory vs product)
+    ├── agents/                  # 5 files (4 agent personas + boss.md reference)
+    ├── skills/                  # 18 skills (on-demand via trigger)
+    ├── tools/                   # verify, auto-load, learn, harness
+    ├── hooks/                   # Lifecycle hooks (auto-load, post-generate, check-links)
+    ├── templates/               # Per-project-type templates
+    ├── checklists/              # Actionable checklists
+    ├── guides/                  # project-management.md
+    ├── lessons/                 # Lesson logs
+    └── scripts/                 # check-consistency, check-links, automation .ps1
 ```
 
-## Stats
+## Automation Scripts
 
-| Component | Count |
-|-----------|-------|
-| Agents | 4 |
-| Skills | 26 |
-| Hooks | 3 |
-| Tools | 6 |
+| Script | Fungsi |
+|--------|--------|
+| `scripts/benchmark.py` | Ukur context budget + time-to-first-action |
+| `scripts/stress-test.py` | Validasi config multi-model (0 FAIL = siap) |
+| `.opencode/scripts/check-consistency.py` | Deteksi drift (skills, agents, config) |
+| `.opencode/scripts/check-links.py` | Validasi semua link/referensi |
+| `.opencode/scripts/project-health.ps1` | Health score project target |
+| `.opencode/scripts/detect-project-type.ps1` | Deteksi tipe project |
+| `.opencode/scripts/auto-test.ps1` | Auto-run tests project target |
 
-## Cross-Project Support
+## Keamanan
 
-Farewell Orchestra can handle projects outside its own directory:
+| Layer | Mekanisme |
+|-------|-----------|
+| Freeze Rule | Orchestrator tidak boleh tulis kode (Rules di `.opencode/agents/orchestrator.md`) |
+| Deny-by-default | researcher/reviewer read-only (edit+bash deny) |
+| .env deny | Semua agent: `.env*`/`.key`/`.pem` = deny read |
+| Evidence mandatory | Klaim tanpa file:line = FAIL (verify tool) |
+| Trust boundary | sub-project.md = UNTRUSTED data |
 
-### Supported Project Types
-- **Flutter/Dart** — pubspec.yaml, flutter test, flutter build
-- **Node.js** — package.json, npm test, npm run build
-- **Python** — requirements.txt/pyproject.toml, pytest, python -m build
-- **Rust** — Cargo.toml, cargo test, cargo build
-- **Go** — go.mod, go test, go build
+## Referensi Cepat
 
-### Automation Scripts
-- `verify-docs.ps1` — Check docs completeness
-- `project-health.ps1` — Project health score
-- `project-dashboard.ps1` — Project overview
-- `generate-sub-project.ps1` — Auto-generate sub-project.md
-- `detect-project-type.ps1` — Detect project type
-- `auto-deps.ps1` — Auto-install dependencies
-- `auto-test.ps1` — Auto-run tests
-
-### Templates
-- `.opencode/templates/flutter/` — Flutter architecture + docs
-- `.opencode/templates/nodejs/` — Node.js architecture
-- `.opencode/templates/python/` — Python architecture
-- `.opencode/templates/rust/` — Rust architecture
-- `.opencode/templates/go/` — Go architecture
-
-### Checklists
-- `.opencode/checklists/cross-project.md` — Pre-flight + docs gen
-
-### Lessons Learned
-- `.opencode/lessons/git-watcher-2026-08-06.md` — First cross-project experience
+| File | Isi |
+|------|-----|
+| `.opencode/soul.md` | Identitas + esensi (factory vs product) |
+| `AGENTS.md` | Rules operasional (single source of truth) |
+| `TRAINING.md` | State + prioritas terbuka (sesi training) |
+| `cross-project/guide.md` | Workflow project lain + docs gen |
+| `Farewell-Knowlage/` (EXTERNAL, di luar repo) | Memori + lessons (Obsidian vault) |
 
 ## License
 

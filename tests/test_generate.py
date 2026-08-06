@@ -242,7 +242,7 @@ class TestPermissionScoping:
 
     def test_executor_external_directory_scoped(self):
         ext = AGENT_TEMPLATES["executor"]["permission"]["external_directory"]
-        assert set(ext.keys()) == {"~/projects/**"}
+        assert set(ext.keys()) == {"~/projects/**", "C:/Users/FANNNDI/Documents/**"}
         assert "~/Documents/Farewell-Knowlage/**" not in ext
 
 

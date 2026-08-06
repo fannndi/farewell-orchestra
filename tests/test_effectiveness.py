@@ -8,21 +8,17 @@ Usage:  python tests/test_effectiveness.py
 import json, os, sys, time, io
 from pathlib import Path
 
-# Fix Windows stdout encoding
-if sys.platform == "win32":
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-
 ROOT = Path(__file__).resolve().parent.parent
 AGENTS_DIR = ROOT / ".opencode" / "agents"
 SKILLS_DIR = ROOT / ".opencode" / "skills"
 
 
-def test_persona_completeness():
+def _audit_persona_completeness():
     """Check if personas have required sections."""
     results = []
     required_sections = [
         "Identity",
-        "WAJIB LOAD",
+        "Auto-Load",
         "Skill Triggers",
         "Proactive Behavior",
         "Decision Tree",
@@ -49,10 +45,22 @@ def test_persona_completeness():
             }
         )
 
+    # Assert all agents complete (baseline: 4/4)
+    assert all(r["complete"] for r in results), (
+        f"Incomplete personas: {[r['agent'] for r in results if not r['complete']]}"
+    )
     return results
 
 
-def test_skill_activation():
+def test_persona_completeness():
+    """All agent personas must be complete (assert baseline)."""
+    results = _audit_persona_completeness()
+    assert all(r["complete"] for r in results), (
+        f"Incomplete: {[r['agent'] for r in results if not r['complete']]}"
+    )
+
+
+def _audit_skill_activation():
     """Check if skills have activation conditions."""
     results = []
 
@@ -78,10 +86,22 @@ def test_skill_activation():
             }
         )
 
+    # Assert all skills have activation or trigger (baseline: 18/18)
+    assert all(r["complete"] for r in results), (
+        f"Missing activation: {[r['skill'] for r in results if not r['complete']]}"
+    )
     return results
 
 
-def test_skill_overlap():
+def test_skill_activation():
+    """All skills must have activation or trigger conditions (assert baseline)."""
+    results = _audit_skill_activation()
+    assert all(r["complete"] for r in results), (
+        f"Missing activation: {[r['skill'] for r in results if not r['complete']]}"
+    )
+
+
+def _audit_skill_overlap():
     """Check for skill overlap between agents."""
     agent_skills = {}
 
@@ -110,10 +130,18 @@ def test_skill_overlap():
                     {"agents": [agents[i], agents[j]], "common_skills": list(common)}
                 )
 
+    # Assert no skill overlap (baseline: 0 conflicts)
+    assert len(overlaps) == 0, f"Skill overlaps: {overlaps}"
     return overlaps
 
 
-def test_conciseness():
+def test_skill_overlap():
+    """No skills may overlap between agents (assert baseline)."""
+    results = _audit_skill_overlap()
+    assert len(results) == 0, f"Skill overlaps: {results}"
+
+
+def _audit_conciseness():
     """Check if persona files are concise."""
     results = []
 
@@ -134,7 +162,19 @@ def test_conciseness():
             }
         )
 
+    # Assert all agents concise (< 80 lines baseline)
+    assert all(r["concise"] for r in results), (
+        f"Not concise: {[r['agent'] for r in results if not r['concise']]}"
+    )
     return results
+
+
+def test_conciseness():
+    """All agent personas must be concise (< 80 lines, assert baseline)."""
+    results = _audit_conciseness()
+    assert all(r["concise"] for r in results), (
+        f"Not concise: {[r['agent'] for r in results if not r['concise']]}"
+    )
 
 
 def main():
@@ -142,7 +182,7 @@ def main():
 
     # Test 1: Persona completeness
     print("1. PERSONA COMPLETENESS")
-    persona_results = test_persona_completeness()
+    persona_results = _audit_persona_completeness()
     for r in persona_results:
         status = "✅" if r["complete"] else "❌"
         print(f"   {status} {r['agent']}: {r['sections_found']}/6 sections")
@@ -151,7 +191,7 @@ def main():
 
     # Test 2: Skill activation
     print("\n2. SKILL ACTIVATION CONDITIONS")
-    skill_results = test_skill_activation()
+    skill_results = _audit_skill_activation()
     with_activation = sum(1 for r in skill_results if r["has_activation"])
     with_trigger = sum(1 for r in skill_results if r["has_trigger"])
     print(f"   With activation: {with_activation}/{len(skill_results)}")
@@ -159,7 +199,7 @@ def main():
 
     # Test 3: Skill overlap
     print("\n3. SKILL OVERLAP")
-    overlaps = test_skill_overlap()
+    overlaps = _audit_skill_overlap()
     if overlaps:
         for o in overlaps:
             print(
@@ -170,7 +210,7 @@ def main():
 
     # Test 4: Conciseness
     print("\n4. CONCISENESS")
-    concise_results = test_conciseness()
+    concise_results = _audit_conciseness()
     for r in concise_results:
         status = "✅" if r["concise"] else "❌"
         print(f"   {status} {r['agent']}: {r['lines']} lines, {r['words']} words")
@@ -188,4 +228,8 @@ def main():
 
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding="utf-8", errors="replace"
+        )
     main()

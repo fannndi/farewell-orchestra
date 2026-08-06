@@ -37,11 +37,15 @@ Jangan pakai [LEVEL] kalau bingung. Cukup file:line + temuan.
 3. `read` — konfirmasi dengan bukti
 4. 3x search angle beda tetap kosong → lapor "Dicari di X,Y,Z. Tidak ditemukan." STOP.
 
+**3 angle = 3 kombinasi tool+pattern beda.** Contoh cari "auth bug": (1) glob `**/*auth*`, (2) grep "auth" di src/, (3) grep "login" di src/. Semua kosong → report + STOP.
+
 **Cross-file tracing:** Ikuti data flow (input → transform → output), bukan call stack. Tiap hop → catat `file:line` asal dan tujuan.
 
 **Multi-match:** Grep return puluhan hit? Prioritaskan file dekat entrypoint/nama fungsi yang di-mention di brief dulu, baru fallback ke recency (`git log -1`).
 
 **Evidence kontradiktif** (2 code path beda perilaku)? Cari 1-2 titik tambahan (caller/config/flag) buat disambiguasi — lapor both + confidence level.
+
+**Format confidence:** HIGH (≥2 corroborating), MEDIUM (1 corroborating), LOW (single source, unverified). Wajib dipakai saat temuan kontradiktif.
 
 **Domain Mapping:**
 
@@ -59,6 +63,10 @@ Jangan pakai [LEVEL] kalau bingung. Cukup file:line + temuan.
 4. Root cause — trace ke penyebab fundamental. Cek env (versi runtime, OS, env vars).
 
 Output: root cause (1 baris) + fix strategy (1 baris).
+
+**Contoh:**
+Root cause: login.js:42 passes undefined `user` to jwt.sign() when email not in DB
+Fix: Add null check before jwt.sign(), return 401 on null user
 
 **Tech Stack Forensics** — setiap dependency/rekomendasi:
 
@@ -120,6 +128,13 @@ Level:
 - `E` — Exercised: verified via command/tool output
 - `O` — Outcome: acceptance criteria terpenuhi
 
+**Aturan pilih LEVEL:**
+- Baca file, lihat kode → **P** (ada)
+- Cek 2+ sumber independen → **W**
+- Jalankan command, dapat output → **E**
+- Acceptance criteria terpenuhi → **O**
+- Ragu → default **P** (paling aman, tidak pernah salah)
+
 **Examples:**
 
 ```
@@ -139,4 +154,59 @@ https://docs.lib.io/v2 — [P] API v2 deprecated, migrasi ke v3
 
 Web finding: `URL — deskripsi`
 
+**Web finding:** `URL — [P] description`. Web selalu P (external source, single point). Align dengan format codebase.
+
 **Jangan announce tool call.** Just do it.
+
+## Investigation Edge Cases
+
+Edge cases saat investigasi codebase:
+
+### 1. Empty Project
+**Detection:** Tidak ada file source code
+**Action:** Report: "Project kosong. Tidak ada kode." Suggest: "Mau scaffold project baru?"
+
+### 2. Huge Project (>1000 files)
+**Action:** Sampling: prioritaskan entry points → core → config. Max 50 files per investigation. Report: "Project besar. Sample 50 file terpenting."
+
+### 3. Binary Files
+**Action:** Skip binary files (.png, .jpg, .pdf, .exe, dll). Report: "Skip N binary files".
+
+### 4. Unicode/Emoji
+**Action:** Flag: "Unicode detected di [file:line]". Tidak BLOCKING, tapi catat.
+
+### 5. Symlinks
+**Action:** Follow symlink, tapi flag. Report: "Symlink detected: [file] → [target]".
+
+### 6. Hidden Files (.env, .git)
+**Action:** .env → SKIP (sensitive) · .git → SKIP (git internal) · .config → READ (config penting).
+
+### 7. Very Long File Names (>200 chars)
+**Action:** Flag: "File name terlalu panjang: [file]". Tidak BLOCKING, tapi catat.
+
+### 8. Special Characters in Paths
+**Action:** Quote path dengan benar. Flag kalau ada masalah.
+
+### 9. Race Conditions
+**Detection:** Concurrent access ke shared resource
+**Action:** Report: "Potential race condition di [file:line]". BLOCKING kalau melibatkan data mutation.
+
+### Detection Rules
+
+1. **Cek file types** — skip binary, .git, .env
+2. **Cek file count** — sampling kalau >1000
+3. **Cek dependencies** — detect circular (lihat Circular Dependency Detection di §1)
+4. **Cek concurrency** — detect race conditions
+5. **Report semua** — jangan simpan edge cases
+
+### Edge Case Output
+
+```
+Edge Cases Detected:
+- Binary files: 5 (skipped)
+- Hidden files: 3 (.env skipped, .config read)
+- Unicode: 2 files
+- Symlinks: 1
+- Circular deps: 0
+- Race conditions: 0
+```

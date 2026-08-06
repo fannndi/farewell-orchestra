@@ -49,11 +49,14 @@ def get_agent_frontmatter_skills():
     agent_skills = {}
     for agent_file in AGENTS_DIR.glob("*.md"):
         content = agent_file.read_text(encoding="utf-8")
-        # Find skills: section in frontmatter
-        match = re.search(r"skills:\s*\n((?:\s+-\s+\S+\n?)+)", content)
+        # Match inline (skills: [a, b]) or block (skills:\n  - a) frontmatter
+        match = re.search(r"skills:\s*\[(.*?)\]", content)
         if match:
-            skills = re.findall(r"-\s+(\S+)", match.group(1))
-            agent_skills[agent_file.stem] = skills
+            skills = [s.strip() for s in match.group(1).split(",") if s.strip()]
+        else:
+            block = re.search(r"skills:\s*\n((?:\s+-\s+\S+\n?)+)", content)
+            skills = re.findall(r"-\s+(\S+)", block.group(1)) if block else []
+        agent_skills[agent_file.stem] = skills
     return agent_skills
 
 
@@ -71,16 +74,16 @@ def get_permission_allowlist():
 
 
 def get_ci_counts():
-    """Extract expected counts from ci.yaml."""
+    """Extract expected counts from ci.yaml. Returns None if CI not configured."""
+    if not CI_YAML.is_file():
+        return None
     content = CI_YAML.read_text(encoding="utf-8")
 
-    # Expected agents
-    agent_match = re.search(
-        r"expected_agents.*?sorted\(\[(.*?)\]\)", content, re.DOTALL
-    )
+    # Expected agents — ci.yaml asserts `expected=sorted(['a.md', ...])`
+    agent_match = re.search(r"expected\s*=\s*sorted\(\[(.*?)\]\)", content, re.DOTALL)
     expected_agents = []
     if agent_match:
-        expected_agents = re.findall(r'"(\w+\.md)"', agent_match.group(1))
+        expected_agents = re.findall(r"['\"](\w+\.md)['\"]", agent_match.group(1))
 
     return sorted(expected_agents)
 
@@ -139,10 +142,12 @@ def main():
                 f"DRIFT: Agent references skill '{skill}' but dir not found in .opencode/skills/"
             )
 
-    for skill in skill_dirs:
-        if skill not in all_agent_skills:
+    # Frontmatter lists core skills only (AGENTS.md: on-demand via trigger).
+    # Completeness of disk skills vs allowlist is covered by Check 2 below.
+    for skill in all_agent_skills:
+        if skill not in allowlist:
             warnings.append(
-                f"WARN: Skill '{skill}' exists on disk but not referenced in any agent frontmatter"
+                f"WARN: Skill '{skill}' in agent frontmatter but NOT in permission allowlist"
             )
 
     # Check 2: Permission allowlist vs skill dirs
@@ -159,7 +164,9 @@ def main():
             )
 
     # Check 3: CI agent count vs actual agents
-    if sorted(expected_agents) != agent_files:
+    if expected_agents is None:
+        print("SKIP: ci.yaml not found")
+    elif sorted(expected_agents) != agent_files:
         errors.append(
             f"DRIFT: CI expects agents {expected_agents}, actual {agent_files}"
         )

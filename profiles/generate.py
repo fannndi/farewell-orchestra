@@ -8,11 +8,6 @@ Usage:
 
 import json, os, sys, time, shutil, glob as glob_mod, io
 
-# Fix Windows stdout encoding for Unicode
-if sys.platform == "win32":
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
-
 PROFILES_DIR = os.path.dirname(os.path.abspath(__file__))
 PROFILES_JSON = os.path.join(PROFILES_DIR, "profiles.json")
 TEMP_FILE = os.path.join(PROFILES_DIR, "opencode.temp.jsonc")
@@ -33,7 +28,14 @@ AGENT_TEMPLATES = {
         "steps": 300,
         "prompt": "Orchestrator: prepare → decompose → fan-out parallel via `task` tool → synthesize → brief executor. Load skill: prepare + orchestrate. JANGAN nulis kode. Baca .opencode/tools/persona-context-orchestrator.md untuk persona lengkap.",
         "permission": {
-            "read": {"*.md": "allow", "*": "ask"},
+            "read": {
+                "**/*.env*": "deny",
+                "**/*.key": "deny",
+                "**/*.pem": "deny",
+                "**/.env*": "deny",
+                "*.md": "allow",
+                "*": "ask",
+            },
             "edit": {"sub-project.md": "allow", "*.md": "deny", "*": "deny"},
             "glob": "allow",
             "grep": "allow",
@@ -42,7 +44,10 @@ AGENT_TEMPLATES = {
             "skill": "allow",
             "todowrite": "allow",
             "lsp": "allow",
-            "external_directory": {"~/projects/**": "allow"},
+            "external_directory": {
+                "~/projects/**": "allow",
+                "C:/Users/FANNNDI/Documents/**": "allow",
+            },
             "task": {
                 "*": "deny",
                 "researcher": "allow",
@@ -60,7 +65,13 @@ AGENT_TEMPLATES = {
         "prompt": "Read-only investigator. Return evidence file:line. Load skill: research. Baca .opencode/tools/persona-context-researcher.md untuk persona lengkap.",
         "permission": {
             "*": "deny",
-            "read": "allow",
+            "read": {
+                "**/*.env*": "deny",
+                "**/*.key": "deny",
+                "**/*.pem": "deny",
+                "**/.env*": "deny",
+                "*": "allow",
+            },
             "glob": "allow",
             "grep": "allow",
             "list": "allow",
@@ -70,7 +81,10 @@ AGENT_TEMPLATES = {
             "skill": "allow",
             "edit": "deny",
             "bash": "deny",
-            "external_directory": {"~/projects/**": "allow"},
+            "external_directory": {
+                "~/projects/**": "allow",
+                "C:/Users/FANNNDI/Documents/**": "allow",
+            },
             "task": "deny",
         },
     },
@@ -83,7 +97,13 @@ AGENT_TEMPLATES = {
         "prompt": "Read-only auditor. STRIDE analysis. Return [TAG] file:line. Load skill: review. Baca .opencode/tools/persona-context-reviewer.md untuk persona lengkap.",
         "permission": {
             "*": "deny",
-            "read": "allow",
+            "read": {
+                "**/*.env*": "deny",
+                "**/*.key": "deny",
+                "**/*.pem": "deny",
+                "**/.env*": "deny",
+                "*": "allow",
+            },
             "glob": "allow",
             "grep": "allow",
             "list": "allow",
@@ -93,7 +113,10 @@ AGENT_TEMPLATES = {
             "skill": "allow",
             "edit": "deny",
             "bash": "deny",
-            "external_directory": {"~/projects/**": "allow"},
+            "external_directory": {
+                "~/projects/**": "allow",
+                "C:/Users/FANNNDI/Documents/**": "allow",
+            },
             "task": "deny",
         },
     },
@@ -105,7 +128,13 @@ AGENT_TEMPLATES = {
         "steps": 300,
         "prompt": "Implement per brief. YAGNI. Verify before report. Load skill: implement. Baca .opencode/tools/persona-context-executor.md untuk persona lengkap.",
         "permission": {
-            "read": "allow",
+            "read": {
+                "**/*.env*": "deny",
+                "**/*.key": "deny",
+                "**/*.pem": "deny",
+                "**/.env*": "deny",
+                "*": "allow",
+            },
             "edit": "allow",
             "glob": "allow",
             "grep": "allow",
@@ -121,7 +150,10 @@ AGENT_TEMPLATES = {
             },
             "lsp": "allow",
             "skill": "allow",
-            "external_directory": {"~/projects/**": "allow"},
+            "external_directory": {
+                "~/projects/**": "allow",
+                "C:/Users/FANNNDI/Documents/**": "allow",
+            },
             "task": "deny",
         },
     },
@@ -306,28 +338,18 @@ def generate(profile_name, to_stdout=False):
                 "review": "allow",
                 "implement": "allow",
                 "bootstrap-project": "allow",
-                "kiss-checklist": "allow",
                 "anti-patterns": "allow",
-                "simplification": "allow",
                 "complexity-budget": "allow",
                 "progress-tracker": "allow",
                 "error-handler": "allow",
-                "context-manager": "allow",
                 "tdd": "allow",
                 "code-review": "allow",
                 "diagnose-bugs": "allow",
                 "handoff": "allow",
                 "domain-modeling": "allow",
-                "session-state": "allow",
                 "task-decomposer": "allow",
-                "agent-protocol": "allow",
                 "feedback-loop": "allow",
                 "context-window": "allow",
-                "task-priority": "allow",
-                "quality-gates": "allow",
-                "agent-monitor": "allow",
-                "kiss-automation": "allow",
-                "edge-cases": "allow",
             },
         },
         "references": {
@@ -413,19 +435,6 @@ def generate(profile_name, to_stdout=False):
         "formatter": True,
         "model": model,
         "small_model": small_model,
-        "watcher": {
-            "ignore": [
-                ".git/**",
-                "node_modules/**",
-                "dist/**",
-                "build/**",
-                ".next/**",
-                ".venv/**",
-                "venv/**",
-                "__pycache__/**",
-                ".pytest_cache/**",
-            ]
-        },
         "agent": build_agent_config(profile),
     }
 
@@ -496,6 +505,15 @@ def validate_registry(registry):
 
 
 if __name__ == "__main__":
+    # Fix Windows stdout encoding for Unicode
+    if sys.platform == "win32":
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding="utf-8", errors="replace"
+        )
+        sys.stderr = io.TextIOWrapper(
+            sys.stderr.buffer, encoding="utf-8", errors="replace"
+        )
+
     args = sys.argv[1:]
     if not args or args[0] in ("-h", "--help"):
         registry = load_profiles()

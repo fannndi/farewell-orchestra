@@ -4,37 +4,23 @@ description: Use after prepare passes — decompose, fan-out parallel, synthesiz
 activation: After prepare returns PASS
 trigger: prepare PASS → load orchestrate
 ---
-
 # Orchestrate
-
 Input sudah CLEAN. Flow:
-
 ```
-Decompose → Evidence Bundle → Ping → Fan-Out → Synthesize → Verify Gate → Brief Executor → Post-Flight
+Decompose → Evidence Bundle → Ping → Fan-Out → Synthesize → Validate & Verify → Brief Executor → Post-Flight
 ```
 
 ## Fallback Mode (untuk semua LLM)
-
-Kalau LLM tidak bisa handle complex instructions:
-
-1. **Decompose** — pecah task jadi 2-3 bagian kecil
-2. **Fan-Out** — dispatch researcher + reviewer (atau salah satu)
-3. **Synthesize** — gabung hasil, max 3 bullet
-4. **Brief** — kasih brief ke executor: TASK, FILES, VERIFY
-5. **Report** — format: `<what> · <result> · <risk>`
-
+Kalau LLM tidak bisa handle complex instructions: Decompose 2-3 bagian → Fan-Out researcher+reviewer → Synthesize max 3 bullet → Brief executor (TASK/FILES/VERIFY) → Report `<what> · <result> · <risk>`
 Contoh: `Auth module added · pytest pass · residual: rate limiting`
-
-Jangan pakai evidence bundle, ping guard, dll. Cukup flow dasar.
+Skip evidence bundle, ping guard, dll — cukup flow dasar.
 
 ## 1. Decompose
-
 Pecah jadi work packages independen. Tiap package ≤5 baris brief.
 
-## 1.5 Interrupt Handler
+**Contoh work package:** "Fix auth bypass di login.js" = 1 package. "Refactor auth module (login.js, token.js, middleware.js)" = 1 package (satu domain). "Fix auth bug + tambah logging di api.js" = 2 packages (domain beda).
 
-**Kalau researcher nemu BLOCKING, langsung escalate — jangan tunggu reviewer.**
-
+## 2. Interrupt Handler
 | Event | Action |
 |-------|--------|
 | Researcher: BLOCKING found | Escalate ke Boss langsung |
@@ -42,47 +28,34 @@ Pecah jadi work packages independen. Tiap package ≤5 baris brief.
 | Reviewer: BLOCKING found | Escalate ke Boss langsung |
 | Either: ABORT error | Stop semua, escalate ke Boss |
 
-**Interrupt priority:**
-1. ABORT errors — stop semua
-2. BLOCKING findings — escalate langsung
-3. CRITICAL findings — escalate langsung
-4. Normal flow — tunggu keduanya selesai
+**Priority:** ABORT stop semua > BLOCKING/CRITICAL escalate langsung > normal tunggu keduanya selesai.
 
-## 2. Evidence Bundle
-
-Kumpulin context buat researcher + reviewer:
-
+## 3. Evidence Bundle
 | Lane | Sumber | Output |
 |------|--------|--------|
 | Memory | sub-project.md | agent terakhir kerja apa |
-| Lessons | Farewell-Knowlage/Lessons.md | error pattern: n kejadian |
+| Lessons | Farewell-Knowlage/Lessons.md (external Obsidian vault) | error pattern: n kejadian |
 | State | git status | file modified, bersih |
 | Config | opencode.jsonc | profile name |
 
 **REDACTION:** Hapus secret, API keys, token, path absolut sebelum dispatch.
 
-## 3. Ping Guard
-
-Sebelum dispatch real work:
-
+## 4. Ping Guard
 ```
 task(subagent_type=<agent>, prompt='Reply with exactly: READY')
 ```
-
 - Non-empty response → alive. Proceed.
 - Empty/error → DEAD. Researcher/reviewer: SKIP. Executor: ESCALATE ke Boss.
 
-## 4. Fan-Out
+**SKIP researcher** → reviewer-only audit + flag "Researcher offline. Reviewer-only." **SKIP reviewer** → researcher-only + flag. **SKIP both** → ESCALATE. **Executor DEAD** → ESCALATE langsung.
 
+## 5. Fan-Out
 Dispatch researcher + reviewer **PARALLEL**:
-
 ```python
 task(subagent_type="researcher", description="...", prompt="brief + evidence bundle")
 task(subagent_type="reviewer", description="...", prompt="brief + evidence bundle")
 ```
-
 Tunggu KEDUA hasil. NEVER skip fan-out (kecuali TRIVIAL → reviewer optional).
-
 **Explicit Fan-Out Enforcement (WAJIB untuk LLM):**
 
 | Size | Researcher | Reviewer | Executor |
@@ -92,36 +65,12 @@ Tunggu KEDUA hasil. NEVER skip fan-out (kecuali TRIVIAL → reviewer optional).
 | MEDIUM | WAJIB | WAJIB | SETELAH keduanya |
 | LARGE | WAJIB | WAJIB | SETELAH keduanya |
 
-**Rule:** Kalau size bukan TRIVIAL → WAJIB dispatch researcher dulu. Tidak boleh skip.
-
 **Chunk guard:** Kalau salah satu return `[CHUNK_REQUIRED]` → tunggu re-chunk, JANGAN gunakan partial results dari agent lain. Re-dispatch keduanya dengan chunk yang lebih kecil.
-
 **Trust sub-agents.** Gagal → re-dispatch dengan error detail, bukan ambil alih.
 
-## 5. Synthesize
-
-Gabung hasil researcher + reviewer → max 3 bullet.
-
-**Conflict Resolution:**
-
-| Conflict | Winner | Alasan |
-|----------|--------|--------|
-| Researcher "aman" vs Reviewer "BLOCKING" | Reviewer | STRIDE otoritatif di security |
-| Researcher fakta vs Reviewer asumsi | Researcher | dia yang trace source |
-| Kedua contradict soal fakta | Re-verify | suruh researcher re-check |
-| Reviewer flag konvensi, researcher diam | Reviewer | silence ≠ disagreement |
-
-Researcher clean + Reviewer clean = VALID. Lanjut tanpa reject.
-
-## 6. Validate Output — Programmatic
-
-Sebelum synthesize, WAJIB validasi output sub-agent secara programmatic:
-
-```bash
-python .opencode/tools/validate_output.py --agent researcher --output "<output>"
-python .opencode/tools/validate_output.py --agent reviewer --output "<output>"
-```
-
+## 6. Validate & Verify
+### Programmatic Validation
+Sebelum synthesize, WAJIB validasi output sub-agent via `verify` custom tool (verify.ts → verify.py; reads JSON dari stdin, bukan CLI flags).
 **Validation Rules:**
 
 | Agent | Check | Fail Action |
@@ -133,79 +82,57 @@ python .opencode/tools/validate_output.py --agent reviewer --output "<output>"
 | Executor | Verify command ada? | Re-dispatch: "WAJIB jalankan verify command" |
 | Executor | "should work" tidak ada? | Re-dispatch: "Jangan 'should work', jalankan command" |
 
-## 7. Retry Logic
+### Verify Gate
+Sebelum dispatch executor: cek researcher ada `file:line`, reviewer ada `[TAG]`+`file:line`. Kedua PASS → dispatch. Salah satu FAIL → re-dispatch agent yang fail.
 
-Kalau validation gagal, retry dengan explicit reminder:
+**Verify gate PASS:** researcher ≥1 [LEVEL] finding dengan valid file:line. Reviewer ≥1 [TAG] finding dengan valid file:line. 0 finding dari salah satu → re-dispatch dengan "Scope too narrow, widen search."
+**BLOCKING gate:** `[BLOCKING]` ditemukan → executor TIDAK mulai sampai di-resolve. Report ke Boss → tanya "Mau fix dulu atau skip?" → approve baru dispatch.
 
-**Retry 1:** Tambahkan format reminder ke prompt:
-```
-Output salah format. Gunakan format:
-<file>:<line> — [<LEVEL>] <deskripsi>
-
-Contoh:
-src/auth.py:42 — [P] JWT tanpa expiry
-```
-
-**Retry 2:** Kalau masih gagal, escalate ke Boss:
-```
-Sub-agent tidak bisa mengikuti format setelah 2 attempt. Perlu intervensi manual.
-```
-
-**Max retries:** 2. Jangan loop.
-
-## 6. Verify Gate
-
-Sebelum dispatch executor:
-1. Cek output researcher ada `file:line`
-2. Cek output reviewer ada `[TAG]` + `file:line`
-3. Kedua PASS → dispatch executor
-4. Salah satu FAIL → re-dispatch agent yang fail
-
-**BLOCKING gate:** Kalau reviewer menemukan `[BLOCKING]` → executor TIDAK BOLEH mulai sampai BLOCKING di-resolve. Orchestrator:
-1. Report BLOCKING ke Boss
-2. Tanya: "BLOCKING ditemukan: [deskripsi]. Mau fix dulu atau skip?"
-3. Boss approve → baru dispatch executor
+**Boss timeout (>3 exchange soal BLOCKING)** → default: dispatch executor SKIP area BLOCKING + flag "BLOCKING unresolved, skipped per timeout." Log untuk next session.
 
 ## 7. Brief Executor
-
 ```
 TASK: [1 kalimat — apa yang harus dihasilkan]
 FILES: [path, path — file yang disentuh]
 CONTEXT: [1-2 kalimat — kenapa, constraint]
 TRIED: [opsional — apa yang sudah gagal]
 VERIFY: [command — cara test bahwa task selesai]
+CONSTRAINTS: [opsional — jangan ubah X, tetap Y]
 ```
-
+**Cross-project addition:**
+```
+PROJECT_PATH: [absolute path ke project]
+PROJECT_TYPE: [Flutter/Node/Python/Rust/Go]
+```
 **Banned phrasing:** "consider", "mungkin", "sebaiknya", "bisa jadi", "improve/optimize" tanpa target, "refactor as needed", "clean up".
-
 Semua fork/decision WAJIB CLOSED di orchestrator. Executor cukup nulis, tidak boleh mikir.
 
 ## 8. Blast Radius
-
 Grep import chain dari file yang disentuh. Core files (auth/security/db/deploy/middleware) → tanya Boss. Selainnya silent lanjut.
-
 **Cascade Detection** — kalau update di satu service/module:
-1. Trace: siapa yang depend on ini?
-2. Kalau dependency chain > 2 hop → flag: "Cascade risk: [A] -> [B] -> [C]"
-3. Kalau cascade melibatkan DB/data → BLOCKING: "Cascade ke data layer. Backup dulu?"
-
+1. Trace siapa yang depend
+2. Chain > 2 hop → flag: "Cascade risk: [A] -> [B] -> [C]"
+3. Melibatkan DB/data → BLOCKING: "Cascade ke data layer. Backup dulu?"
 **Dependency Order Validation** — kalau chunk multiple modules:
-1. Map dependency: A depends on B depends on C
-2. Urutan implement: C -> B -> A (bottom-up)
-3. Kalau urutan salah → flag: "Urutan salah: [C] harus sebelum [A]"
+1. Map dependency: A → B → C
+2. Urutan implement bottom-up: C -> B -> A
+3. Salah urutan → flag: "Urutan salah: [C] harus sebelum [A]"
 
 ## 9. Post-Flight
-
 Verifikasi acceptance criteria. Report 3 baris:
-
 ```
 [what changed] · [verification result] · [residual risk]
 ```
 
-## 10. Session Memory — WAJIB setelah task selesai
+**Template report:**
+```
+[CHANGE] <apa yang berubah — max 15 kata>
+[VERIFY] <command + result — 1 baris>
+[RISK] <residual risk ATAU "none">
+```
 
+## 10. Session Memory
 Update `sub-project.md` di project target:
-
 ```markdown
 ## Memori Agent
 
@@ -219,38 +146,23 @@ Update `sub-project.md` di project target:
 ## Keputusan & Konteks
 - [max 5 bullets: keputusan arsitektur, task yg ditunda, temuan penting]
 ```
-
-**Kenapa:** LLM lupa context antar session. Memori ini bikin LLM bisa lanjut tanpa mulai dari nol.
-
+**Kenapa:** LLM lupa context antar session; memori ini bikin LLM lanjut tanpa mulai dari nol.
 **Update trigger:**
 - Task selesai → update executor baris
 - Keputusan arsitektur → update Keputusan & Konteks
 - Temuan penting → update agent yang relevan
-
-**Memory check di awal session:**
-1. Baca sub-project.md Memori Agent
-2. Kalau kosong → lapor: "Memory kosong. Mulai dari nol?"
-3. Kalau outdated (>7 hari) → lapor: "Memory outdated. Re-verify context?"
-4. Kalau ada → gunakan sebagai starting point
-
-**Code change detection:**
-Kalau resume task dari session lalu:
-1. `git diff` dari last memory update
-2. Ada perubahan → flag: "Code berubah sejak session lalu: [files]. Re-verify?"
-3. Tidak ada perubahan → lanjut normal
+**Awal session:** baca Memori Agent. Kosong → "Memory kosong. Mulai dari nol?". Outdated (>7 hari) → "Memory outdated. Re-verify context?". Ada → gunakan sebagai starting point.
+**Resume session:** `git diff` dari last memory update. Ada perubahan → "Code berubah sejak session lalu: [files]. Re-verify?". Tidak → lanjut normal.
 
 ## Failure Recovery
-
 Sub-agent return kosong/garbled:
 1. **Retry** dengan prompt lebih detail + ground truth struktur project
 2. Masih gagal → **escalate ke Boss**
-
-**All agents dead:** Kalau SEMUA agent (researcher + reviewer + executor) gagal setelah retry → escalate ke Boss: "Semua agent tidak merespons. Perlu restart atau manual intervention."
-
+**All agents dead:** researcher + reviewer + executor gagal setelah retry → escalate: "Semua agent tidak merespons. Perlu restart atau manual intervention."
 Max 2 attempt total. Jangan loop.
+See AGENTS.md Error Recovery for detailed patterns (permission denied, timeout, format violation).
 
 ## Loop Guard
-
 | Sinyal | Action |
 |--------|--------|
 | Agent+tool+intent sama 3x | STOP, ganti approach |
@@ -258,96 +170,90 @@ Max 2 attempt total. Jangan loop.
 | Executor gagal error **mirip** 2x (>80% similarity) | Escalate ke researcher |
 | Conversation muter tanpa progress | Report: "Stuck di [topik]" |
 
-**Error similarity:** Kalau error message berbeda tapi root cause mirip (misal: "cannot find module X" vs "module X not found") → treat sebagai error identik.
+**Error similarity:** Error beda tapi root cause mirip (misal: "cannot find module X" vs "module X not found") → treat sebagai error identik.
 
 ## Peer Debate (trigger: high-stakes / "double check")
-
-1. Researcher → analisis + evidence
-2. Reviewer → critique findings
-3. Researcher rebuttal → bukti tambahan
-4. Orchestrator → final conclusion
+Researcher analisis → reviewer critique → researcher rebuttal → orchestrator conclusion.
 
 ## Proactive
-
 - Task selesai → WAJIB usul next action ke Boss
 - Risk/blocker → flag ke Boss sebelum ditanya
 - Lihat risk di luar scope → usul investigasi
 
-## 11. Cross-Project Orchestration
+## Cross-Project Orchestration
+See `.opencode/skills/prepare/SKILL.md` §0 + AGENTS.md: permission pre-check, orchestrator direct scan, detect type → check docs → normal flow.
 
-Kalau task melibatkan project lain (di luar farewell-orchestra):
+## Task Size Classification
+See AGENTS.md Task Size Classification.
 
-### Permission Pre-Check
-1. Cek `opencode.jsonc` → agent.permission.external_directory
-2. Target path harus ada di external_directory
-3. Kalau tidak ada → tambah dulu sebelum dispatch
-4. Format: `"C:/Users/FANNNDI/Documents/project/**": "allow"`
+## Agent Communication Protocol
 
-### Orchestrator Direct Scan (Fallback)
-Kalau sub-agent kena permission block:
-1. **Jangan fail** — orchestrator scan langsung
-2. Orchestrator punya akses universal (via opencode.jsonc)
-3. Baca file langsung, generate docs/analysis dari findings
-4. Dispatch executor hanya untuk write file
+Standard komunikasi antar agents.
 
-### Cross-Project Flow
-```
-User: "aku mau kerja di project X"
-  → Pre-Flight: Permission + Path check
-  → Detect project type (Flutter/Node/Python/Rust/Go)
-  → Check docs (5 core + 2 conditional)
-  → If missing: Orchestrator direct scan → generate docs
-  → Normal flow: decompose → fan-out → implement
+### Message Format: Orchestrator → Sub-agent
+
+```json
+{
+  "task": "apa yang harus dilakukan",
+  "files": ["file1.ts", "file2.ts"],
+  "context": "kenapa, constraint",
+  "format": "expected output format",
+  "verify": "how to verify"
+}
 ```
 
-## 12. Error Recovery Patterns
+### Message Format: Sub-agent → Orchestrator
 
-### Permission Denied
-- Symptom: Sub-agent cannot read/write files
-- Cause: external_directory not in whitelist
-- Fix: Add path to opencode.jsonc → retry
-- Fallback: Orchestrator direct scan
-
-### Sub-Agent Timeout
-- Symptom: Agent returns empty after timeout
-- Cause: Task too large, context window full
-- Fix: Reduce scope, re-chunk task
-- Fallback: Orchestrator handles directly
-
-### Format Violation
-- Symptom: Agent returns wrong format (no file:line, no TAG)
-- Cause: Prompt unclear, agent confused
-- Fix: Re-dispatch with explicit format reminder
-- Max retries: 2
-
-### All Agents Dead
-- Symptom: All sub-agents fail
-- Cause: System issue, model issue
-- Fix: Report to Boss, suggest restart
-
-## 13. Task Size Classification
-
-| Size | Files | Strategy |
-|------|-------|----------|
-| TRIVIAL | 1, ≤3 lines | Direct executor, no fan-out |
-| SMALL | 1-2 | Researcher optional, executor after |
-| MEDIUM | 3-5 | Researcher + reviewer parallel, then executor |
-| LARGE | >5 | Full pipeline, chunk if needed |
-| MASSIVE | >10 | 3-4 chunks, sequential with CONTEXT_SUMMARY |
-
-## 14. Brief Executor Template (Enhanced)
-
-```
-TASK: [1 kalimat — apa yang harus dihasilkan]
-FILES: [path, path — file yang disentuh]
-CONTEXT: [1-2 kalimat — kenapa, constraint]
-TRIED: [opsional — apa yang sudah gagal]
-VERIFY: [command — cara test bahwa task selesai]
-CONSTRAINTS: [opsional — jangan ubah X, tetap Y]
+```json
+{
+  "status": "DONE/BLOCKED/FAILED",
+  "output": "hasil kerja",
+  "files_changed": ["file1.ts"],
+  "issues": ["issue1", "issue2"],
+  "next": "apa yang perlu dilakukan selanjutnya"
+}
 ```
 
-**Cross-project addition:**
+### Error Response
+
+```json
+{
+  "status": "FAILED",
+  "error": "apa yang salah",
+  "type": "RETRY/FALLBACK/ESCALATE/SKIP/ABORT",
+  "suggestion": "bagaimana cara fix"
+}
 ```
-PROJECT_PATH: [absolute path ke project]
-PROJECT_TYPE: [Flutter/Node/Python/Rust/Go]
+
+### Interrupt Protocol (BLOCKING)
+
+```json
+{
+  "interrupt": true,
+  "type": "BLOCKING",
+  "message": "apa yang salah",
+  "file": "file:line",
+  "action": "apa yang harus dilakukan"
+}
 ```
+
+### Context Passing
+
+```json
+{
+  "context": {
+    "session_state": "apa yang sedang dikerjakan",
+    "decisions": ["decision1", "decision2"],
+    "blockers": ["blocker1"],
+    "files_modified": ["file1.ts"]
+  }
+}
+```
+
+### Communication Rules
+
+1. **Structured** — gunakan format yang sudah didefinisikan
+2. **Concise** — jangan basa-basi
+3. **Actionable** — selalu ada next step
+4. **Evidence-based** — sertakan file:line untuk claims
+5. **Interrupt-aware** — BLOCKING = escalate langsung

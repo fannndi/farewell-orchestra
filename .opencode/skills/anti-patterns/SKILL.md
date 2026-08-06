@@ -88,3 +88,123 @@ src/
 Total: 1 file, 150 baris
 
 **Penghematan:** 6 file, 95 baris
+
+## Fix Process (Simplification)
+
+> "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away." — Antoine de Saint-Exupéry
+
+### Step 1: Identify Complexity
+
+Tanya:
+- Ada file yang tidak perlu?
+- Ada abstraction yang tidak perlu?
+- Ada pattern yang tidak perlu?
+- Ada dependency yang tidak perlu?
+- Ada kode yang tidak dipakai?
+
+### Step 2: Merge Files
+
+**Kalau file < 100 baris dan logic sama → gabung**
+
+Before:
+```
+src/utils/string.ts (20 baris)
+src/utils/number.ts (15 baris)
+src/utils/date.ts (25 baris)
+```
+
+After:
+```
+src/utils.ts (60 baris)
+```
+
+### Step 3: Remove Abstractions
+
+**Kalau abstraction dipakai 1x → hapus**
+
+Before:
+```typescript
+interface UserService {
+  getUser(id: string): User;
+}
+
+class UserServiceImpl implements UserService {
+  getUser(id: string): User { ... }
+}
+```
+
+After:
+```typescript
+function getUser(id: string): User { ... }
+```
+
+### Step 4: Remove Patterns
+
+**Kalau pattern tidak perlu → hapus**
+
+Before:
+```typescript
+class UserFactory {
+  create(data: UserData): User {
+    return new User(data);
+  }
+}
+```
+
+After:
+```typescript
+const user = new User(data);
+```
+
+### Step 5: Remove Dependencies
+
+**Kalau dependency bisa diganti stdlib → hapus**
+
+Before:
+```typescript
+import { v4 as uuid } from 'uuid';
+const id = uuid();
+```
+
+After:
+```typescript
+const id = crypto.randomUUID();
+```
+
+### Step 6: Simplify Logic
+
+**Kalau logic bisa lebih sederhana → sederhanakan**
+
+Before:
+```typescript
+const result = condition1
+  ? condition2
+    ? value1
+    : value2
+  : condition3
+    ? value3
+    : value4;
+```
+
+After:
+```typescript
+let result;
+if (condition1 && condition2) result = value1;
+else if (condition1) result = value2;
+else if (condition3) result = value3;
+else result = value4;
+```
+
+### Step 7: Remove Dead Code
+
+**Kalau kode tidak dipakai → hapus**
+
+- Unused imports
+- Unused functions
+- Unused variables
+- Commented code
+- TODO/FIXME yang sudah tidak relevan
+
+### Metrics
+
+Budget limits: pakai complexity-budget skill (per feature: files ≤3, lines ≤300, functions ≤10, dependencies ≤5, abstraction layers ≤2).

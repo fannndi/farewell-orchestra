@@ -17,13 +17,7 @@
 
 ## Project Type Detection
 
-| Files | Type |
-|-------|------|
-| `pubspec.yaml` | Flutter/Dart |
-| `package.json` | Node.js |
-| `requirements.txt` / `pyproject.toml` | Python |
-| `Cargo.toml` | Rust |
-| `go.mod` | Go |
+See cross-project/guide.md — Project Type Detection.
 
 ## Docs Generation
 

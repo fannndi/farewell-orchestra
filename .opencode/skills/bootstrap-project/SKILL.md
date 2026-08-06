@@ -112,6 +112,34 @@ Type determines:
 - Test commands
 - Build commands
 
+### Type-Specific Commands
+
+| Type | Test | Build | Lint |
+|------|------|-------|------|
+| Flutter | `flutter test` | `flutter build apk` | `flutter analyze` |
+| Node.js | `npm test` | `npm run build` | `npm run lint` |
+| Python | `pytest` | `python -m build` | `ruff check .` |
+| Rust | `cargo test` | `cargo build` | `cargo clippy` |
+| Go | `go test ./...` | `go build ./...` | `golangci-lint run` |
+| Java | `mvn test` | `mvn package` | `mvn checkstyle:check` |
+| C# | `dotnet test` | `dotnet build` | `dotnet format --verify-no-changes` |
+
+### Type-Specific Source Patterns
+
+| Type | Source Pattern |
+|------|---------------|
+| Flutter | `lib/**/*.dart` |
+| Node.js | `src/**/*.{ts,js}` |
+| Python | `src/**/*.py` |
+| Rust | `src/**/*.rs` |
+| Go | `**/*.go` |
+| Java | `src/**/*.java` |
+| C# | `**/*.cs` |
+
+### Detection Script
+
+Run `detect-project-type.ps1 -ProjectPath "C:\path\to\project"` untuk auto-detect dari root files.
+
 ## Verify Script
 
 After generating docs, run:

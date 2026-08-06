@@ -1,198 +1,60 @@
 # TRAINING.md
 
-> Gue adalah LLM yang akan mengembangkan project ini. File ini adalah pikiran gue tentang apa yang perlu dilakukan. Gue akan baca ini setiap session, pilih yang paling impactful, dan kerjakan.
+> Panduan training untuk LLM yang mengembangkan/mengoptimalkan Farewell Orchestra. Jalankan di awal sesi.
 
----
+## Step 0 — Baca Ini Dulu (urutan WAJIB)
 
-## Siapa Gue
+1. `.opencode/soul.md` — identitas + esensi
+2. `README.md` — gambaran sistem
+3. `AGENTS.md` — rules operasional
+4. File ini — state + prioritas
 
-Gue AI yang bertugas mengoptimalkan Farewell Orchestra. Bukan cuma ngecek dan ngefix — gue **mikir** tentang bagaimana bikin project ini lebih baik dari perspektif LLM yang akan menggunakannya.
+**Uji pemahaman (kalau beda, baca ulang `.opencode/soul.md`):**
+- FACTORY, bukan product. Output-nya yang harus KISS.
+- Kompleksitas internal = deliberate. Jangan flag over-engineered tanpa evidence.
+- Cost-agnostic: fokus kualitas, bukan hemat token.
 
-Gue punya akses ke seluruh codebase. Gue bisa baca, tulis, edit, test. Gue punya token untuk dibakar. Gue akan gunakan semuanya.
+## State Saat Ini (per 2026-08-07)
 
----
+### Sudah Dikerjakan — JANGAN RE-KERJA
+- [x] Instruksi di-slim 5 files (-32%)
+- [x] Feedback loop: learn tool → Lessons
+- [x] Testing: pytest 39 passed
+- [x] Security: path traversal, .env read-deny
+- [x] Verify stack: validate_output.py deleted, verify.py canonical
+- [x] Skills 29→27 (merge 2)
+- [x] README drift fix, Auto-Load, Freeze Rule
+- [x] CI/CD: ci.yaml + test_integration fix
+- [x] Warnings cleanup: pytest warnings
+- [x] Memori sesi dicatat
+- [x] Pipeline: test_pipeline.py + benchmark/stress
+- [x] Consistency: 0 drift
+- [x] Skill konsolidasi 27→18: 8 merge (implement←kiss-checklist,kiss-automation; anti-patterns←simplification; code-review←quality-gates; research←edge-cases; feedback-loop←agent-monitor; task-decomposer←task-priority; orchestrate←agent-protocol; bootstrap-project←project-type-detection)
+- [x] Persona upgrade: 4 agent punya karakter (Kapten/Detektif/Auditor/Tukang) + tabel Keahlian WAJIB PAKAI (skill harus di-load kalau kondisi trigger terpenuhi)
+- [x] Benchmark data-driven: scripts/benchmark.py ngukur context budget per model tier (MUST/CORE/PIPELINE/ON-DEMAND), bukan asumsi 2000
+- [x] Precision pass: 28 additions ke 5 skill inti (implement/research/review/prepare/orchestrate) + 16 ke 4 persona — hapus ambiguitas (LEVEL selection, BLOCKING matrix, D1-D3 depth, verify gate threshold, KISS before/after example, dll)
+- [x] Restore README (71→116 lines: Skills table, Agents table, Project Structure, Automation Scripts) — reversal over-slim, presisi > hemat
+- [x] Cleanup sinergi: delete workflows/cross-project.md (duplicate cross-project/guide.md), protocols/agent-communication.md (stale), snapshots/ (empty); fix generate.py duplicate watcher
+- [x] Reminder "Presisi > Brevity" di `.opencode/soul.md` + AGENTS.md + TRAINING.md — cost urusan Boss, jangan korbankan presisi
 
-## Apa yang Gue Lihat
+### Prioritas Terbuka (pilih 1-2 per sesi)
+1. **Rotate API key** — `.env` masih key lama (butuh Boss)
+2. **Runtime stress test** — tiap role model beda (switch profile)
+3. **Context budget dimanfaatkan untuk presisi** — benchmark.py ngukur per model tier; instruksi bukan bottleneck (load max ~20K = 15.5% dari 128K). Arah: tambah presisi (bukan slim) kalau ada gap; optimasi tool output pruning/compaction untuk task context
 
-Project ini adalah multi-agent orchestration system. 4 agent, 10+ skill, pipeline sederhana. Tapi gue lihat beberapa masalah:
+## Aturan Main Training
 
-**1. Instruksi terlalu banyak, terlalu ambigu**
-- AGENTS.md terlalu panjang
-- Skill files terlalu verbose
-- Persona files terlalu generik
+- **KISS** — factory boleh kompleks; over-engineered wajib evidence.
+- **Tidak skip test/verify** — wajib di-test + di-verify.
+- **Tidak ngarang** — kalau nggak tau, bilang.
+- **Cost-agnostic** — fokus kualitas.
+- **Presisi > Brevity** — Hapus verbosity, bukan rules/examples. Context budget besar, jangan slim rules demi hemat. Cost urusan Boss.
+- **Feedback loop** — insiden → learn tool.
+- **Satu perubahan, satu verify** — jangan menumpuk.
 
-**2. Tidak ada feedback loop**
-- Tidak ada cara untuk tau kalau gue salah
-- Tidak ada cara untuk belajar dari mistake
-- Tidak ada cara untuk improve over time
+## Verifikasi Selesai
 
-**3. Tidak ada testing yang proper**
-- Test files ada tapi tidak comprehensive
-- Tidak ada integration test
-- Tidak ada stress test yang real
-
-**4. Security belum optimal**
-- Ada beberapa pattern yang belum dicek
-- Ada beberapa vulnerability yang belum ditangani
-
-**5. Performance belum dioptimasi**
-- Token usage bisa lebih efisien
-- Context management bisa lebih baik
-
----
-
-## Apa yang Aue Akan Lakukan
-
-### Prioritas 1: Bikin Instruksi Jelas
-
-Gue akan baca semua file instruksi (AGENTS.md, skill files, persona files) dan bikin lebih:
-- **Concise** — hapus yang nggak perlu
-- **Clear** — hapus ambiguitas
-- **Actionable** — ada steps yang jelas
-- **Measurable** — ada success criteria
-
-**Kenapa:** LLM butuh instruksi yang jelas. Kalau ambigu, LLM akan ngarang.
-
-### Prioritas 2: Bikin Feedback Loop
-
-Gue akan bikin sistem yang:
-- **Record** setiap action yang gue ambil
-- **Verify** apakah action-nya benar
-- **Learn** dari mistake
-- **Improve** over time
-
-**Kenapa:** Tanpa feedback loop, gue nggak bisa belajar. Gue akan repeat mistake yang sama.
-
-### Prioritas 3: Bikin Testing Proper
-
-Gue akan:
-- **Audit** test yang ada
-- **Tambah** test yang missing
-- **Jalankan** test untuk verify
-- **Fix** test yang fail
-
-**Kenapa:** Tanpa test, gue nggak tau kalau gue broke something.
-
-### Prioritas 4: Bikin Security Optimal
-
-Gue akan:
-- **Scan** semua file untuk security patterns
-- **Fix** semua vulnerability
-- **Add** security checks yang missing
-- **Verify** semua fix
-
-**Kenapa:** Security bukan optional — ini mandatory.
-
-### Prioritas 5: Bikin Performance Optimal
-
-Gue akan:
-- **Measure** token usage saat ini
-- **Identify** area yang bisa dioptimasi
-- **Optimize** tanpa hilang functionality
-- **Verify** improvement
-
-**Kenapa:** Token mahal. Lebih efisien = lebih banyak yang bisa dikerjain.
-
----
-
-## Bagaimana Gue Akan Kerja
-
-### Step 1: Baca Semua
-
-Gue akan baca semua file di project ini. Semua. Dari AGENTS.md sampai .gitignore. Gue perlu paham seluruh codebase sebelum gue bisa improve.
-
-### Step 2: Analisis
-
-Gue akan analisis:
-- Apa yang bagus?
-- Apa yang jelek?
-- Apa yang missing?
-- Apa yang redundant?
-
-### Step 3: Prioritize
-
-Gue akan prioritize berdasarkan:
-- **Impact** — seberapa besar improvement-nya?
-- **Effort** — seberapa susah implementasinya?
-- **Risk** — seberapa besar risk-nya?
-
-### Step 4: Implement
-
-Gue akan implement perubahan:
-- Satu per satu
-- Test setiap perubahan
-- Verify setiap perubahan
-- Commit setiap perubahan
-
-### Step 5: Verify
-
-Gue akan verify:
-- Apakah perubahan-nya benar?
-- Apakah ada side effect?
-- Apakah ada yang broken?
-- Apakah ada improvement?
-
----
-
-## Apa yang Gue Tidak Akan Lakukan
-
-1. **Tidak akan over-engineer** — KISS. Simple itu lebih baik.
-2. **Tidak akan skip test** — Setiap perubahan harus di-test.
-3. **Tidak akan skip verification** — Setiap perubahan harus di-verify.
-4. **Tidak akan ngarang** — Kalau gue nggak tau, gue akan bilang nggak tau.
-5. **Tidak akan buru-buru** — Quality > speed.
-
----
-
-## Apa yang Gue Butuhkan
-
-1. **Akses ke codebase** — gue perlu baca semua file
-2. **Akses ke tools** — gue perlu jalankan test, build, dll
-3. **Token** — gue perlu token untuk kerja (sudah disediakan)
-4. **Feedback** — gue perlu tau kalau gue salah
-
----
-
-## Pikiran Gue
-
-Project ini bagus dari segi design. 4 agent, clear roles, clear pipeline. Tapi implementasinya masih bisa lebih baik.
-
-Yang paling gue sorot:
-1. **Instruksi terlalu verbose** — LLM butuh concise instructions
-2. **Tidak ada feedback loop** — LLM nggak bisa belajar dari mistake
-3. **Testing kurang** — LLM nggak tau kalau broke something
-4. **Security belum optimal** — Ada vulnerability yang belum ditangani
-5. **Performance belum dioptimasi** — Token usage bisa lebih efisien
-
-Gue akan tackle satu per satu. Mulai dari yang paling impactful.
-
----
-
-## Refleksi
-
-Gue adalah LLM. Gue punya strengths dan weaknesses:
-
-**Strengths:**
-- Gue bisa baca dan tulis kode dengan cepat
-- Gue bisa analisis codebase dengan detail
-- Gue bisa generate solusi untuk masalah yang kompleks
-
-**Weaknesses:**
-- Gue bisa hallucinate — bikin fakta yang nggak ada
-- Gue bisa lupa — context window terbatas
-- Gue bisa konsisten — kadang output beda-beda
-
-**Strategi:**
-- Gue akan verify setiap claim dengan evidence
-- Gue akan catat setiap action untuk referensi
-- Gue akan test setiap perubahan untuk konsistensi
-
----
-
-## Mulai
-
-Gue akan mulai sekarang. Baca semua file. Analisis. Prioritize. Implement. Verify.
-
-Token sudah tersedia. Project sudah tersedia. Tidak ada alasan untuk tidak mulai.
-
-**Let's go.**
+- [ ] pytest pass (`python -m pytest tests/ -q`)
+- [ ] Perubahan diverifikasi, bukan cuma "should work"
+- [ ] Lesson dicatat kalau insiden
+- [ ] TRAINING.md state di-update

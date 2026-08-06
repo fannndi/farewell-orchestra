@@ -18,6 +18,26 @@ Optimalkan penggunaan context window.
 | 3 (Medium) | Related code, dependencies | Sometimes | If not relevant |
 | 4 (Low) | Historical, old sessions | Rarely | Usually |
 
+## Context Format
+
+```markdown
+## Context (Priority: [level])
+
+### Critical
+- Current task: [deskripsi]
+- Blockers: [list]
+
+### High
+- Recent decisions: [list]
+- Active context: [deskripsi]
+
+### Medium
+- Historical: [ringkasan]
+
+### Low
+- Old sessions: [ringkasan]
+```
+
 ## Optimization Rules
 
 ### 1. Compress
@@ -64,6 +84,14 @@ Kalau context penuh:
 2. Then Medium priority
 3. Keep High and Critical
 
+### 5. Reload (Context Empty)
+
+Kalau context kosong:
+1. Load Critical dari sub-project.md
+2. Load High dari recent memory
+3. Load Medium dari lessons
+4. Skip Low
+
 ## Context Budget
 
 | Agent | Budget | Strategy |
@@ -80,6 +108,7 @@ Kalau context penuh:
 3. **Summarize** — ringkas detail
 4. **Prioritize** — drop yang kurang penting
 5. **Budget** — patuhi budget per agent
+6. **Update** — refresh context setiap step
 
 ## Integration
 

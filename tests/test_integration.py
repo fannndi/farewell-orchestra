@@ -7,6 +7,8 @@ Run:  python -m pytest tests/test_integration.py -v
 
 import json, os, sys, subprocess
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "profiles"))
 from generate import load_profiles, find_profile
 
@@ -189,18 +191,19 @@ class TestConsistency:
             if f.endswith(".md")
         ]
 
-        ci_content = open(
-            os.path.join(ROOT, ".github", "workflows", "ci.yaml"), encoding="utf-8"
-        ).read()
+        ci_path = os.path.join(ROOT, ".github", "workflows", "ci.yaml")
+        if not os.path.isfile(ci_path):
+            pytest.skip("ci.yaml not found — CI workflow not configured")
+        ci_content = open(ci_path, encoding="utf-8").read()
 
         # Count expected agents in CI
         import re
 
         expected_match = re.search(
-            r"expected_agents.*?sorted\(\[(.*?)\]\)", ci_content, re.DOTALL
+            r"expected=sorted\(\[(.*?)\]\)", ci_content, re.DOTALL
         )
         if expected_match:
-            expected = re.findall(r'"(\w+\.md)"', expected_match.group(1))
+            expected = re.findall(r"['\"](\w+\.md)['\"]", expected_match.group(1))
             assert len(expected) == len(agent_files), (
                 f"CI expects {len(expected)} agents, disk has {len(agent_files)}"
             )

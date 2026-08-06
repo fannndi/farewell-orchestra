@@ -22,6 +22,9 @@ Persistent task tracking. Track progress across sessions.
 - [ ] Step 3: [deskripsi] — BLOCKED: [alasan]
 - [ ] Step 4: [deskripsi]
 
+## Files Changed
+- [daftar file yang sudah diubah]
+
 ## Decisions
 - [tanggal] [keputusan] — [alasan]
 
@@ -38,6 +41,7 @@ Persistent task tracking. Track progress across sessions.
 2. **Catat decisions** — kenapa keputusan diambil
 3. **Catat blockers** — apa yang menghambat
 4. **Resume dari last state** — jangan mulai dari nol
+5. **Catat files** — file apa saja yang sudah diubah
 
 ## Integration
 
@@ -57,6 +61,9 @@ Persistent task tracking. Track progress across sessions.
 - [x] Step 2: Review security — DONE
 - [ ] Step 3: Implement login — IN_PROGRESS
 - [ ] Step 4: Verify — PENDING
+
+## Files Changed
+- src/auth.ts, src/auth.test.ts
 
 ## Decisions
 - [2026-08-06] Pakai JWT, bukan session — lebih scalable

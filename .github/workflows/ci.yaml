@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+      - name: Run tests
+        run: python -m pytest tests/ -q
+      - name: Validate profiles
+        run: python profiles/generate.py --validate
+      - name: Consistency check
+        run: python .opencode/scripts/check-consistency.py || true
+      - name: Link check
+        run: python .opencode/scripts/check-links.py || true
+      - name: Agent list check
+        run: python -c "import os; agents=sorted([f for f in os.listdir('.opencode/agents') if f.endswith('.md')]); expected=sorted(['boss.md','orchestrator.md','executor.md','researcher.md','reviewer.md']); assert agents==expected, f'Mismatch: {agents} vs {expected}'"

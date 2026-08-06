@@ -48,7 +48,7 @@ Agent: "Berdasarkan glossary, session = period waktu user login.
 
 ### 5. Update Documentation
 
-Update `CONTEXT.md` atau `docs/glossary.md` dengan findings.
+Update `Context.md` atau `docs/glossary.md` dengan findings.
 
 ## Rules
 

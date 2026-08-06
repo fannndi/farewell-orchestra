@@ -30,13 +30,10 @@
       "review": "allow",
       "implement": "allow",
       "bootstrap-project": "allow",
-      "kiss-checklist": "allow",
       "anti-patterns": "allow",
-      "simplification": "allow",
       "complexity-budget": "allow",
       "progress-tracker": "allow",
-      "error-handler": "allow",
-      "context-manager": "allow"
+      "error-handler": "allow"
     }
   },
   "references": {
