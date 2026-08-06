@@ -5,40 +5,44 @@ All notable changes to Farewell Orchestra.
 ## [Unreleased]
 
 ### Added
-- 8 new LLM-centric skills: session-state, task-decomposer, agent-protocol, feedback-loop, context-window, task-priority, quality-gates, agent-monitor
-- soul.md — project identity (bukan persona agent)
-- Cross-project workflow with reverse engineering
+- 8 LLM-centric skills: session-state, task-decomposer, agent-protocol, feedback-loop, context-window, task-priority, quality-gates, agent-monitor
+- soul.md — project identity
+- small_model to profiles.json
+- OpenCode config: shell, snapshot, enabled_providers, watcher
+- LSP configuration (TypeScript)
+- Formatters configuration (Prettier + Black)
 
 ### Removed
 - templates/ folder (redundant with cross-project/)
+- .github/workflows/ (not needed)
 
 ## [2026-08-06]
 
 ### Added
-- 5 skills from mattpocock/skills synthesis: tdd, code-review, diagnose-bugs, handoff, domain-modeling
-- Auto-load system for skills AND personas (3 layer enforcement)
+- 5 skills from mattpocock/skills: tdd, code-review, diagnose-bugs, handoff, domain-modeling
+- Auto-load system (3 layer: hook, prompt, inline)
 - 4 KISS skills: kiss-checklist, anti-patterns, simplification, complexity-budget
 - 3 management skills: progress-tracker, error-handler, context-manager
-- Interrupt handler (BLOCKING = escalate langsung)
+- Interrupt handler (BLOCKING = escalate)
 - LLM NOTE in README
-- check-consistency.py — automated drift detection
-- test_integration.py — golden-path integration tests
+- check-consistency.py — drift detection
+- test_integration.py — integration tests
+- test_effectiveness.py — effectiveness tests
 - CHANGELOG.md
 
 ### Fixed
 - test_generate.py — updated imports
-- ci.yaml — updated to 26 skills, 5 agents
-- generate.py — all skills in permission allowlist
-- verify.py — evidence tag adjacency checks
+- generate.py — all skills in allowlist
+- verify.py — evidence tag adjacency
 - check-links.py — strip code blocks
 - post-generate.py — ported to Python
-- switch.bat — interactive menu with dynamic profiles
+- switch.bat — interactive menu
 
 ### Removed
 - Orphan dispatch templates
 - Windows-only scripts (except switch.bat)
-- .codenomad/ leftover
-- Stress test documentation files
+- .codenomad/
+- Stress test documentation
 
 ## [2026-08-05]
 
