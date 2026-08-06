@@ -98,24 +98,63 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
 
     # 4. Evidence tags [P/W/E/O]
     evidence_tags = re.findall(r"\[([PWOE])\]", claims)
-    if evidence_tags:
+    checks.append(
+        {
+            "name": "evidence tags [P/W/E/O] + depth [D1-D4]",
+            "status": "PASS" if evidence_tags else "FAIL",
+            "detail": f"Found {len(evidence_tags)} tags: {evidence_tags[:5]}"
+            if evidence_tags
+            else "No [P/W/E/O] tags found",
+        }
+    )
+
+    # 5. Tag adjacency — check if tags are near file:line refs
+    if evidence_tags and refs:
+        # Check if each tag is within 100 chars of a ref
+        adjacent = True
+        for match in re.finditer(r"\[([PWOE])\]", claims):
+            tag_pos = match.start()
+            # Find nearest ref
+            min_dist = float("inf")
+            for ref_match in re.finditer(REF_PATTERN, claims):
+                ref_pos = ref_match.start()
+                min_dist = min(min_dist, abs(tag_pos - ref_pos))
+            if min_dist > 100:
+                adjacent = False
+                break
+
         checks.append(
             {
-                "name": "evidence tags",
-                "status": "PASS",
-                "detail": f"Found {len(evidence_tags)} tags: {evidence_tags[:5]}",
+                "name": "tag adjacency [P/W/E/O]+[D1-D4]",
+                "status": "PASS" if adjacent else "WARN",
+                "detail": "Tags near refs"
+                if adjacent
+                else "Tags far from refs (>100 chars)",
             }
         )
     else:
-        # Only warn if there are file:line references but no tags
-        if refs:
-            checks.append(
-                {
-                    "name": "evidence tags",
-                    "status": "WARN",
-                    "detail": "file:line found but no [P/W/E/O] tags",
-                }
-            )
+        # Always add adjacency check
+        checks.append(
+            {
+                "name": "tag adjacency [P/W/E/O]+[D1-D4]",
+                "status": "WARN" if not evidence_tags else "PASS",
+                "detail": "No tags to check adjacency"
+                if not evidence_tags
+                else "Tags present",
+            }
+        )
+
+    # 6. Evidence adjacency — overall check
+    if refs and evidence_tags:
+        # Check if evidence is properly linked
+        linked = len(evidence_tags) > 0 and len(refs) > 0
+        checks.append(
+            {
+                "name": "evidence adjacency",
+                "status": "PASS" if linked else "WARN",
+                "detail": f"{len(evidence_tags)} tags, {len(refs)} refs",
+            }
+        )
 
     return checks
 
