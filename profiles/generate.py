@@ -281,6 +281,7 @@ def generate(profile_name, to_stdout=False):
         "instructions": ["AGENTS.md", "cross-project/guide.md", ".opencode/soul.md"],
         "subagent_depth": 2,
         "share": "disabled",
+        "shell": "pwsh",
         "snapshot": True,
         "permission": {
             "doom_loop": "deny",
