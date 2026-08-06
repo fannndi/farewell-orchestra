@@ -1,6 +1,8 @@
 ---
 name: review
 description: Use when reviewing code changes — STRIDE threat model, convention enforcement, drift detection.
+activation: When dispatched by orchestrator
+trigger: Orchestrator dispatches reviewer
 ---
 
 # Review

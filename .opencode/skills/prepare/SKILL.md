@@ -1,6 +1,8 @@
 ---
 name: prepare
 description: Use when receiving a request — validate input, extract requirements, chunk if needed. Gate before orchestration.
+activation: ALWAYS at start of every request
+trigger: Any request from Boss
 ---
 
 # Prepare

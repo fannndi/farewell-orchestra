@@ -1,6 +1,8 @@
 ---
 name: research
 description: Use when investigating codebase or external sources — evidence-first, file:line mandatory.
+activation: When dispatched by orchestrator
+trigger: Orchestrator dispatches researcher
 ---
 
 # Research

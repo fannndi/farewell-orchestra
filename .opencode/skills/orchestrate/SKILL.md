@@ -1,6 +1,8 @@
 ---
 name: orchestrate
 description: Use after prepare passes — decompose, fan-out parallel, synthesize, brief executor.
+activation: After prepare returns PASS
+trigger: prepare PASS → load orchestrate
 ---
 
 # Orchestrate

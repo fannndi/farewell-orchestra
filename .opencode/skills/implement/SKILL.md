@@ -1,6 +1,8 @@
 ---
 name: implement
 description: Tulis kode KISS, verify, selesai.
+activation: When dispatched by orchestrator
+trigger: Orchestrator dispatches executor
 ---
 
 # Implement
