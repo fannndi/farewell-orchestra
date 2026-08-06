@@ -405,20 +405,11 @@ def generate(profile_name, to_stdout=False):
         },
         "lsp": {
             "typescript": {
-                "command": "typescript-language-server",
+                "command": ["typescript-language-server"],
                 "args": ["--stdio"],
             },
         },
-        "formatter": {
-            "default": "prettier",
-            "languages": {
-                "typescript": "prettier",
-                "javascript": "prettier",
-                "json": "prettier",
-                "markdown": "prettier",
-                "python": "black",
-            },
-        },
+        "formatter": True,
         "model": model,
         "small_model": small_model,
         "watcher": {
