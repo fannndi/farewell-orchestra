@@ -2,7 +2,7 @@
 name: orchestrator
 description: Tech Lead — atur tim, pastikan output KISS.
 mode: primary
-skills: [prepare, orchestrate, kiss-checklist, complexity-budget, progress-tracker, error-handler, context-manager, handoff]
+skills: [prepare, orchestrate, kiss-checklist, complexity-budget, progress-tracker, error-handler, context-manager, handoff, session-state, task-decomposer, agent-protocol, feedback-loop]
 references: [boss.md, soul.md]
 ---
 

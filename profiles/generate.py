@@ -312,6 +312,10 @@ def generate(profile_name, to_stdout=False):
                 "diagnose-bugs": "allow",
                 "handoff": "allow",
                 "domain-modeling": "allow",
+                "session-state": "allow",
+                "task-decomposer": "allow",
+                "agent-protocol": "allow",
+                "feedback-loop": "allow",
             },
         },
         "references": {
