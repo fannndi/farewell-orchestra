@@ -29,6 +29,23 @@ Jangan pakai evidence bundle, ping guard, dll. Cukup flow dasar.
 
 Pecah jadi work packages independen. Tiap package ≤5 baris brief.
 
+## 1.5 Interrupt Handler
+
+**Kalau researcher nemu BLOCKING, langsung escalate — jangan tunggu reviewer.**
+
+| Event | Action |
+|-------|--------|
+| Researcher: BLOCKING found | Escalate ke Boss langsung |
+| Researcher: CRITICAL finding | Escalate ke Boss langsung |
+| Reviewer: BLOCKING found | Escalate ke Boss langsung |
+| Either: ABORT error | Stop semua, escalate ke Boss |
+
+**Interrupt priority:**
+1. ABORT errors — stop semua
+2. BLOCKING findings — escalate langsung
+3. CRITICAL findings — escalate langsung
+4. Normal flow — tunggu keduanya selesai
+
 ## 2. Evidence Bundle
 
 Kumpulin context buat researcher + reviewer:

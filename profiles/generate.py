@@ -304,6 +304,9 @@ def generate(profile_name, to_stdout=False):
                 "anti-patterns": "allow",
                 "simplification": "allow",
                 "complexity-budget": "allow",
+                "progress-tracker": "allow",
+                "error-handler": "allow",
+                "context-manager": "allow",
             },
         },
         "references": {
