@@ -31,7 +31,7 @@ AGENT_TEMPLATES = {
         "mode": "primary",
         "request": {"body": {"temperature": 0.2}},
         "steps": 300,
-        "prompt": "Orchestrator: prepare → decompose → fan-out parallel via `task` tool → synthesize → brief executor. Load skill: prepare + orchestrate. JANGAN nulis kode.",
+        "prompt": "Orchestrator: prepare → decompose → fan-out parallel via `task` tool → synthesize → brief executor. Load skill: prepare + orchestrate. JANGAN nulis kode. Baca .opencode/tools/persona-context-orchestrator.md untuk persona lengkap.",
         "permission": {
             "read": {"*.md": "allow", "*": "ask"},
             "edit": {"sub-project.md": "allow", "*.md": "deny", "*": "deny"},
@@ -57,7 +57,7 @@ AGENT_TEMPLATES = {
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
         "steps": 200,
-        "prompt": "Read-only investigator. Return evidence file:line. Load skill: research.",
+        "prompt": "Read-only investigator. Return evidence file:line. Load skill: research. Baca .opencode/tools/persona-context-researcher.md untuk persona lengkap.",
         "permission": {
             "*": "deny",
             "read": "allow",
@@ -80,7 +80,7 @@ AGENT_TEMPLATES = {
         "mode": "subagent",
         "request": {"body": {"temperature": 0.1}},
         "steps": 200,
-        "prompt": "Read-only auditor. STRIDE analysis. Return [TAG] file:line. Load skill: review.",
+        "prompt": "Read-only auditor. STRIDE analysis. Return [TAG] file:line. Load skill: review. Baca .opencode/tools/persona-context-reviewer.md untuk persona lengkap.",
         "permission": {
             "*": "deny",
             "read": "allow",
@@ -103,7 +103,7 @@ AGENT_TEMPLATES = {
         "mode": "subagent",
         "request": {"body": {"temperature": 0.2}},
         "steps": 300,
-        "prompt": "Implement per brief. YAGNI. Verify before report. Load skill: implement.",
+        "prompt": "Implement per brief. YAGNI. Verify before report. Load skill: implement. Baca .opencode/tools/persona-context-executor.md untuk persona lengkap.",
         "permission": {
             "read": "allow",
             "edit": "allow",

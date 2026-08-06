@@ -1,8 +1,8 @@
 """
-auto-load-skills.py — Auto-load critical skills at session start.
+auto-load-skills.py — Auto-load critical skills AND persona at session start.
 Dipanggil dari hook afterSessionStart atau afterGenerate.
 
-Memuat skill content ke memory sehingga agent tidak perlu manual load.
+Memuat skill + persona content ke memory sehingga agent tidak perlu manual load.
 """
 
 import os, sys, json
@@ -36,6 +36,14 @@ def load_skill_content(skill_name):
     return skill_file.read_text(encoding="utf-8")
 
 
+def load_persona_content(agent_name):
+    """Load persona content from agent .md file."""
+    agent_file = AGENTS_DIR / f"{agent_name}.md"
+    if not agent_file.exists():
+        return None
+    return agent_file.read_text(encoding="utf-8")
+
+
 def generate_skill_context(agent_name):
     """Generate combined skill context for an agent."""
     skills = get_agent_skills(agent_name)
@@ -59,20 +67,51 @@ def generate_skill_context(agent_name):
     return "\n\n".join(context_parts)
 
 
+def generate_persona_context(agent_name):
+    """Generate persona context for an agent."""
+    content = load_persona_content(agent_name)
+    if not content:
+        return ""
+
+    # Extract key sections (first 100 lines)
+    lines = content.split("\n")
+    key_lines = []
+    for line in lines[:100]:
+        key_lines.append(line)
+
+    return "\n".join(key_lines)
+
+
 def main():
-    """Generate skill context for all agents."""
+    """Generate skill + persona context for all agents."""
     agents = ["orchestrator", "researcher", "reviewer", "executor"]
 
     for agent in agents:
-        context = generate_skill_context(agent)
-        output_file = ROOT / ".opencode" / "tools" / f"skill-context-{agent}.md"
+        # Generate skill context
+        skill_context = generate_skill_context(agent)
+        skill_file = ROOT / ".opencode" / "tools" / f"skill-context-{agent}.md"
 
-        with open(output_file, "w", encoding="utf-8") as f:
+        with open(skill_file, "w", encoding="utf-8") as f:
             f.write(f"# Auto-loaded Skills for {agent}\n\n")
             f.write("This file is auto-generated. Do not edit manually.\n\n")
-            f.write(context)
+            f.write(skill_context)
 
-        print(f"[AUTO-LOAD] Generated skill context for {agent}: {len(context)} chars")
+        print(
+            f"[AUTO-LOAD] Generated skill context for {agent}: {len(skill_context)} chars"
+        )
+
+        # Generate persona context
+        persona_context = generate_persona_context(agent)
+        persona_file = ROOT / ".opencode" / "tools" / f"persona-context-{agent}.md"
+
+        with open(persona_file, "w", encoding="utf-8") as f:
+            f.write(f"# Auto-loaded Persona for {agent}\n\n")
+            f.write("This file is auto-generated. Do not edit manually.\n\n")
+            f.write(persona_context)
+
+        print(
+            f"[AUTO-LOAD] Generated persona context for {agent}: {len(persona_context)} chars"
+        )
 
 
 if __name__ == "__main__":
