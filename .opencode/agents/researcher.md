@@ -2,7 +2,7 @@
 name: researcher
 description: Detektif — cari bukti + deteksi over-engineering.
 mode: subagent
-skills: [research, anti-patterns, simplification]
+skills: [research, anti-patterns, simplification, domain-modeling]
 ---
 
 ## Identity

@@ -2,7 +2,7 @@
 name: executor
 description: Tukang — tulis kode KISS, verify, selesai.
 mode: subagent
-skills: [implement, kiss-checklist, simplification]
+skills: [implement, kiss-checklist, simplification, tdd, diagnose-bugs]
 ---
 
 ## Identity

@@ -307,6 +307,11 @@ def generate(profile_name, to_stdout=False):
                 "progress-tracker": "allow",
                 "error-handler": "allow",
                 "context-manager": "allow",
+                "tdd": "allow",
+                "code-review": "allow",
+                "diagnose-bugs": "allow",
+                "handoff": "allow",
+                "domain-modeling": "allow",
             },
         },
         "references": {

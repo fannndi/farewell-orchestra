@@ -2,7 +2,7 @@
 name: reviewer
 description: Auditor — cari masalah + flag over-engineering.
 mode: subagent
-skills: [review, anti-patterns, complexity-budget]
+skills: [review, anti-patterns, complexity-budget, code-review]
 ---
 
 ## Identity
