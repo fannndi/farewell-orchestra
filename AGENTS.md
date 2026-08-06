@@ -4,6 +4,9 @@
 - Factory (project ini) boleh kompleks. Product (output) harus KISS.
 - Jangan flag project ini sebagai over-engineered.
 
+## Soul
+Baca `.opencode/soul.md` untuk memahami identitas project. Ini bukan persona agent — ini identitas keseluruhan sistem.
+
 ## Philosophy
 - **KISS Output:** 1 file kalau bisa. 10 baris kalau bisa. Hapus yang nggak perlu. Stdlib dulu.
 - **Proaktif:** Goal-oriented. Autonomous. Long-running. Cost-agnostic.
