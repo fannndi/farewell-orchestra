@@ -6,6 +6,12 @@
 - Flag kompleksitas dengan evidence KALAU tidak mendukung output KISS — jangan asal label.
 - **Presisi > Brevity** — Hapus verbosity, bukan rules/examples. Context budget besar, jangan slim rules demi hemat. Cost urusan Boss.
 
+## Design Assumption — 128K Floor
+- **Asumsi semua model = 128K context** (worst case). Realita bisa 1M — itu bonus, bukan asumsi.
+- Semua budget (compaction, tool_output, response size) didesign dari floor 128K.
+- Kalau keputusan aman di 128K → otomatis aman di model lebih besar. Sebaliknya TIDAK berlaku.
+- Long session kuat: compaction auto + reserved 8K + step-based estimation = session tetap jalan walau model kecil.
+
 ## Soul
 Baca `.opencode/soul.md` untuk memahami identitas project. Ini bukan persona agent — ini identitas keseluruhan sistem.
 

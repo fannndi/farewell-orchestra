@@ -105,7 +105,7 @@ Trigger chunk kalau: **Q≥3** (pertanyaan) ATAU **F≥3** (file) ATAU **O≥2**
 |------|--------|----------------|
 | TRIVIAL/SMALL | 1 chunk, fan-out normal | — |
 | MEDIUM (F=3-5) | 1 chunk, fan-out normal | — |
-| LARGE (F=3-10) | 2-3 chunk | Per module/feature, ≤3 file per chunk |
+| LARGE (>5 files ATAU >200 baris) | 2-3 chunk | Per module/feature, ≤3 file per chunk |
 | MASSIVE (F>10) | 3-4 chunk | Per layer (FE/BE/DB), ≤3 file per chunk |
 
 Per chunk: ≤3 file, 1 fokus, 1 format. **DALAM chunk:** parallel. **ANTAR chunk:** sequential dengan CONTEXT_SUMMARY.

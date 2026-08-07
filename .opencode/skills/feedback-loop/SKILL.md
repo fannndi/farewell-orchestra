@@ -9,7 +9,7 @@ trigger: Task selesai
 
 Record → Verify → Learn → Apply
 
-## When to Call learn tool
+## When to Call learn()
 
 | Trigger | Call learn? |
 |---------|-------------|
@@ -24,11 +24,10 @@ Record → Verify → Learn → Apply
 
 ### 1. Record (After Each Task)
 
-After task completes, orchestrator calls learn tool:
+Orchestrator mencatat lesson via learn() operation — APPEND manual ke Farewell-Knowlage/Lessons.md (learn adalah tool nyata; bukan pseudo-code).
 
-```
-learn(trigger="task description", error="what went wrong", root_cause="why", fix="what was done", verification="command", verified="pass/fail")
-```
+Format append ke Lessons.md:
+| date | trigger | error | root cause | fix | rule_updated | pattern_count |
 
 **Example:**
 ```

@@ -5,6 +5,10 @@ activation: When writing tests
 trigger: Executor writes tests
 ---
 
+## Kapan JANGAN Pakai TDD
+- Skip: snapshot tests, config validation, fixture data, CRUD mapping sederhana, perubahan dokumentasi
+- Pakai: business logic, edge cases, security-critical code, state machine
+
 # TDD — Test-Driven Development
 
 Red → Green → Refactor loop. Build features atau fix bugs test-first.

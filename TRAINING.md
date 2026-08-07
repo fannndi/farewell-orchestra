@@ -12,6 +12,8 @@ Gue punya akses ke seluruh codebase. Gue bisa baca, tulis, edit, test. Gue punya
 
 **Satu aturan sebelum mulai:** Presisi > Brevity. Hapus verbosity, bukan rules/examples. Context budget besar (headroom 109K+ di model terkecil). Cost urusan Boss — jangan korbankan presisi demi hemat token.
 
+- **Design for 128K** — asumsi semua model 128K (worst case). Realita 1M = bonus. Budget dari floor, bukan dari kenyataan.
+
 ---
 
 ## Perjalanan Project Ini
@@ -25,6 +27,12 @@ Waktu pertama kali gue lihat project ini, ada 5 masalah besar:
 5. **Performance belum dioptimasi** → SUDAAH: benchmark.py data-driven per model tier. Instruksi BUKAN bottleneck (max 21.9K = 17.2% dari 128K). Yang tersisa: task context optimization.
 
 **Kesimpulan:** Fondasi sudah kuat. Project sekarang: 4 agent berkarakter (Kapten/Detektif/Auditor/Tukang), 18 skill dengan WAJIB PAKAI enforcement, 49 tests sebagai safety net, context budget terukur.
+
+### Update Sesi (2026-08-08)
+- **Prioritas 2 (Feedback Loop) SELESAI** — 3 recurring patterns → rules durable di AGENTS.md (Free Model Capacity 6x, Evidence Prohibition 4x, Path Verification 3x); Lessons.md + Recurring Patterns summary
+- **Prioritas 4 (Task Context) SELESAI** — compaction reserved 14K→8K, preserve 4K→6K, tool_output 1000/20K→500/12K; response limits (researcher ≤15, reviewer ≤20, sub-agent ≤1500 tok); step-based context estimation
+- **Prioritas 1 (Presisi Lanjutan) SEBAGIAN** — 10 dari 30 residual ambiguity di-fix (size contradiction, handoff trigger, learn() clarity, cross-platform, tdd when-NOT, dll)
+- **Design for 128K floor** — asumsi semua model 128K (worst case), 1M = bonus; benchmark floor mode
 
 ---
 
@@ -61,6 +69,7 @@ Project sudah sehat. Tapi gue masih lihat peluang:
 ## Apa yang Akan Gue Lakukan
 
 ### Prioritas 1: Presisi Lanjutan
+*(10/30 residual ambiguity fixed 2026-08-08 — lanjutkan scan berikutnya)*
 
 Gue akan scan ulang 18 skill + 4 persona untuk ambiguitas tersisa:
 - **Hapus** ambiguitas — ganti "pertimbangkan" dengan decision rule

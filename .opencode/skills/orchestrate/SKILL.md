@@ -90,6 +90,8 @@ Sebelum dispatch executor: cek researcher ada `file:line`, reviewer ada `[TAG]`+
 
 **Boss timeout (>3 exchange soal BLOCKING)** → default: dispatch executor SKIP area BLOCKING + flag "BLOCKING unresolved, skipped per timeout." Log untuk next session.
 
+**Prioritas:** Timeout rule OVERRIDES audit completion. Setelah 3 exchange, executor dispatch jalan tanpa menunggu audit selesai.
+
 ## 7. Brief Executor
 ```
 TASK: [1 kalimat — apa yang harus dihasilkan]

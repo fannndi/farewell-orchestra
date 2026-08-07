@@ -133,6 +133,8 @@ Jalankan sebelum report "Done". Semua PASS → report "KISS verified". Ada FAIL 
 | 6 | Magic numbers | `ruff check --select PLR2004 src/` | 0 magic numbers |
 | 7 | Naming | `ruff check --select N src/` | Nama konsisten |
 
+**Cross-platform:** Linux/Mac pakai `find`/`wc -l`. Windows PowerShell: file count `(Get-ChildItem -Recurse -Include *.py,*.ts,*.js).Count`, line count `(Get-Content src/*.py | Measure-Object -Line).Lines`. Kalau tool/command tidak ada → skip + note "Tool [X] not available, skipped."
+
 ### Automation Flow
 
 ```

@@ -2,7 +2,7 @@
 name: domain-modeling
 description: Build and sharpen project domain model.
 activation: When domain unclear
-trigger: Terms undefined
+trigger: Nama variabel/function inkonsisten antar file OR tidak ada glossary OR konsep domain ambigu di brief
 ---
 
 # Domain Modeling

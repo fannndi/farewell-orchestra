@@ -124,6 +124,8 @@ Quality checks sebelum task dianggap selesai. Jalankan setelah review, sebelum m
 | Security issues | 0 | `npm audit` |
 | Performance | No regression | Benchmark |
 
+**Project-type aware:** gates di atas untuk Node. Python: `pytest --cov`, `flake8`. Flutter: `flutter test --coverage`, `dart analyze`. Rust: `cargo test`, `cargo clippy`. Go: `go test ./...`, `go vet`. Skip gate kalau tidak applicable + catat alasannya.
+
 ## Rules
 
 1. **All gates must pass** — tidak ada yang boleh skip

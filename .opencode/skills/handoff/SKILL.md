@@ -2,7 +2,7 @@
 name: handoff
 description: Compact conversation into handoff document for session continuity.
 activation: When session ends
-trigger: Session????
+trigger: Session end OR context >80% full OR task done OR blocker found
 ---
 
 # Handoff
@@ -122,6 +122,8 @@ Kalau handoff melibatkan project lain:
 2. Session > 30 menit
 3. Task selesai → report + handoff
 4. Blocker ditemukan → handoff dengan blocker info
+
+**Pemicu:** Context >80% dideteksi context-window skill (bukan self-detect). Urutan: compress dulu, handoff kalau masih penuh.
 
 ## Handoff File Location
 

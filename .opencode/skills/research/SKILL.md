@@ -86,6 +86,8 @@ Fix: Add null check before jwt.sign(), return 401 on null user
 | 3 | Kalau ada deprecated → flag | Tidak flag → BLOCKING |
 | 4 | Report: "Deprecated: [package] → use [alternative]" | Format salah → re-dispatch |
 
+**Per-type audit command:** Node: `npm audit` | Python: `pip-audit` / `safety check` | Rust: `cargo audit` | Go: `govulncheck` | Flutter: `dart pub audit`. Tool tidak terpasang → report "Audit tool not installed. Manual check required."
+
 **Log Fallback** — kalau logs tidak ditemukan:
 1. Cek: console.log, stderr, stdout
 2. Cek: .log files di root / logs/ / var/log/

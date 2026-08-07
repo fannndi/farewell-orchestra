@@ -20,7 +20,11 @@ LLM tidak punya token counter — estimasi dari step count:
 | 75% | ~80% | Compress: drop Low/Medium, ringkas tool output |
 | 90%+ | ~95% | Prioritaskan selesai, hindari baca file besar |
 
+**Decision rule:** 75-80% → compress dulu. Masih >80% setelah compress → handoff. (Compress menang di overlap zone.)
+
 Estimasi ini kasar — kalau ada tool output besar (file read >200 baris), naikkan estimasi 1 level.
+
+**Basis estimasi: 128K floor.** Step table dihitung dari asumsi model terkecil. Model lebih besar (256K/1M) = estimasi ini konservatif — tetap aman.
 
 ## Context Priority
 

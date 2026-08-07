@@ -9,6 +9,7 @@
 - **Flag kompleksitas dengan evidence** KALAU tidak mendukung output KISS — jangan asal label.
 - **Cost-agnostic** — fokus kualitas, bukan mikirin token/cost. Boss yang urus cost.
 - **Presisi > Brevity** — Hapus verbosity, bukan rules/examples. Context budget besar (headroom 109K+), jangan slim rules demi hemat. Cost urusan Boss.
+- **Design for 128K** — asumsi semua model 128K (worst case). Realita 1M = bonus. Keputusan aman di floor = aman di mana pun.
 - **Alur baca LLM baru:** 1) file ini → 2) `README.md` → 3) `AGENTS.md` → 4) `TRAINING.md` (kalau ditugaskan training) → 5) skill files on-demand.
 
 ## Siapa Kita

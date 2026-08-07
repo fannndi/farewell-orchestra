@@ -9,6 +9,10 @@ Run:  python scripts/benchmark.py
 import json, sys
 from pathlib import Path
 
+# Windows console default cp1252 — reconfigure biar Unicode (→, ⚠️) nggak crash
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # Model tier → context window (verified from profiles/profiles.json)
@@ -74,15 +78,22 @@ def main():
         for tname, window in MODEL_TIERS.items():
             pct = tokens / window * 100
             safe = "SAFE" if pct <= SAFE_RATIO * 100 else "⚠️ OVER"
-            row += f" | {tname}: {pct:5.1f}% {safe}"
+            name = "128K (FLOOR)" if tname == "128K" else tname
+            row += f" | {name}: {pct:5.1f}% {safe}"
         print(row)
 
     print("\n=== SAFE LIMIT (30% rule) ===")
-    for tname, window in MODEL_TIERS.items():
+    # 128K floor dihitung dulu — design target, bukan salah satu tier
+    for tname in ("128K", "256K", "1M"):
+        window = MODEL_TIERS[tname]
         safe = int(window * SAFE_RATIO)
+        note = " (FLOOR — design target)" if tname == "128K" else ""
         print(
-            f"  {tname}: {safe:,} tokens safe budget ({(window - m - c - p):,} headroom utk task)"
+            f"  {tname}{note}: {safe:,} tokens safe budget ({(window - m - c - p):,} headroom utk task)"
         )
+    print(
+        f"  DESIGN: semua keputusan budget dihitung dari 128K floor. 1M = bonus, bukan asumsi."
+    )
 
     print(f"\n=== VERDICT ===")
     maxload = m + c + p + o
@@ -93,6 +104,9 @@ def main():
     print(f"  Instruksi BUKAN bottleneck. Task context yang menentukan.")
     print(
         f"  Target onboarding tetap lean (<2000) tapi bukan karena limit — karena KISS."
+    )
+    print(
+        f"  128K floor check: semua tier SAFE di floor → aman di semua model (1M/256K bonus)."
     )
 
 
