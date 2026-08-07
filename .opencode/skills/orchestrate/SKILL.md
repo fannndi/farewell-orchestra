@@ -257,3 +257,4 @@ Standard komunikasi antar agents.
 3. **Actionable** — selalu ada next step
 4. **Evidence-based** — sertakan file:line untuk claims
 5. **Interrupt-aware** — BLOCKING = escalate langsung
+6. **Max response:** sub-agent total output ≤1500 tokens. Researcher ≤15 findings, reviewer ≤20 findings (sisanya overflow note). Executor ≤500 tokens response.

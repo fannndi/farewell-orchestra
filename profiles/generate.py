@@ -390,11 +390,11 @@ def generate(profile_name, to_stdout=False):
                 {"effect": "allow", "action": "provider.use", "resource": "9router"},
             ],
         },
-        "tool_output": {"max_lines": 1000, "max_bytes": 20000},
+        "tool_output": {"max_lines": 500, "max_bytes": 12000},
         "compaction": {
             "auto": True,
-            "preserve_recent_tokens": 4000,
-            "reserved": 14000,
+            "preserve_recent_tokens": 6000,
+            "reserved": 8000,
             "prune": True,
             "prune_rules": {
                 "tool_output": {

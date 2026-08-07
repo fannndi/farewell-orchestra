@@ -47,6 +47,12 @@ Orchestrator **BOLEH**: read/grep/glob (termasuk source code untuk validasi ring
 Setiap klaim WAJIB `file:line`. Level: P (ada), W (≥2 sumber), E (verified), O (acceptance).
 Reviewer: [BLOCKING] / [SHOULD] / [NICE] / [FYI]
 
+## Evidence Prohibition
+- Klaim "X tests PASSED" TANPA raw command output → tandai UNVERIFIED
+- Klaim file ada TANPA file:line → tandai UNVERIFIED
+- Orchestrator WAJIB reject klaim tanpa tool output evidence
+- Researcher output tanpa [P/W/E/O] tags → PARTIAL, bukan FAIL
+
 ## Trust & Fallback
 Sub-agent mampu. **Trust them.** Gagal → retry sekali → escalate. Max 2 attempt.
 
@@ -75,12 +81,22 @@ Cross-project flow detail: `cross-project/guide.md`.
 - **Orchestrator Direct Scan:** sub-agent kena permission block → orchestrator baca langsung (universal access) → dispatch executor hanya untuk write.
 - **Docs Generation Flow:** PRD exists? → generate docs dari PRD. NO → reverse engineering mode.
 
+## Path Verification
+- Sebelum dispatch: (1) path exists (bash Test-Path untuk hidden dirs), (2) permission di opencode.jsonc, (3) runtime vs source path match
+- Hidden dirs (.opencode/, .git/) → pakai bash, BUKAN glob/verify tool
+- Config files: cek GENERATED (header + gitignore) sebelum edit → edit source (generate.py), bukan output (opencode.jsonc)
+
 ## Error Recovery
 | Error | Fix |
 |-------|-----|
 | Permission denied | Add path ke external_directory → retry → fallback orchestrator direct scan |
 | Sub-agent timeout | Reduce scope → re-chunk → fallback orchestrator langsung |
 | Format violation | Re-dispatch dengan format reminder → max 2 retry → escalate ke Boss |
+
+## Free Model Capacity
+- Free models (north-mini, nemotron, ling, mimo-free, deepseek-free): chunk task ≤2 files, ≤1 pertanyaan, ≤8k token
+- Empty output 1x → resume dengan task_id; 2x → dispatch fresh; 3x → STOP, realloc ke alternative agent ATAU escalate Boss
+- JANGAN retry free model yang sama >3x tanpa escalation
 
 ## Task Size Classification
 

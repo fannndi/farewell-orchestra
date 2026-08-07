@@ -87,28 +87,19 @@ export default tool({
 
       const result = JSON.parse(raw.trim())
 
-      // Build human-readable output
-      let output = `## Verification Gate — ${args.stage.toUpperCase()}\n\n`
-      output += `**Result: ${result.summary}**\n\n`
+      // Build compact output — result line (summary already contains counts) + check lines.
+      // Trimmed framing: dropped redundant header + count line (verify.py summary has them).
+      let output = `**Verify ${args.stage}:** ${result.summary}`
+      output += result.pass
+        ? result.warnings > 0
+          ? " — proceed, note warnings."
+          : " — all clean."
+        : " — FAILED. Do NOT proceed; fix FAIL items and resubmit."
 
       for (const check of result.checks) {
         const icon =
-          check.status === "PASS" ? "  ✓" : check.status === "WARN" ? "  ⚠" : "  ✗"
-        output += `${icon} ${check.name}: ${check.detail}\n`
-      }
-
-      output += `\n${result.passed}/${result.total} checks passed`
-      if (result.warnings > 0) output += `, ${result.warnings} warnings`
-      if (result.failed > 0) output += `, ${result.failed} FAILED`
-
-      if (!result.pass) {
-        output +=
-          "\n\n⛔ VERIFICATION FAILED. Do NOT proceed. Send this report back to the agent with: 'Fix the FAIL items above and resubmit.'"
-      } else if (result.warnings > 0) {
-        output +=
-          "\n\n⚠ PASSED with warnings. Can proceed but note warnings."
-      } else {
-        output += "\n\n✅ All clean. Proceed to next stage."
+          check.status === "PASS" ? "✓" : check.status === "WARN" ? "⚠" : "✗"
+        output += `\n${icon} ${check.name}: ${check.detail}`
       }
 
       return output

@@ -135,6 +135,8 @@ Level:
 - Acceptance criteria terpenuhi → **O**
 - Ragu → default **P** (paling aman, tidak pernah salah)
 
+**Max findings:** 15 total per report. Lebih dari itu → pilih 15 paling relevan (prioritas: E > W > P, lalu severity). Sisanya: "N additional findings omitted (overflow)."
+
 **Examples:**
 
 ```

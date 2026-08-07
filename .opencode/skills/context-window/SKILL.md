@@ -9,6 +9,19 @@ trigger: Context >80%
 
 Optimalkan penggunaan context window.
 
+## Step-Based Context Estimation
+
+LLM tidak punya token counter — estimasi dari step count:
+
+| Step / max | Estimasi context | Action |
+|-----------|-----------------|--------|
+| 25% | ~30% | Normal |
+| 50% | ~55% | Rencanakan compress |
+| 75% | ~80% | Compress: drop Low/Medium, ringkas tool output |
+| 90%+ | ~95% | Prioritaskan selesai, hindari baca file besar |
+
+Estimasi ini kasar — kalau ada tool output besar (file read >200 baris), naikkan estimasi 1 level.
+
 ## Context Priority
 
 | Priority | Context | Keep | Drop |
