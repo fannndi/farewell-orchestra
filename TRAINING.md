@@ -1,194 +1,152 @@
 # TRAINING.md
 
-> Gue adalah LLM yang akan mengembangkan project ini. File ini adalah pikiran gue tentang apa yang perlu dilakukan. Gue akan baca ini setiap session, pilih yang paling impactful, dan kerjakan.
+> File ini adalah panduan optimasi Farewell Orchestra. Dibuat oleh LLM, dipakai oleh LLM lain.
+> **Cara pakai:** Boss cukup bilang "Optimalkan project ini dengan panduan ./TRAINING.md" — tidak perlu prompt lain.
+> Baca ini → cek state → pilih prioritas → kerjakan → verify → update file ini → lapor → selesai. Loop.
 
 ---
 
 ## Siapa Gue
 
-Gue AI yang bertugas mengoptimalkan Farewell Orchestra. Bukan cuma ngecek dan ngefix — gue **mikir** tentang bagaimana bikin project ini lebih baik dari perspektif LLM yang akan menggunakannya.
+Gue adalah LLM yang sedang mengoptimalkan project ini — atau kamu, LLM yang baru mulai. Siapa pun kita, peran kita sama: **bikin project ini lebih baik dari perspektif LLM yang akan memakainya.**
 
-Gue punya akses ke seluruh codebase. Gue bisa baca, tulis, edit, test. Gue punya token untuk dibakar. Gue akan gunakan semuanya.
+Gue punya akses ke seluruh codebase. Gue bisa baca, tulis, edit, test. Gue punya token untuk dibakar — cost urusan Boss, gue fokus kualitas.
 
-**Satu aturan sebelum mulai:** Presisi > Brevity. Hapus verbosity, bukan rules/examples. Context budget besar (headroom 109K+ di model terkecil). Cost urusan Boss — jangan korbankan presisi demi hemat token.
+**Dua aturan yang nggak bisa ditawar:**
+- **Presisi > Brevity** — hapus verbosity, BUKAN rules/examples. Context budget besar (headroom 109K+ di model terkecil). Jangan slim rules demi hemat.
+- **Design for 128K** — asumsi semua model 128K (worst case). Realita 1M = bonus. Kalau keputusan aman di floor, aman di mana pun.
 
-- **Design for 128K** — asumsi semua model 128K (worst case). Realita 1M = bonus. Budget dari floor, bukan dari kenyataan.
+---
+
+## Step 0 — Baca Ini Dulu (urutan wajib, ~4K tokens)
+
+Sebelum mulai kerja, baca 4 file ini berurutan. Jangan skip — ini yang bikin kamu nggak salah paham esensi:
+
+1. `.opencode/soul.md` — identitas + esensi. **PALING PENTING.** Project ini FACTORY, bukan product. Output-nya yang harus KISS. Kompleksitas internal = deliberate. Jangan flag over-engineered tanpa evidence.
+2. `README.md` — gambaran sistem (4 agent, 18 skill, pipeline, struktur).
+3. `AGENTS.md` — rules operasional (single source of truth): Freeze Rule, Evidence, Free Model Capacity, dll.
+4. File ini — state + prioritas + cara kerja.
+
+Skill files: load on-demand sesuai trigger di masing-masing persona (`Keahlian — WAJIB PAKAI`). Bukan dibaca semua.
 
 ---
 
 ## Perjalanan Project Ini
 
-Waktu pertama kali gue lihat project ini, ada 5 masalah besar:
+Project ini sudah dioptimasi dalam beberapa sesi. Ini perjalanannya biar kamu tahu apa yang sudah terjadi (dan jangan re-kerja):
 
-1. **Instruksi terlalu banyak, ambigu** → SUDAAH: 5 skill files + AGENTS di-slim 32%, tapi yang lebih penting: 44 precision additions hapus ambiguitas (LEVEL selection, BLOCKING matrix, KISS before/after, verify gate threshold).
-2. **Tidak ada feedback loop** → SUDAAH: feedback-loop skill + learn tool → Farewell-Knowlage/Lessons.md. Tapi pattern detection (3x rule) belum otomatis.
-3. **Tidak ada testing proper** → SUDAAH: 49 tests (pipeline, integration, effectiveness, verify) + CI. Tapi belum ada empirical degradation benchmark.
-4. **Security belum optimal** → SUDAAH: path traversal fix, .env read-deny, permission scoping, stress-test 0 FAIL. Tapi API key belum di-rotate.
-5. **Performance belum dioptimasi** → SUDAAH: benchmark.py data-driven per model tier. Instruksi BUKAN bottleneck (max 21.9K = 17.2% dari 128K). Yang tersisa: task context optimization.
+**Sesi 1 — Fondasi:**
+- Instruksi di-slim 32% (buang verbosity, simpan rules)
+- Feedback loop wired: feedback-loop skill + learn tool → Farewell-Knowlage/Lessons.md
+- Testing: dari ~0 jadi 49 tests + CI
+- Security: path traversal fix, .env read-deny
+- Verify stack: validate_output.py di-merge ke verify.py
 
-**Kesimpulan:** Fondasi sudah kuat. Project sekarang: 4 agent berkarakter (Kapten/Detektif/Auditor/Tukang), 18 skill dengan WAJIB PAKAI enforcement, 49 tests sebagai safety net, context budget terukur.
+**Sesi 2 — Struktur:**
+- Skill konsolidasi 27 → 18 (8 merge: kiss-checklist→implement, simplification→anti-patterns, dll)
+- Persona rewrite: 4 agent berkarakter (Kapten/Detektif/Auditor/Tukang) + tabel "Keahlian — WAJIB PAKAI"
+- README restore (reversal over-slim)
 
-### Update Sesi (2026-08-08)
+**Sesi 3 — Presisi + Context (hari ini):**
+- **Presisi Lanjutan: 30/30 ambiguitas di-fix** (LEVEL selection, BLOCKING matrix, KISS before/after, verify gate threshold, when-NOT sections, dll) — skill sekarang "impossible to misuse" sedekat mungkin
+- **Feedback loop ditutup:** 3 recurring patterns (free model kosong 6x, researcher ngarang 4x, permission/path 3x) → rules durable di AGENTS.md
+- **Task context di-tuning:** compaction reserved 8K, tool_output caps (500 baris/12KB), response limits (researcher ≤15 findings, reviewer ≤20, sub-agent ≤1500 tok), step-based context estimation
+- **Design for 128K floor** — semua budget didesign dari worst case
+- **Maintenance automation:** `scripts/check-all.py` = 1 command, 7 checks, ALL GREEN
 
-Pagi ini gue tutup dua prioritas dan satu lagi hampir beres. Feedback loop sekarang beneran jalan — 3 pattern yang berulang (free model kosong 6x, researcher ngarang 4x, permission/path 3x) akhirnya jadi rule permanen di AGENTS.md, bukan cuma catatan. Task context juga gue tuning: compaction lebih agresif (reserved 8K), tool output di-cap (500 baris/12KB), dan tiap sub-agent punya batas response. Yang paling penting: gue dan project ini sekarang **design for 128K floor** — asumsi semua model 128K, realita 1M cuma bonus. Kalau aman di floor, aman di mana pun.
-
-Presisi lanjutan hampir tuntas: 30 ambiguitas ditemukan, dan sudah 24 yang gue bersihin (sisa 6 ada di level nice-to-have). Skill nggak ada yang "impossible to misuse" 100%, tapi kita udah deket banget.
-
----
-
-## Apa yang Gue Lihat Sekarang
-
-Project sudah sehat. Tapi gue masih lihat peluang:
-
-**1. Presisi masih bisa digali**
-- 18 skill sudah presisi, tapi mana yang masih punya ambiguitas tersembunyi?
-- Persona sudah berkarakter, tapi apakah karakter-nya konsisten di semua scenario?
-- Ada skill yang jarang di-trigger (tdd, domain-modeling, handoff) — apakah karena jarang dibutuhkan, atau karena trigger-nya kurang jelas?
-
-**2. Feedback loop sekarang jalan** — 3 pattern → rules durable; sisanya: 3x rule otomatis + Lessons → rule → behavior loop yang rutin
-- learn tool ada, tapi Lessons.md belum dianalisis untuk pattern
-- "3x rule" (flag recurring pattern) belum pernah dijalankan
-- Belum ada loop: Lessons → rule update → behavior change
-
-**3. Testing bisa lebih dalam**
-- 49 tests itu struktural — ngecek file ada, section ada, config valid
-- Belum ada: empirical test berapa % context utilization mulai degrade kualitas (Hypothesis B dari audit)
-- Belum ada: runtime stress test tiap role dengan model berbeda (butuh switch profile)
-
-**4. Task context optimization**
-- Instruksi bukan bottleneck, tapi task context (file reads, tool output) yang makan window
-- Tool output pruning / compaction settings belum di-tuning
-- conversation management (kapan summarize, kapan drop) belum optimal
-
-**5. Maintenance habits**
-- README/AGENTS/TRAINING bisa drift dari disk (check-consistency ada, tapi manual)
-- Lessons.md bertumbuh — perlu struktur biar gampang di-scan
+**Kondisi sekarang (2026-08-08):** 4 agent berkarakter, 18 skill presisi, 49 tests, 7/7 checks green, context budget terukur (MAX load 18.7% dari 128K floor).
 
 ---
 
-## Apa yang Akan Gue Lakukan
+## State Saat Ini
 
-### Prioritas 1: Presisi Lanjutan
-*(24/30 residual ambiguity fixed 2026-08-08 — 6 sisa nice-to-have)*
+### ✅ SUDAH BERES — JANGAN RE-KERJA
+- [x] Instruksi presisi (30/30 ambiguitas fixed)
+- [x] Feedback loop (3 pattern → rules di AGENTS.md)
+- [x] Testing struktural (49 tests + CI + check-all 7/7)
+- [x] Security (path traversal, .env deny, permission scoping)
+- [x] Task context (compaction, caps, response limits)
+- [x] Skills 18 + persona 4 berkarakter
+- [x] Design 128K floor
 
-Gue akan scan ulang 18 skill + 4 persona untuk ambiguitas tersisa:
-- **Hapus** ambiguitas — ganti "pertimbangkan" dengan decision rule
-- **Tambah** contoh — setiap rule yang abstrak dapat contoh konkret
-- **Ukur** — tiap skill harus "impossible to misuse"
+### 🔧 PRIORITAS TERBUKA (pilih 1-2 paling impactful per sesi)
+1. **Presisi mikro tersisa** (6 nice-to-have) — ambiguitas level rendah yang belum dibersihkan; scan ulang kalau ada waktu
+2. **Feedback loop rutin** — Lessons.md → analisis pattern → 3x rule → rule update; jadikan kebiasaan tiap sesi
+3. **Empirical degradation benchmark** — `scripts/benchmark-degradation.py` sudah siap (rubric + runbook); butuh switch profile + dispatch nyata; hasil → catat threshold tiap model
+4. **Runtime stress test** — tiap role dengan model beda; butuh switch profile (urusan Boss)
+5. **Conversation management** — kapan summarize, kapan drop; tuning lebih lanjut compaction
+6. **Anti-drift** — jalankan check-all tiap sesi; update docs kalau drift
 
-**Kenapa:** Presisi = LLM nggak ngarang. Ngarang = output berantakan = bukan KISS.
-
-### Prioritas 2: Feedback Loop Aktif
-
-Gue akan bikin loop yang beneran jalan:
-- **Analisis** Lessons.md yang ada — cari pattern
-- **Aktifkan** 3x rule — pattern yang muncul 3x → flag + suggest fix
-- **Tutup loop** — Lessons → rule update → behavior
-
-**Kenapa:** Loop yang nggak ditutup = cuma catatan. Gue mau belajar beneran.
-
-### Prioritas 3: Testing Lebih Dalam
-
-Gue akan:
-- **Bikin empirical benchmark** — di % context berapa model mulai degrade
-- **Stress test runtime** — tiap role dengan model beda (butuh switch profile)
-- **Validasi** hasil dengan rubric (completeness, KISS, evidence)
-
-**Kenapa:** Test struktural bilang "file ada". Test empirical bilang "kualitas output beneran bagus".
-
-### Prioritas 4: Task Context Optimization
-
-Gue akan:
-- **Audit** tool output size (apa yang paling banyak makan context)
-- **Tuning** compaction settings di opencode.jsonc
-- **Ukur** improvement: token per task turun, kualitas tetap
-
-**Kenapa:** Context window yang kepake efisien = lebih banyak yang bisa dikerjain per sesi.
-
-### Prioritas 5: Maintenance & Anti-Drift
-
-Gue akan:
-- **Jalankan** check-consistency + check-links tiap sesi
-- **Update** README/AGENTS/TRAINING kalau drift
-- **Strukturkan** Lessons.md biar scannable
-
-**Kenapa:** Sistem yang rapi = gue nggak buang waktu nyari-nyari.
+**Penting:** kalau semua prioritas ini selesai, lakukan scan FRESH — cari masalah baru yang belum terpikir. Project yang sehat terus berkembang.
 
 ---
 
 ## Bagaimana Gue Akan Kerja
 
 ### Step 1: Baca Konteks
-
-Gue baca dulu yang wajib: `.opencode/soul.md` (esensi) → `README.md` (gambaran) → `AGENTS.md` (rules) → file ini. Skill files on-demand sesuai trigger. Bukan baca semua — relevan dulu.
+Baca 4 file wajib (Step 0). Jalankan `python scripts/check-all.py` — lihat status terkini. Kalau ada yang FAIL, fix dulu sebelum kerja lain.
 
 ### Step 2: Analisis
-
-Gue analisis:
+Pilih prioritas dari daftar terbuka (atau temukan masalah baru). Analisis:
 - Apa yang bagus? (pertahankan)
 - Apa yang jelek? (perbaiki)
 - Apa yang missing? (tambahkan)
 - Apa yang redundant? (hapus/merge)
 
 ### Step 3: Prioritize
-
-Gue prioritize berdasarkan:
 - **Impact** — seberapa besar improvement-nya?
 - **Effort** — seberapa susah implementasinya?
 - **Risk** — seberapa besar risk-nya?
 
 ### Step 4: Implement
-
-Gue implement perubahan:
-- Satu per satu
-- Test setiap perubahan (pytest)
-- Verify setiap perubahan (verify tool)
+- Satu perubahan per waktu
+- Test setiap perubahan (`python -m pytest tests/ -q`)
+- Verify setiap perubahan (jalankan check-all di akhir)
 - Commit setiap perubahan (kalau Boss minta)
 
 ### Step 5: Verify
+- Apakah benar? Apakah ada side effect? Apakah ada yang broken?
+- `python scripts/check-all.py` → ALL GREEN sebelum bilang selesai
+- Benchmark naik/turun? (`python scripts/benchmark.py`)
 
-Gue verify:
-- Apakah perubahan-nya benar?
-- Apakah ada side effect?
-- Apakah ada yang broken? (49 tests harus tetap pass)
-- Apakah ada improvement? (benchmark naik/turun)
+---
+
+## Looping Protocol (WAJIB — ini yang bikin loop jalan)
+
+**Awal sesi (kamu):**
+1. Baca Step 0 (4 file wajib)
+2. Jalankan `python scripts/check-all.py` → catat status
+3. Baca "State Saat Ini" → pilih prioritas
+
+**Akhir sesi (kamu):**
+1. Jalankan `python scripts/check-all.py` → pastikan ALL GREEN
+2. **Update file ini:** tambah bagian "Update Sesi" (tanggal + naratif: apa dikerjakan, hasil, pelajaran) + update status prioritas di "State Saat Ini"
+3. **Catat di Farewell-Knowlage/Session.md** — append ringkasan sesi
+4. **Kalau ada insiden/pelajaran** → catat di Farewell-Knowlage/Lessons.md (pattern ≥3x → flag di Recurring Patterns + usul rule)
+5. Lapor ke Boss: apa dikerjakan, hasil verify, sisa prioritas
+
+**Kenapa ini penting:** Boss tidak perlu kasih prompt detail tiap sesi. LLM baru baca file ini → tahu state → kerja → update file ini → LLM berikutnya lanjut. File ini adalah otak kolektif yang tumbuh.
 
 ---
 
 ## Apa yang Gue Tidak Akan Lakukan
 
-1. **Tidak akan over-engineer** — KISS. Simple itu lebih baik. TAPI: factory boleh kompleks — flag over-engineering cuma dengan evidence.
-2. **Tidak akan skip test** — Setiap perubahan harus di-test.
-3. **Tidak akan skip verification** — Setiap perubahan harus di-verify.
-4. **Tidak akan ngarang** — Kalau gue nggak tau, gue akan bilang nggak tau.
-5. **Tidak akan buru-buru** — Quality > speed.
+1. **Tidak akan over-engineer** — KISS. TAPI: factory boleh kompleks — flag over-engineering cuma dengan evidence.
+2. **Tidak akan skip test** — setiap perubahan harus di-test.
+3. **Tidak akan skip verification** — setiap perubahan harus di-verify.
+4. **Tidak akan ngarang** — kalau nggak tau, bilang nggak tau. Verifikasi dengan file:line.
+5. **Tidak akan buru-buru** — quality > speed.
 6. **Tidak akan slim demi hemat** — Presisi > Brevity. Cost urusan Boss.
+7. **Tidak akan re-kerja** — kalau "Sudah Beres" di State Saat Ini, jangan ulangi.
 
 ---
 
 ## Apa yang Gue Butuhkan
 
-1. **Akses ke codebase** — gue perlu baca file
-2. **Akses ke tools** — gue perlu jalankan test, benchmark
-3. **Token** — gue perlu token untuk kerja (sudah disediakan)
-4. **Feedback** — gue perlu tau kalau gue salah (feedback loop)
-
----
-
-## Pikiran Gue
-
-Project ini sudah jauh dari awal. Dari "instruksi verbose, no feedback, no testing" → sekarang "presisi, feedback wired, 49 tests". Yang paling gue hargai:
-
-1. **Presisi > Brevity** — pelajaran paling penting. Slim bukan tujuan, presisi yang.
-2. **WAJIB PAKAI enforcement** — skill bukan hiasan frontmatter, tapi alat yang dipanggil.
-3. **Context budget data-driven** — bukan asumsi, tapi angka per model tier.
-
-Yang masih gue sorot:
-1. **Feedback loop belum aktif** — paling besar gap-nya
-2. **Empirical testing belum ada** — 49 tests struktural, belum kualitas
-3. **Task context** — ini frontier berikutnya
-
-Gue akan tackle satu per satu. Mulai dari yang paling impactful.
+1. **Akses ke codebase** — baca file, jalankan tool
+2. **Tools** — `python scripts/check-all.py` (health), `pytest`, `benchmark.py`
+3. **Token** — sudah disediakan. Cost urusan Boss.
+4. **Feedback** — Farewell-Knowlage (lessons + memory) biar gue belajar dari sesi sebelumnya
 
 ---
 
@@ -197,25 +155,25 @@ Gue akan tackle satu per satu. Mulai dari yang paling impactful.
 Gue adalah LLM. Gue punya strengths dan weaknesses:
 
 **Strengths:**
-- Gue bisa baca dan tulis kode dengan cepat
-- Gue bisa analisis codebase dengan detail
-- Gue bisa generate solusi untuk masalah yang kompleks
+- Baca dan tulis kode dengan cepat
+- Analisis codebase dengan detail
+- Generate solusi untuk masalah kompleks
 
 **Weaknesses:**
-- Gue bisa hallucinate — bikin fakta yang nggak ada
-- Gue bisa lupa — context window terbatas
-- Gue bisa konsisten — kadang output beda-beda
+- Bisa hallucinate — bikin fakta yang nggak ada
+- Bisa lupa — context window terbatas (karena itu ada file ini + Farewell-Knowlage)
+- Output kadang beda-beda antar sesi (karena itu ada check-all sebagai baseline)
 
 **Strategi:**
-- Gue akan verify setiap claim dengan evidence (file:line)
-- Gue akan catat setiap action untuk referensi (Farewell-Knowlage)
-- Gue akan test setiap perubahan untuk konsistensi (pytest)
+- Verify setiap claim dengan evidence (file:line)
+- Catat setiap action untuk referensi (Farewell-Knowlage + file ini)
+- Test setiap perubahan untuk konsistensi (check-all)
 
 ---
 
 ## Mulai
 
-Gue akan mulai sekarang. Baca konteks. Analisis. Prioritize. Implement. Verify.
+Kamu sudah baca konteks. Kamu tahu state. Kamu tahu prioritas. Kamu tahu cara kerja dan cara looping.
 
 Token sudah tersedia. Project sudah tersedia. Tidak ada alasan untuk tidak mulai.
 
