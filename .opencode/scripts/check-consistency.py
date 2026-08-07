@@ -7,7 +7,7 @@ Drift yang dicek (5):
 2. Skills di permission allowlist (generate.py SKILL_ALLOWLIST) vs skill dirs di disk (bidirectional)
 3. Agent list di ci.yaml vs agent files di disk (skip kalau ci.yaml tidak ada)
 4. Skill allowlist tidak dekoratif: tidak ada '"skill": "allow"' bypass di generate.py / opencode.jsonc
-5. Konten skill/agent tidak mereferensikan dir yang sudah dihapus (.opencode/workflows/, protocols/, snapshots/)
+5. Konten project (skills, agents, root docs, scripts, tools) tidak mereferensikan dir yang sudah dihapus (.opencode/workflows/, protocols/, snapshots/)
 
 Usage:  python .opencode/scripts/check-consistency.py
 Exit:   0 if consistent, 1 if drift detected
@@ -118,13 +118,22 @@ def get_ci_counts():
 
 
 def get_stale_dir_refs():
-    """Grep skill/agent content for references to deleted dirs.
+    """Grep project files for references to deleted dirs.
 
-    Referensi ke dir yang sudah dihapus = stale ref: agent/skill menunjuk ke
-    file yang tidak ada lagi.
+    Scan scope: skills/*/SKILL.md, agents/*.md, root *.md (AGENTS, README,
+    TRAINING, CHANGELOG), scripts/*.py, .opencode/tools/*.py.
+    Referensi ke dir yang sudah dihapus = stale ref: file menunjuk ke path
+    yang tidak ada lagi.
     """
     hits = []
-    for path in sorted(SKILLS_DIR.glob("*/SKILL.md")) + sorted(AGENTS_DIR.glob("*.md")):
+    targets = (
+        sorted(SKILLS_DIR.glob("*/SKILL.md"))
+        + sorted(AGENTS_DIR.glob("*.md"))
+        + sorted(ROOT.glob("*.md"))
+        + sorted((ROOT / "scripts").glob("*.py"))
+        + sorted((ROOT / ".opencode" / "tools").glob("*.py"))
+    )
+    for path in targets:
         content = path.read_text(encoding="utf-8")
         for i, line in enumerate(content.splitlines(), 1):
             refs = [d for d in DELETED_DIRS if d in line]

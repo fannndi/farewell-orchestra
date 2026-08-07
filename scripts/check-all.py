@@ -30,6 +30,17 @@ CHECKS = [
     ("benchmark (context budget)", ["python", "scripts/benchmark.py"]),
 ]
 
+# Recovery hints per check key — printed after a FAIL line
+HINTS = {
+    "pytest": "Fix: python -m pytest tests/ -q --tb=short",
+    "effectiveness": "Fix: python tests/test_effectiveness.py",
+    "consistency": "Fix: python .opencode/scripts/check-consistency.py",
+    "links": "Fix: python .opencode/scripts/check-links.py",
+    "stress-test": "Fix: python scripts/stress-test.py",
+    "profiles": "Fix: python profiles/generate.py --validate",
+    "benchmark": "Fix: python scripts/benchmark.py",
+}
+
 
 def main():
     print("=== CHECK-ALL: Full Health ===\n")
@@ -53,6 +64,9 @@ def main():
         print(f"  [{mark}] {name}: {tail}")
         if not ok:
             failed.append(name)
+            hint = HINTS.get(name.split(" ")[0].split("(")[0])
+            if hint:
+                print(f"         {hint}")
 
     print(
         f"\n=== RESULT: {len(CHECKS) - len(failed)}/{len(CHECKS)} PASS"

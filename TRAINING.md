@@ -112,7 +112,7 @@ Pola yang sudah pernah ditemukan di deep audit. Kalau kamu scan, cek pola ini LE
 
 _(isi di akhir sesi, 2-5 baris naratif: apa yang dikerjakan, celah apa yang ditemukan, pelajaran. Update juga pola temuan historis kalau ada pola baru.)_
 
-**Sesi deep audit (2026-08-08):** fan-out researcher+reviewer nemu 50 temuan. Fix: security hardening (executor edit deny map, learn.ts mkdir, auto-load full persona), verify gate depth beneran di-enforce (BLOCKING=[D3]+), allowlist tidak dekoratif, 64 tests (dari 49). Pelajaran: dua perspektif (cari-celah + cari-salah) nemu hal yang beda — gabung keduanya. Pola baru #1 (gate palsu) dan #2 (permission satu arah) ditemukan di sesi ini.
+**Sesi deep audit (2026-08-08):** fan-out researcher+reviewer nemu 50 temuan. Fix: security hardening (executor edit deny map, learn.ts mkdir, auto-load full persona), verify gate depth beneran di-enforce (BLOCKING=[D3]+), allowlist tidak dekoratif, 67 tests (dari 49). Pelajaran: dua perspektif (cari-celah + cari-salah) nemu hal yang beda — gabung keduanya. Pola baru #1 (gate palsu) dan #2 (permission satu arah) ditemukan di sesi ini.
 
 **Sesi deep audit R2 (2026-08-08):** deny-map hole — round-1 cuma blok config files, tapi executor masih bisa edit .opencode/** (hooks = auto-run code, tools = subprocess, skills = instruction injection) → ditutup (.opencode/** + AGENTS.md + cross-project/guide.md). verify.py: review stage reject [P/W/E/O] (false gate) + multi-line depth — fixed. learn.ts atomic append (lock) + insertion bound ke main table. npm* → ask (RCE via editable package.json). ci.yaml ||true dihapus (drift bikin CI FAIL). Pola baru #9: "deny-map hole" — deny permission-defining SURFACE (hooks/tools/skills), bukan cuma config files.
 

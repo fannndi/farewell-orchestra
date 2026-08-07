@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-08 — Deep Audit R1: security hardening + verify gate depth
+- Security: executor edit deny map (self-escalation block), learn.ts mkdir, auto-load full persona
+- Verify gate: depth D1-D4 enforced (BLOCKING=[D3]+), containment, +15 tests (49→64)
+
+## 2026-08-08 — Deep Audit R2: deny-map hole + atomic learn
+- Security: .opencode/** + AGENTS + guide deny (instruction injection/RCE block), npm* ask
+- Correctness: verify.py PWOE tags + multi-line depth, learn.ts atomic lock + bounded insert
+- Infra: ci.yaml strict (no ||true), auto-load table-safe, harness stub-guard (64→67 tests)
+
+## 2026-08-08 — Deep Audit R3: polish
+- Docs: test count 64→67, scripts table complete, CHANGELOG maintained
+- Edge: verify depth window 5-line, auto-load complete-table keep, consistency wider scope
+
 ## 2026-08-06 — Cross-Project Support
 
 ### Added

@@ -58,12 +58,16 @@ def extract_key_rules(content, max_lines=60):
     if len(fences) % 2 == 1:
         lines = lines[: fences[-1]]
     # Table-safe: slice ended inside a table → scan back to the first table line
-    # (header/separator/rows all start with "|") and drop the incomplete table.
+    # (header/separator/rows all start with "|"). Only drop if the table is
+    # INCOMPLETE (no header separator `|---` in the scanned-back block). A
+    # complete table ending exactly at the boundary is kept.
     if lines and lines[-1].lstrip().startswith("|"):
         i = len(lines) - 1
         while i >= 0 and lines[i].lstrip().startswith("|"):
             i -= 1
-        lines = lines[: i + 1]
+        table = lines[i + 1 :]
+        if not any(re.search(r"^[\s|:-]+$", ln) and "-" in ln for ln in table):
+            lines = lines[: i + 1]
     return "\n".join(lines)
 
 

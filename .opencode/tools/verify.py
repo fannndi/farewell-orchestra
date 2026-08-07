@@ -206,11 +206,11 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
     )
 
     # 3. Depth enforcement: BLOCKING requires [D3]+, SHOULD requires [D2]+
-    #    Depth tag may sit on the finding line OR a continuation line (next 2).
+    #    Depth tag may sit on the finding line OR a continuation line (next 4).
     depth_issues = []
     lines = claims.splitlines()
     for i, line in enumerate(lines):
-        window = "\n".join(lines[i : i + 3])
+        window = "\n".join(lines[i : i + 5])
         if "[BLOCKING]" in line and not re.search(r"\[D[34]\]", window):
             depth_issues.append("BLOCKING requires [D3]+ depth")
         if "[SHOULD]" in line and not re.search(r"\[D[234]\]", window):

@@ -104,7 +104,7 @@ farewell-orchestra/
 │   ├── benchmark-degradation.py # Empirical degradation harness
 │   ├── stress-test.py           # Multi-model config validation
 │   └── check-all.py             # 1-command full health check (7 checks)
-├── tests/                       # 64 tests (pytest)
+├── tests/                       # 67 tests (pytest)
 └── .opencode/
     ├── soul.md                  # Identitas + esensi (factory vs product)
     ├── agents/                  # 5 files (4 agent personas + boss.md reference)
@@ -123,6 +123,8 @@ farewell-orchestra/
 | Script | Fungsi |
 |--------|--------|
 | `scripts/benchmark.py` | Ukur context budget + time-to-first-action |
+| `scripts/benchmark-degradation.py` | Readiness check + runbook empirical degradation |
+| `scripts/check-all.py` | Master health check — 7 checks, 1 command |
 | `scripts/stress-test.py` | Validasi config multi-model (0 FAIL = siap) |
 | `.opencode/scripts/check-consistency.py` | Deteksi drift (skills, agents, config) |
 | `.opencode/scripts/check-links.py` | Validasi semua link/referensi |
