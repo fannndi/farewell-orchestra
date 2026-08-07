@@ -34,27 +34,64 @@ Skill files: load on-demand sesuai trigger di persona (`Keahlian — WAJIB PAKAI
 
 ---
 
-## Cara Kerja — CARI CELAH
+## Cara Kerja — DUA MODE
 
-### 1. Baseline
-Jalankan `python scripts/check-all.py`. Ada yang FAIL? Fix dulu. Green? Lanjut.
+Ada dua cara kerja. Pilih sesuai waktu yang tersedia.
 
-### 2. Scan — cari celah di 6 area
-- **Instruksi:** skill/persona/AGENTS ambigu? "pertimbangkan" tanpa rule? contoh kurang? kontradiksi antar file?
-- **Feedback:** `Farewell-Knowlage/Lessons.md` ada pattern berulang? 3x rule? loop tertutup?
-- **Testing:** celah di tests? empirical degradation belum jalan? (`scripts/benchmark-degradation.py` siap)
-- **Context:** compaction optimal? tool output boros? response limits jalan?
-- **Struktur:** file redundant? orphan? referensi putus? (check-links + check-consistency bantu)
-- **Security:** pattern belum dicek? permission longgar? key belum rotate?
+### Mode A — Scan Cepat (sesi singkat: 1-2 celah)
 
-### 3. Pilih — celah paling berdampak
-Impact × effort × risk. Satu celah per waktu. Jangan menumpuk.
+1. **Baseline:** `python scripts/check-all.py`. FAIL? Fix dulu. Green? Lanjut.
+2. **Scan 6 area** (lihat Checklist Area di bawah) — cari 1-2 celah paling jelas.
+3. **Pilih + Fix:** impact × effort × risk. Satu perubahan → `pytest` → `check-all` → ALL GREEN.
 
-### 4. Fix + Verify
-Satu perubahan → `python -m pytest tests/ -q` → `python scripts/check-all.py` → ALL GREEN.
+### Mode B — Deep Audit (sesi penuh, hasil terbaik)
 
-### 5. Kalau semua terlihat beres
-Scan LEBIH DALAM. Celah yang belum terpikir: usability, onboarding cost, model behavior, edge cases. Project sehat terus berkembang — kalau kamu nggak nemu celah, kamu belum scan cukup dalam.
+Ini proses audit dalam yang pernah menghasilkan 50 temuan sekaligus. Ikuti urutannya.
+
+**Langkah 1 — Baseline:** `python scripts/check-all.py`. Green dulu, baru audit.
+
+**Langkah 2 — Fan-out PARALEL:** dispatch researcher + reviewer BERSAMAAN (dua perspektif beda):
+- **Researcher** (deep scan): baca semua skill/persona/AGENTS/config, cari celah di 6 area + yang belum terpikir. Format: `file:line — [TYPE] issue — proposed fix` dengan [P/W/E/O]. TYPE: [C] contradiction / [S] stale-ref / [G] gap / [X] security / [F] friction.
+- **Reviewer** (audit): cari kontradiksi antar file, security hole, drift source-vs-generated. Format: `[TAG] file:line — issue — impact`. TAG: BLOCKING/SHOULD/NICE/FYI.
+- Keduanya READ-ONLY. Jangan biarkan mereka edit apa pun.
+
+**Langkah 3 — Synthesize:** gabung kedua hasil, kategorikan:
+- **BLOCKING** (bisa bikin salah/safety hole) → chunk sendiri, fix pertama
+- **P1** (causes wrong behavior) → chunk berikutnya
+- **P2/P3** → sisanya
+- Kalau researcher bilang "aman" tapi reviewer bilang BLOCKING → percaya reviewer (security otoritatif).
+
+**Langkah 4 — Fix per chunk:** eksekusi berurutan (A: security → B: correctness → C: consistency → D: test gaps). TIAP chunk: satu executor dispatch → `pytest` → `check-all` → baru chunk berikutnya. Jangan menumpuk.
+
+**Langkah 5 — Verify final + simpan:** `check-all` ALL GREEN → commit → push → update file ini + Session.md + Lessons.md.
+
+**Kenapa Mode B lebih kuat:** dua perspektif (cari-celah vs cari-salah) nemu hal yang beda. Researcher nemu "verify.py klaim depth tapi tidak dicek" (gate palsu). Reviewer nemu "executor bisa rewrite generate.py" (self-escalation). Sendiri-sendiri keduanya lolos; digabung, ketahuan.
+
+---
+
+## Checklist Area — apa yang dicari per area
+
+- **Instruksi:** skill/persona/AGENTS ambigu? "pertimbangkan" tanpa rule? kontradiksi antar file? skill sebut file yang tidak ada? trigger frontmatter vs isi body cocok?
+- **Feedback:** `Farewell-Knowlage/Lessons.md` pattern berulang (3x rule)? rules di-enforce atau cuma didokumentasi? learn() flow incident → Lessons → rule benar-benar jalan?
+- **Testing:** critical path tanpa test (cross-project, hooks, generated output)? gate jujur — klaim "cek X" tapi tidak di-implement? test assert hal yang sebenarnya tidak diverifikasi?
+- **Context:** compaction math vs 128K floor? caps (tool_output 500/12K) vs apa yang skill suruh agent baca? agent step limits masuk akal?
+- **Struktur:** stale refs (file/skill dirujuk tapi tidak ada)? orphan? generated vs source drift (opencode.jsonc vs generate.py)? README/CHANGELOG akurat?
+- **Security:** permission DUA ARAH (read deny → edit juga deny)? self-escalation (agent bisa edit file yang define permission)? auto-load potong safety rules? exec tanpa timeout?
+
+---
+
+## Pola Temuan Historis — cek ini dulu, jangan temukan ulang
+
+Pola yang sudah pernah ditemukan di deep audit. Kalau kamu scan, cek pola ini LEBIH DULU (kemungkinan besar masih ada atau muncul lagi):
+
+1. **Gate palsu** — tool klaim cek sesuatu tapi tidak di-implement (verify.py klaim depth D1-D4 tapi regex tidak match). Cek: klaim vs implementasi.
+2. **Permission satu arah** — read deny secrets tapi edit allow → agent bisa overwrite/create secrets. Cek: deny harus dua arah.
+3. **Self-escalation** — agent punya edit access ke file yang define permission (generate.py, opencode.jsonc, agents/) → bisa naikin permission sendiri. Cek: deny file permission-defining.
+4. **Auto-load truncation** — context file dipotong raw-line, safety rules (## Rules) hilang → model tidak dapat constraint. Cek: truncation per-section, bukan per-line.
+5. **Stale refs** — referensi ke skill/file yang sudah di-merge/dihapus (quality-gates → code-review). Cek: grep nama lama.
+6. **Test gap** — critical path tanpa test (cross-project, hooks, generated output). Cek: setiap flow punya test?
+7. **Config drift** — opencode.example.jsonc stale (10 skill, no .env deny) → kalau dipakai, hilangkan proteksi. Cek: example = real config minus profile.
+8. **Orphan trigger** — skill di trigger table tapi tidak ada jalur real untuk di-load. Cek: trigger → jalur eksekusi.
 
 ---
 
@@ -72,7 +109,9 @@ Scan LEBIH DALAM. Celah yang belum terpikir: usability, onboarding cost, model b
 
 ## Update Sesi
 
-_(isi di akhir sesi: apa yang kamu kerjakan, celah apa yang kamu temukan, apa yang kamu pelajari)_
+_(isi di akhir sesi, 2-5 baris naratif: apa yang dikerjakan, celah apa yang ditemukan, pelajaran. Update juga pola temuan historis kalau ada pola baru.)_
+
+**Sesi deep audit (2026-08-08):** fan-out researcher+reviewer nemu 50 temuan. Fix: security hardening (executor edit deny map, learn.ts mkdir, auto-load full persona), verify gate depth beneran di-enforce (BLOCKING=[D3]+), allowlist tidak dekoratif, 64 tests (dari 49). Pelajaran: dua perspektif (cari-celah + cari-salah) nemu hal yang beda — gabung keduanya. Pola baru #1 (gate palsu) dan #2 (permission satu arah) ditemukan di sesi ini.
 
 ---
 
