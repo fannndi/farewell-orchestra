@@ -79,14 +79,23 @@ class TestVerifyToolIntegration:
 
 
 class TestFeedbackLoop:
-    """Feedback loop must be wired: learn tool + orchestrator trigger."""
+    """Feedback loop must be rule/test-based — no external vault, no learn tool."""
 
-    def test_learn_tool_exists(self):
-        assert (TOOLS / "learn.ts").exists(), "learn.ts missing"
-        content = read(TOOLS / "learn.ts")
-        assert "Farewell-Knowlage" in content, "learn.ts must write to lessons vault"
+    def test_no_vault_dependency(self):
+        """Project must not depend on external vault — pure rules + tests."""
+        for f in [
+            "AGENTS.md",
+            ".opencode/soul.md",
+            "README.md",
+            "TRAINING.md",
+            ".opencode/agents/orchestrator.md",
+            ".opencode/skills/orchestrate/SKILL.md",
+            ".opencode/skills/feedback-loop/SKILL.md",
+        ]:
+            content = read(ROOT / f)
+            assert "Farewell-Knowlage" not in content, f"{f} still references vault"
 
     def test_orchestrator_has_feedback_trigger(self):
         content = read(AGENTS / "orchestrator.md")
         assert "Feedback" in content, "orchestrator missing Feedback Loop section"
-        assert "learn" in content.lower(), "orchestrator must call learn tool"
+        assert "rule" in content, "orchestrator feedback loop must be rule-based"

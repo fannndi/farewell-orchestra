@@ -42,7 +42,7 @@ def main():
     print("\n3. RUNBOOK (manual, butuh model access)")
     print("  Langkah: (1) switch profile, (2) dispatch sub-agent dengan")
     print("  prompt + filler sampai level target, (3) nilai output via rubric,")
-    print("  (4) catat hasil di Farewell-Knowlage/Session.md")
+    print("  (4) catat hasil — report ke Boss, tanpa session log")
     print("  Stopping rule: sharp quality drop antara 70-90% → catat threshold model")
 
     print("\n4. READINESS")

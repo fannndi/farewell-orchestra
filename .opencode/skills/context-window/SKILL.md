@@ -106,7 +106,7 @@ Kalau context penuh:
 Kalau context kosong:
 1. Load Critical dari sub-project.md
 2. Load High dari recent memory
-3. Load Medium dari lessons
+3. Load Medium dari skill files (relevan dengan task)
 4. Skip Low
 
 ## Context Budget

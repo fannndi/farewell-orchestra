@@ -59,5 +59,3 @@ WAJIB sebelum nulis kode. Cek semua:
 |---------|-----------|
 | < 100 baris | 1 file |
 - **100-300 baris:** Split HANYA kalau ada 2+ tanggung jawab beda (contoh: validation + API call). Satu tanggung jawab → tetap 1 file.
-| > 300 baris | Pisahkan dengan alasan jelas |
-| Logic beda | Pisahkan (misal: auth vs utils) |

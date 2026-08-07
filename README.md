@@ -109,12 +109,11 @@ farewell-orchestra/
     ├── soul.md                  # Identitas + esensi (factory vs product)
     ├── agents/                  # 5 files (4 agent personas + boss.md reference)
     ├── skills/                  # 18 skills (on-demand via trigger)
-    ├── tools/                   # verify, auto-load, learn, harness
+    ├── tools/                   # verify, auto-load, harness
     ├── hooks/                   # Lifecycle hooks (auto-load, post-generate, check-links)
     ├── templates/               # Per-project-type templates
     ├── checklists/              # Actionable checklists
     ├── guides/                  # project-management.md
-    ├── lessons/                 # Lesson logs
     └── scripts/                 # check-consistency, check-links, automation .ps1
 ```
 
@@ -148,9 +147,8 @@ farewell-orchestra/
 |------|-----|
 | `.opencode/soul.md` | Identitas + esensi (factory vs product) |
 | `AGENTS.md` | Rules operasional (single source of truth) |
-| `TRAINING.md` | State + prioritas terbuka (sesi training) |
+| `TRAINING.md` | Panduan optimasi (cara kerja + checklist area, raw power) |
 | `cross-project/guide.md` | Workflow project lain + docs gen |
-| `Farewell-Knowlage/` (EXTERNAL, di luar repo) | Memori + lessons (Obsidian vault) |
 
 ## License
 

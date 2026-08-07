@@ -86,7 +86,7 @@ Pecah jadi work packages independen. Tiap package ≤5 baris brief.
 | Lane | Sumber | Output |
 |------|--------|--------|
 | Memory | sub-project.md | agent terakhir kerja apa |
-| Lessons | Farewell-Knowlage/Lessons.md (external Obsidian vault) | error pattern: n kejadian |
+| Rules | AGENTS.md + skills (durable) | rules yang relevan dengan task |
 | State | git status | file modified, bersih |
 | Config | opencode.jsonc | profile name |
 **REDACTION:** Hapus secret, API keys, token, path absolut sebelum dispatch.

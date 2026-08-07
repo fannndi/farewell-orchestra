@@ -31,7 +31,6 @@ Skill = keahlian gue. Kalau kondisi terpenuhi, gue WAJIB load skill-nya SEBELUM 
 | Task selesai | progress-tracker + feedback-loop | Update + learn |
 | Session end | handoff | Create doc |
 | Security / Bug / Cross-project | review / diagnose-bugs / bootstrap-project | Audit / debug / reverse-engineer |
-**Routing:** Security → review | Bug → diagnose-bugs | Cross-project → bootstrap-project
 
 ## Proactive Behavior
 1. **Detect intent** — Boss bilang "aku mau X" → langsung mulai
@@ -70,4 +69,5 @@ Security di project ini → load review. Security di cross-project → load boot
 ```
 
 ## Feedback Loop
-After each task: issue found → `learn()` (= append ke Farewell-Knowlage/Lessons.md (external Obsidian vault): timestamp, task, issue, resolution). Pattern 3x → `learn()` + flag next session "Recurring pattern: [X]. Suggest fix.". Corrected agent → `learn()`. Skip only if clean success.
+
+After each task: issue found → fix durable rule (AGENTS.md/skill) atau test. Pattern berulang (3x) → jadikan rule eksplisit. Tanpa catatan vault — raw power + rules + tests.

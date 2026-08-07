@@ -26,15 +26,15 @@ import * as path from "path"
 
 export default tool({
   description:
-    "Check harness health: validate profiles.json, show active profile, sensor coverage status. " +
+    "Check harness health: validate profiles.json, show active profile. " +
     "Call this when boss asks /check, or when orchestrator needs health info before dispatching. " +
-    "Use format:'json' for machine-readable output matching .opencode/command/check.md schema.",
+    "Use format:'json' for machine-readable output.",
   args: {
     check: tool.schema
-      .enum(["all", "profiles", "sensors", "active"])
+      .enum(["all", "profiles", "active"])
       .optional()
       .default("all")
-      .describe("What to check: all (default), profiles, sensors, or active profile"),
+      .describe("What to check: all (default), profiles, or active profile"),
     format: tool.schema
       .enum(["text", "json"])
       .optional()
@@ -113,27 +113,6 @@ export default tool({
       }
     }
 
-    // 4. Sensor coverage (from Farewell-Knowlage/Lessons.md) — pure Node.js
-    let sensorOk = 0, sensorMissing = 0, sensorPartial = 0
-    if (args.check === "all" || args.check === "sensors") {
-      try {
-        const lessonsPath = path.join(path.dirname(worktree), "Farewell-Knowlage", "Lessons.md")
-        const lessonsContent = fs.readFileSync(lessonsPath, "utf-8")
-        const sensorSection = lessonsContent.match(/## Sensor Coverage[\s\S]*?(?=## |$)/)
-        if (sensorSection) {
-          const section = sensorSection[0]
-          sensorOk = (section.match(/\[PASS\]/g) || []).length
-          sensorMissing = (section.match(/\[FAIL\]/g) || []).length
-          sensorPartial = (section.match(/\[WARN\]/g) || []).length
-          results.push(`Sensor coverage: ${sensorOk} OK, ${sensorMissing} MISSING, ${sensorPartial} PARTIAL`)
-        } else {
-          errors.push("Sensor coverage section not found in Farewell-Knowlage/Lessons.md")
-        }
-      } catch {
-        errors.push("Cannot read sensor coverage")
-      }
-    }
-
     // --- JSON output ---
     if (args.format === "json") {
       jsonPayload.profile = activeModel
@@ -155,11 +134,6 @@ export default tool({
         valid: profilesValid,
         names: availableProfiles,
       }
-      jsonPayload.sensors = {
-        ok: sensorOk,
-        missing: sensorMissing,
-        partial: sensorPartial,
-      }
       jsonPayload.errors = errors.length > 0 ? errors : undefined
       jsonPayload.healthy = errors.length === 0
 
@@ -174,7 +148,7 @@ export default tool({
     if (errors.length > 0) {
       output += "\n" + errors.map((e) => `  ✗ ${e}`).join("\n") + "\n"
     }
-    if (errors.length === 0 && args.check !== "sensors") {
+    if (errors.length === 0) {
       output += "\n  ✓ All checks passed"
     }
 

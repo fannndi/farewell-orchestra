@@ -63,7 +63,7 @@ Ini proses audit dalam yang pernah menghasilkan 50 temuan sekaligus. Ikuti uruta
 
 **Langkah 4 — Fix per chunk:** eksekusi berurutan (A: security → B: correctness → C: consistency → D: test gaps). TIAP chunk: satu executor dispatch → `pytest` → `check-all` → baru chunk berikutnya. Jangan menumpuk.
 
-**Langkah 5 — Verify final + simpan:** `check-all` ALL GREEN → commit → push → update file ini + Session.md + Lessons.md.
+**Langkah 5 — Verify final:** `check-all` ALL GREEN → commit → push. Tidak ada catatan sesi — rules/tests yang update.
 
 **Kenapa Mode B lebih kuat:** dua perspektif (cari-celah vs cari-salah) nemu hal yang beda. Researcher nemu "verify.py klaim depth tapi tidak dicek" (gate palsu). Reviewer nemu "executor bisa rewrite generate.py" (self-escalation). Sendiri-sendiri keduanya lolos; digabung, ketahuan.
 
@@ -72,7 +72,7 @@ Ini proses audit dalam yang pernah menghasilkan 50 temuan sekaligus. Ikuti uruta
 ## Checklist Area — apa yang dicari per area
 
 - **Instruksi:** skill/persona/AGENTS ambigu? "pertimbangkan" tanpa rule? kontradiksi antar file? skill sebut file yang tidak ada? trigger frontmatter vs isi body cocok?
-- **Feedback:** `Farewell-Knowlage/Lessons.md` pattern berulang (3x rule)? rules di-enforce atau cuma didokumentasi? learn() flow incident → Lessons → rule benar-benar jalan?
+- **Feedback:** rules di-enforce atau cuma didokumentasi? pola masalah yang sama muncul di 2+ tempat? (tanpa lesson log — cek langsung di kode/docs)
 - **Testing:** critical path tanpa test (cross-project, hooks, generated output)? gate jujur — klaim "cek X" tapi tidak di-implement? test assert hal yang sebenarnya tidak diverifikasi?
 - **Context:** compaction math vs 128K floor? caps (tool_output 500/12K) vs apa yang skill suruh agent baca? agent step limits masuk akal?
 - **Struktur:** stale refs (file/skill dirujuk tapi tidak ada)? orphan? generated vs source drift (opencode.jsonc vs generate.py)? README/CHANGELOG akurat?
@@ -80,41 +80,26 @@ Ini proses audit dalam yang pernah menghasilkan 50 temuan sekaligus. Ikuti uruta
 
 ---
 
-## Pola Temuan Historis — cek ini dulu, jangan temukan ulang
+## Prinsip: Raw Power, Tanpa Catatan
 
-Pola yang sudah pernah ditemukan di deep audit. Kalau kamu scan, cek pola ini LEBIH DULU (kemungkinan besar masih ada atau muncul lagi):
+Project ini tidak menyimpan catatan sesi, lesson log, atau memory tertulis. Semua pengetahuan ter-encode di dua tempat:
+- **Rules durable** — AGENTS.md + skill files (baca kalau butuh)
+- **Tests executable** — tests/ (67 tests, `python -m pytest tests/ -q`)
 
-1. **Gate palsu** — tool klaim cek sesuatu tapi tidak di-implement (verify.py klaim depth D1-D4 tapi regex tidak match). Cek: klaim vs implementasi.
-2. **Permission satu arah** — read deny secrets tapi edit allow → agent bisa overwrite/create secrets. Cek: deny harus dua arah.
-3. **Self-escalation** — agent punya edit access ke file yang define permission (generate.py, opencode.jsonc, agents/) → bisa naikin permission sendiri. Cek: deny file permission-defining.
-4. **Auto-load truncation** — context file dipotong raw-line, safety rules (## Rules) hilang → model tidak dapat constraint. Cek: truncation per-section, bukan per-line.
-5. **Stale refs** — referensi ke skill/file yang sudah di-merge/dihapus (quality-gates → code-review). Cek: grep nama lama.
-6. **Test gap** — critical path tanpa test (cross-project, hooks, generated output). Cek: setiap flow punya test?
-7. **Config drift** — opencode.example.jsonc bisa ketinggalan dari generate.py (misal: skill allowlist, permission). Cek: example = real config minus profile; regenerate + diff.
-8. **Orphan trigger** — skill di trigger table tapi tidak ada jalur real untuk di-load. Cek: trigger → jalur eksekusi.
-9. **Deny-map hole** — deny permission-defining SURFACE (hooks/tools/skills), bukan cuma config files. Kalau deny cuma di config files, executor masih bisa edit .opencode/** → auto-run code / subprocess / instruction injection. Cek: deny mencakup hooks/tools/skills/agents, bukan hanya opencode.jsonc.
+Kalau kamu menemukan masalah → FIX LANGSUNG jadi rule atau test. Jangan catat di mana pun. Sesi berikutnya mulai fresh, scan ulang, dan rules/tests yang sudah ada yang menjaga kualitas.
+
+Kenapa: project dilatih dengan LLM High Reasoning 1M, tapi target runtime 128K. Di 128K tidak ada ruang buat baca sejarah — yang ada cuma rules + tests. Raw power reasoning yang cari celah, bukan catatan yang bilang apa yang harus dilakukan.
 
 ---
 
-## Looping Protocol — yang bikin sesi ini berguna untuk sesi berikutnya
+## Looping Protocol
 
 **Akhir sesi:**
 1. `python scripts/check-all.py` → ALL GREEN (wajib)
-2. Update file ini: ganti bagian "Update Sesi" di bawah dengan catatan singkat (2-5 baris naratif: apa dikerjakan, celah apa yang ditemukan, pelajaran)
-3. Catat di `Farewell-Knowlage/Session.md` (ringkasan) + `Lessons.md` (insiden/pelajaran)
-4. Lapor Boss: apa dikerjakan, hasil verify, celah tersisa
+2. Update rules/tests: kalau kamu menemukan masalah → fix jadi rule (AGENTS.md/skill) ATAU test. Jangan catat prosa.
+3. Lapor Boss: apa dikerjakan, hasil verify, celah tersisa
 
-**Kenapa:** Boss tidak perlu prompt detail tiap sesi. LLM berikutnya baca file ini → langsung tahu arah → lanjut cari celah. File ini otak kolektif yang tumbuh.
-
----
-
-## Update Sesi
-
-_(isi di akhir sesi, 2-5 baris naratif: apa yang dikerjakan, celah apa yang ditemukan, pelajaran. Update juga pola temuan historis kalau ada pola baru.)_
-
-**Sesi deep audit (2026-08-08):** fan-out researcher+reviewer nemu 50 temuan. Fix: security hardening (executor edit deny map, learn.ts mkdir, auto-load full persona), verify gate depth beneran di-enforce (BLOCKING=[D3]+), allowlist tidak dekoratif, 67 tests (dari 49). Pelajaran: dua perspektif (cari-celah + cari-salah) nemu hal yang beda — gabung keduanya. Pola baru #1 (gate palsu) dan #2 (permission satu arah) ditemukan di sesi ini.
-
-**Sesi deep audit R2 (2026-08-08):** deny-map hole — round-1 cuma blok config files, tapi executor masih bisa edit .opencode/** (hooks = auto-run code, tools = subprocess, skills = instruction injection) → ditutup (.opencode/** + AGENTS.md + cross-project/guide.md). verify.py: review stage reject [P/W/E/O] (false gate) + multi-line depth — fixed. learn.ts atomic append (lock) + insertion bound ke main table. npm* → ask (RCE via editable package.json). ci.yaml ||true dihapus (drift bikin CI FAIL). Pola baru #9: "deny-map hole" — deny permission-defining SURFACE (hooks/tools/skills), bukan cuma config files.
+**Kenapa:** project tidak menyimpan catatan sesi — rules (AGENTS.md/skill) + tests adalah satu-satunya memori durable. LLM berikutnya mulai fresh, scan ulang, dan kualitas dijaga oleh rules + tests yang sudah ter-encode.
 
 ---
 
@@ -131,7 +116,7 @@ _(isi di akhir sesi, 2-5 baris naratif: apa yang dikerjakan, celah apa yang dite
 
 ## Mulai
 
-Baca konteks. Jalankan check-all. Cari celah. Buktikan. Perbaiki. Verify. Update file ini.
+Baca konteks. Jalankan check-all. Cari celah. Buktikan. Perbaiki. Verify. Encode jadi rule/test.
 
 Token sudah tersedia. Project sudah tersedia. Tidak ada alasan untuk tidak mulai.
 

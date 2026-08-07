@@ -51,10 +51,6 @@ FORWARD_REFS = {
     "docs-template.md",
 }
 
-# Known vault files — refs written without prefix (e.g. bare "Lessons.md")
-# are valid; they live in Farewell-Knowlage/
-VAULT_REFS = {"Lessons.md", "Session.md", "Decisions.md"}
-
 # Known deleted files — refs to files intentionally removed (historical
 # records like TRAINING.md "Sudah Dikerjakan" log); skip, they will never exist
 DELETED_REFS = {"workflows/cross-project.md", "protocols/agent-communication.md"}
@@ -166,8 +162,6 @@ def main():
             if (
                 ref_path in FORWARD_REFS
                 or any(ref_path.endswith(f"/{f}") for f in FORWARD_REFS)
-                or ref_path in VAULT_REFS
-                or any(ref_path.endswith(f"/{v}") for v in VAULT_REFS)
                 or ref_path in DELETED_REFS
                 or any(ref_path.endswith(f"/{d}") for d in DELETED_REFS)
             ):
