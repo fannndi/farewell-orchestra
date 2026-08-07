@@ -58,14 +58,7 @@ task(subagent_type="researcher", description="...", prompt="brief + evidence bun
 task(subagent_type="reviewer", description="...", prompt="brief + evidence bundle")
 ```
 Tunggu KEDUA hasil. NEVER skip fan-out (kecuali TRIVIAL → reviewer optional).
-**Explicit Fan-Out Enforcement (WAJIB untuk LLM):**
-
-| Size | Researcher | Reviewer | Executor |
-|------|------------|----------|----------|
-| TRIVIAL | OPTIONAL | OPTIONAL | LANGSUNG |
-| SMALL | WAJIB | OPTIONAL | SETELAH research |
-| MEDIUM | WAJIB | WAJIB | SETELAH keduanya |
-| LARGE | WAJIB | WAJIB | SETELAH keduanya |
+See AGENTS.md Dispatch — table kanonik.
 
 **Chunk guard:** Kalau salah satu return `[CHUNK_REQUIRED]` → tunggu re-chunk, JANGAN gunakan partial results dari agent lain. Re-dispatch keduanya dengan chunk yang lebih kecil.
 **Trust sub-agents.** Gagal → re-dispatch dengan error detail, bukan ambil alih.

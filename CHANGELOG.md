@@ -32,7 +32,7 @@
 - Bootstrap-project skill (PRD-heavy mode, permission handling)
 - Context-window skill (cross-project context management)
 - Error-handler skill (cross-project error patterns)
-- Quality-gates skill (cross-project quality gates)
+- Code-review skill (quality gates merged)
 - AGENTS.md (cross-project patterns, agent brief format)
 - README.md (cross-project support, automation scripts)
 

@@ -172,7 +172,7 @@ When switching between projects:
 | Agent status (1) | ~20 |
 | File content (100 lines) | ~500 |
 | Error message | ~50-100 |
-| Full codebase (26 files) | ~15000 |
+| Full codebase (~75 files) | ~50000 (est) |
 
 ### Auto-Prune Rules
 

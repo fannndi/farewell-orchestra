@@ -101,8 +101,10 @@ farewell-orchestra/
 │   └── switch.bat               # Interactive switcher
 ├── scripts/
 │   ├── benchmark.py             # Context budget per model tier
-│   └── stress-test.py           # Multi-model config validation
-├── tests/                       # 49 tests (pytest)
+│   ├── benchmark-degradation.py # Empirical degradation harness
+│   ├── stress-test.py           # Multi-model config validation
+│   └── check-all.py             # 1-command full health check (7 checks)
+├── tests/                       # 64 tests (pytest)
 └── .opencode/
     ├── soul.md                  # Identitas + esensi (factory vs product)
     ├── agents/                  # 5 files (4 agent personas + boss.md reference)

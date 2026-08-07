@@ -16,6 +16,34 @@ BACKUP_DIR = os.path.join(PROFILES_DIR, "backups")
 MAX_BACKUPS = 3
 PROVIDER_PREFIX = "9router/"
 
+# ── Skill permission allowlist ────────────────────────────────────────
+# Single source of truth: exactly the 18 skills on disk. Shared by root
+# permission and every agent template — agents must NOT bypass with an
+# open allow string for the skill permission (that would make this
+# allowlist decorative). check-consistency.py enforces this.
+
+SKILL_ALLOWLIST = {
+    "*": "deny",
+    "prepare": "allow",
+    "orchestrate": "allow",
+    "research": "allow",
+    "review": "allow",
+    "implement": "allow",
+    "bootstrap-project": "allow",
+    "anti-patterns": "allow",
+    "complexity-budget": "allow",
+    "progress-tracker": "allow",
+    "error-handler": "allow",
+    "tdd": "allow",
+    "code-review": "allow",
+    "diagnose-bugs": "allow",
+    "handoff": "allow",
+    "domain-modeling": "allow",
+    "task-decomposer": "allow",
+    "feedback-loop": "allow",
+    "context-window": "allow",
+}
+
 # ── Agent templates ──────────────────────────────────────────────────
 # Only `model` changes per profile. Rules are in AGENTS.md + skills.
 
@@ -36,12 +64,12 @@ AGENT_TEMPLATES = {
                 "*.md": "allow",
                 "*": "ask",
             },
-            "edit": {"sub-project.md": "allow", "*.md": "deny", "*": "deny"},
+            "edit": {"**/sub-project.md": "allow", "*": "deny"},
             "glob": "allow",
             "grep": "allow",
             "list": "allow",
             "question": "allow",
-            "skill": "allow",
+            "skill": SKILL_ALLOWLIST,
             "todowrite": "allow",
             "lsp": "allow",
             "external_directory": {
@@ -78,7 +106,7 @@ AGENT_TEMPLATES = {
             "webfetch": "allow",
             "websearch": "allow",
             "lsp": "allow",
-            "skill": "allow",
+            "skill": SKILL_ALLOWLIST,
             "edit": "deny",
             "bash": "deny",
             "external_directory": {
@@ -110,7 +138,7 @@ AGENT_TEMPLATES = {
             "webfetch": "allow",
             "websearch": "allow",
             "lsp": "allow",
-            "skill": "allow",
+            "skill": SKILL_ALLOWLIST,
             "edit": "deny",
             "bash": "deny",
             "external_directory": {
@@ -135,7 +163,16 @@ AGENT_TEMPLATES = {
                 "**/.env*": "deny",
                 "*": "allow",
             },
-            "edit": "allow",
+            "edit": {
+                "**/.env*": "deny",
+                "**/*.key": "deny",
+                "**/*.pem": "deny",
+                "profiles/generate.py": "deny",
+                "profiles/profiles.json": "deny",
+                "opencode.jsonc": "deny",
+                ".opencode/agents/*": "deny",
+                "*": "allow",
+            },
             "glob": "allow",
             "grep": "allow",
             "list": "allow",
@@ -149,7 +186,7 @@ AGENT_TEMPLATES = {
                 "*": "ask",
             },
             "lsp": "allow",
-            "skill": "allow",
+            "skill": SKILL_ALLOWLIST,
             "external_directory": {
                 "~/projects/**": "allow",
                 "C:/Users/FANNNDI/Documents/**": "allow",
@@ -259,7 +296,9 @@ def build_agent_config(profile):
             },
         }
     if "compaction" in agents:
-        agents["compaction"]["steps"] = 8
+        # Compaction summarizes long sessions — 8 steps is too tight
+        # for reading a large conversation. Floor: 100.
+        agents["compaction"]["steps"] = 100
 
     agents.update(DISABLED_AGENTS)
     return agents
@@ -330,27 +369,7 @@ def generate(profile_name, to_stdout=False):
             "todowrite": "allow",
             "lsp": "allow",
             "mcp_*": "deny",
-            "skill": {
-                "*": "deny",
-                "prepare": "allow",
-                "orchestrate": "allow",
-                "research": "allow",
-                "review": "allow",
-                "implement": "allow",
-                "bootstrap-project": "allow",
-                "anti-patterns": "allow",
-                "complexity-budget": "allow",
-                "progress-tracker": "allow",
-                "error-handler": "allow",
-                "tdd": "allow",
-                "code-review": "allow",
-                "diagnose-bugs": "allow",
-                "handoff": "allow",
-                "domain-modeling": "allow",
-                "task-decomposer": "allow",
-                "feedback-loop": "allow",
-                "context-window": "allow",
-            },
+            "skill": SKILL_ALLOWLIST,
         },
         "references": {
             "projects": {"path": "~/projects", "description": "Folder project"},

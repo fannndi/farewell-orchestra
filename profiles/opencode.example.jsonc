@@ -1,12 +1,16 @@
-﻿// Profile: Pro
+// Profile: Pro
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "orchestrator",
   "instructions": [
-    "AGENTS.md"
+    "AGENTS.md",
+    "cross-project/guide.md",
+    ".opencode/soul.md"
   ],
   "subagent_depth": 2,
   "share": "disabled",
+  "shell": "pwsh",
+  "snapshot": true,
   "permission": {
     "doom_loop": "deny",
     "edit": "ask",
@@ -33,7 +37,15 @@
       "anti-patterns": "allow",
       "complexity-budget": "allow",
       "progress-tracker": "allow",
-      "error-handler": "allow"
+      "error-handler": "allow",
+      "tdd": "allow",
+      "code-review": "allow",
+      "diagnose-bugs": "allow",
+      "handoff": "allow",
+      "domain-modeling": "allow",
+      "task-decomposer": "allow",
+      "feedback-loop": "allow",
+      "context-window": "allow"
     }
   },
   "references": {
@@ -159,9 +171,19 @@
       "max_base64_bytes": 5242880
     }
   },
-  "lsp": false,
+  "lsp": {
+    "typescript": {
+      "command": [
+        "typescript-language-server"
+      ],
+      "args": [
+        "--stdio"
+      ]
+    }
+  },
   "formatter": true,
   "model": "9router/ocg/deepseek-v4-flash",
+  "small_model": "9router/ocg/deepseek-v4-flash",
   "agent": {
     "orchestrator": {
       "color": "#7c3aed",
@@ -173,26 +195,50 @@
         }
       },
       "steps": 300,
-      "prompt": "Orchestrator: prepare ΓåÆ decompose ΓåÆ fan-out parallel via `task` tool ΓåÆ synthesize ΓåÆ brief executor. Load skill: prepare + orchestrate. JANGAN nulis kode. Baca .opencode/tools/persona-context-orchestrator.md untuk persona lengkap.",
+      "prompt": "Orchestrator: prepare → decompose → fan-out parallel via `task` tool → synthesize → brief executor. Load skill: prepare + orchestrate. JANGAN nulis kode. Baca .opencode/tools/persona-context-orchestrator.md untuk persona lengkap.",
       "permission": {
         "read": {
+          "**/*.env*": "deny",
+          "**/*.key": "deny",
+          "**/*.pem": "deny",
+          "**/.env*": "deny",
           "*.md": "allow",
           "*": "ask"
         },
         "edit": {
-          "sub-project.md": "allow",
-          "*.md": "deny",
+          "**/sub-project.md": "allow",
           "*": "deny"
         },
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
         "question": "allow",
-        "skill": "allow",
+        "skill": {
+          "*": "deny",
+          "prepare": "allow",
+          "orchestrate": "allow",
+          "research": "allow",
+          "review": "allow",
+          "implement": "allow",
+          "bootstrap-project": "allow",
+          "anti-patterns": "allow",
+          "complexity-budget": "allow",
+          "progress-tracker": "allow",
+          "error-handler": "allow",
+          "tdd": "allow",
+          "code-review": "allow",
+          "diagnose-bugs": "allow",
+          "handoff": "allow",
+          "domain-modeling": "allow",
+          "task-decomposer": "allow",
+          "feedback-loop": "allow",
+          "context-window": "allow"
+        },
         "todowrite": "allow",
         "lsp": "allow",
         "external_directory": {
-          "~/projects/**": "allow"
+          "~/projects/**": "allow",
+          "C:/Users/FANNNDI/Documents/**": "allow"
         },
         "task": {
           "*": "deny",
@@ -216,18 +262,45 @@
       "prompt": "Read-only investigator. Return evidence file:line. Load skill: research. Baca .opencode/tools/persona-context-researcher.md untuk persona lengkap.",
       "permission": {
         "*": "deny",
-        "read": "allow",
+        "read": {
+          "**/*.env*": "deny",
+          "**/*.key": "deny",
+          "**/*.pem": "deny",
+          "**/.env*": "deny",
+          "*": "allow"
+        },
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
         "webfetch": "allow",
         "websearch": "allow",
         "lsp": "allow",
-        "skill": "allow",
+        "skill": {
+          "*": "deny",
+          "prepare": "allow",
+          "orchestrate": "allow",
+          "research": "allow",
+          "review": "allow",
+          "implement": "allow",
+          "bootstrap-project": "allow",
+          "anti-patterns": "allow",
+          "complexity-budget": "allow",
+          "progress-tracker": "allow",
+          "error-handler": "allow",
+          "tdd": "allow",
+          "code-review": "allow",
+          "diagnose-bugs": "allow",
+          "handoff": "allow",
+          "domain-modeling": "allow",
+          "task-decomposer": "allow",
+          "feedback-loop": "allow",
+          "context-window": "allow"
+        },
         "edit": "deny",
         "bash": "deny",
         "external_directory": {
-          "~/projects/**": "allow"
+          "~/projects/**": "allow",
+          "C:/Users/FANNNDI/Documents/**": "allow"
         },
         "task": "deny"
       },
@@ -246,18 +319,45 @@
       "prompt": "Read-only auditor. STRIDE analysis. Return [TAG] file:line. Load skill: review. Baca .opencode/tools/persona-context-reviewer.md untuk persona lengkap.",
       "permission": {
         "*": "deny",
-        "read": "allow",
+        "read": {
+          "**/*.env*": "deny",
+          "**/*.key": "deny",
+          "**/*.pem": "deny",
+          "**/.env*": "deny",
+          "*": "allow"
+        },
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
         "webfetch": "allow",
         "websearch": "allow",
         "lsp": "allow",
-        "skill": "allow",
+        "skill": {
+          "*": "deny",
+          "prepare": "allow",
+          "orchestrate": "allow",
+          "research": "allow",
+          "review": "allow",
+          "implement": "allow",
+          "bootstrap-project": "allow",
+          "anti-patterns": "allow",
+          "complexity-budget": "allow",
+          "progress-tracker": "allow",
+          "error-handler": "allow",
+          "tdd": "allow",
+          "code-review": "allow",
+          "diagnose-bugs": "allow",
+          "handoff": "allow",
+          "domain-modeling": "allow",
+          "task-decomposer": "allow",
+          "feedback-loop": "allow",
+          "context-window": "allow"
+        },
         "edit": "deny",
         "bash": "deny",
         "external_directory": {
-          "~/projects/**": "allow"
+          "~/projects/**": "allow",
+          "C:/Users/FANNNDI/Documents/**": "allow"
         },
         "task": "deny"
       },
@@ -275,8 +375,23 @@
       "steps": 300,
       "prompt": "Implement per brief. YAGNI. Verify before report. Load skill: implement. Baca .opencode/tools/persona-context-executor.md untuk persona lengkap.",
       "permission": {
-        "read": "allow",
-        "edit": "allow",
+        "read": {
+          "**/*.env*": "deny",
+          "**/*.key": "deny",
+          "**/*.pem": "deny",
+          "**/.env*": "deny",
+          "*": "allow"
+        },
+        "edit": {
+          "**/.env*": "deny",
+          "**/*.key": "deny",
+          "**/*.pem": "deny",
+          "profiles/generate.py": "deny",
+          "profiles/profiles.json": "deny",
+          "opencode.jsonc": "deny",
+          ".opencode/agents/*": "deny",
+          "*": "allow"
+        },
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
@@ -290,9 +405,30 @@
           "*": "ask"
         },
         "lsp": "allow",
-        "skill": "allow",
+        "skill": {
+          "*": "deny",
+          "prepare": "allow",
+          "orchestrate": "allow",
+          "research": "allow",
+          "review": "allow",
+          "implement": "allow",
+          "bootstrap-project": "allow",
+          "anti-patterns": "allow",
+          "complexity-budget": "allow",
+          "progress-tracker": "allow",
+          "error-handler": "allow",
+          "tdd": "allow",
+          "code-review": "allow",
+          "diagnose-bugs": "allow",
+          "handoff": "allow",
+          "domain-modeling": "allow",
+          "task-decomposer": "allow",
+          "feedback-loop": "allow",
+          "context-window": "allow"
+        },
         "external_directory": {
-          "~/projects/**": "allow"
+          "~/projects/**": "allow",
+          "C:/Users/FANNNDI/Documents/**": "allow"
         },
         "task": "deny"
       },
@@ -339,7 +475,7 @@
         "bash": "deny",
         "task": "deny"
       },
-      "steps": 8
+      "steps": 100
     },
     "build": {
       "mode": "primary",

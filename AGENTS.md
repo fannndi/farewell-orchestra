@@ -25,8 +25,9 @@ Baca `.opencode/soul.md` untuk memahami identitas project. Ini bukan persona age
 Request → prepare → [research || review] → orchestrate → implement → report
 ```
 
-## Auto-Load
-Skills + personas di-load otomatis (3 layer: hook, prompt, inline). Agent tidak perlu manual load.
+## Auto-Context
+
+Context files (persona + skill) di-generate saat session start oleh hook (`afterSessionStart` → `.opencode/tools/auto-load-skills.py`). Agent prompt mereferensikan file-nya; LLM baca saat butuh. Tidak ada injeksi langsung ke context.
 
 ## Roles
 | Role | Tugas | Skills | Kode? |
@@ -39,10 +40,14 @@ Skills + personas di-load otomatis (3 layer: hook, prompt, inline). Agent tidak 
 Note: skills can be loaded on-demand by trigger (see each agent's Skill Triggers table), so roles table lists only core loaded skills.
 
 ## Dispatch
-- Researcher + reviewer **WAJIB parallel** (kecuali TRIVIAL).
-- Executor dispatch **setelah** keduanya selesai.
+| Size | Researcher | Reviewer | Executor |
+|------|-----------|----------|----------|
+| TRIVIAL | OPTIONAL | OPTIONAL | LANGSUNG |
+| SMALL | WAJIB | OPTIONAL | SETELAH research |
+| MEDIUM | WAJIB | WAJIB | SETELAH keduanya |
+| LARGE+ | WAJIB | WAJIB | SETELAH keduanya |
+
 - **Interrupt:** BLOCKING = escalate langsung.
-- SMALL task: researcher WAJIB, reviewer OPTIONAL (see orchestrate skill).
 
 ## Freeze Rule
 Orchestrator **TIDAK** boleh: edit/write kode, bash compile/test/build.

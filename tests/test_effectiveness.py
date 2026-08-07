@@ -18,7 +18,7 @@ def _audit_persona_completeness():
     results = []
     required_sections = [
         "Identity",
-        "Auto-Load",
+        "Auto-Context",
         "Skill Triggers",
         "Proactive Behavior",
         "Decision Tree",

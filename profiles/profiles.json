@@ -105,7 +105,7 @@
     },
     {
       "name": "Daily",
-      "label": "Mixed",
+      "label": "Daily",
       "small_model": "9router/ocg/deepseek-v4-flash",
       "agents": {
         "orchestrator": {"model": "9router/ocg/deepseek-v4-flash"},
@@ -116,7 +116,7 @@
     },
     {
       "name": "Eco",
-      "label": "Daily",
+      "label": "Eco",
       "small_model": "9router/oc/deepseek-v4-flash-free",
       "agents": {
         "orchestrator": {"model": "9router/oc/deepseek-v4-flash-free"},

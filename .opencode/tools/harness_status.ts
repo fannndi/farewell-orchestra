@@ -2,7 +2,7 @@ import { tool } from "@opencode-ai/plugin"
 import { execFileSync } from "child_process"
 
 const pythonCmd = (() => {
-  try { execFileSync('python3', ['--version'], { stdio: 'ignore' }); return 'python3'; }
+  try { execFileSync('python3', ['--version'], { stdio: 'ignore', timeout: 5000 }); return 'python3'; }
   catch { return 'python'; }
 })();
 import * as fs from "fs"

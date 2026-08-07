@@ -63,9 +63,11 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
     # 2. File:line references exist
     refs = re.findall(REF_PATTERN, claims)
     bad_refs = []
+    skipped = 0  # refs outside worktree: not counted as checked
     for fpath, line in refs:
         full = _safe_worktree_path(fpath)
         if full is None:
+            skipped += 1
             continue  # skip paths outside worktree
         if not full.exists():
             bad_refs.append(f"{fpath} (not found)")
@@ -81,7 +83,8 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         {
             "name": "file:line references",
             "status": "FAIL" if bad_refs else "PASS",
-            "detail": f"{len(refs)} refs checked"
+            "detail": f"{len(refs) - skipped} refs checked"
+            + (f"; {skipped} outside worktree" if skipped else "")
             + (f"; BAD: {bad_refs}" if bad_refs else ""),
         }
     )
@@ -96,13 +99,15 @@ def check_stage_research(claims: str, files: list[str]) -> list[dict]:
         }
     )
 
-    # 4. Evidence tags [P/W/E/O]
+    # 4. Evidence tags [P/W/E/O] + depth [D1-D4]
     evidence_tags = re.findall(r"\[([PWOE])\]", claims)
+    depth_tags = re.findall(r"\[(D[1-4])\]", claims)
     checks.append(
         {
             "name": "evidence tags [P/W/E/O] + depth [D1-D4]",
             "status": "PASS" if evidence_tags else "FAIL",
             "detail": f"Found {len(evidence_tags)} tags: {evidence_tags[:5]}"
+            + (f"; depth: {depth_tags[:5]}" if depth_tags else "")
             if evidence_tags
             else "No [P/W/E/O] tags found",
         }
@@ -163,7 +168,7 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
     checks = []
 
     # 1. Priority tags present
-    valid_tags = ["BLOCKING", "SHOULD", "NICE", "FYI"]
+    valid_tags = {"BLOCKING", "SHOULD", "NICE", "FYI", "D1", "D2", "D3", "D4"}
     found_tags = re.findall(r"\[(\w+)\]", claims)
     bad_tags = [t for t in found_tags if t not in valid_tags and t != "CHUNK_REQUIRED"]
     checks.append(
@@ -187,7 +192,22 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
         }
     )
 
-    # 3. Uncertainty markers
+    # 3. Depth enforcement: BLOCKING requires [D3]+, SHOULD requires [D2]+
+    depth_issues = []
+    for line in claims.splitlines():
+        if "[BLOCKING]" in line and not re.search(r"\[D[34]\]", line):
+            depth_issues.append("BLOCKING requires [D3]+ depth")
+        if "[SHOULD]" in line and not re.search(r"\[D[234]\]", line):
+            depth_issues.append("SHOULD requires [D2]+ depth")
+    checks.append(
+        {
+            "name": "depth [D1-D4]",
+            "status": "FAIL" if depth_issues else "PASS",
+            "detail": "; ".join(depth_issues) or "BLOCKING=[D3]+ SHOULD=[D2]+ enforced",
+        }
+    )
+
+    # 4. Uncertainty markers
     found = [m for m in UNCERTAINTY_MARKERS if m.lower() in claims.lower()]
     checks.append(
         {
@@ -203,9 +223,15 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
 def check_stage_implement(claims: str, files: list[str]) -> list[dict]:
     checks = []
 
-    # 1. Files exist
+    # 1. Files exist (contained in worktree)
     if files:
-        missing = [f for f in files if not (Path(WORKTREE) / f).exists()]
+        missing = []
+        for f in files:
+            resolved = _safe_worktree_path(f)
+            if resolved is None:
+                missing.append(f"{f} (path traversal)")
+            elif not resolved.exists():
+                missing.append(f"{f} (not found)")
         checks.append(
             {
                 "name": "files exist",

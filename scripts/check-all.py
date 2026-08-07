@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 CHECKS = [
-    ("pytest (49 tests)", ["python", "-m", "pytest", "tests/", "-q"]),
+    ("pytest (64 tests)", ["python", "-m", "pytest", "tests/", "-q"]),
     ("effectiveness (persona/skill)", ["python", "tests/test_effectiveness.py"]),
     ("consistency (drift)", ["python", ".opencode/scripts/check-consistency.py"]),
     ("links (broken refs)", ["python", ".opencode/scripts/check-links.py"]),

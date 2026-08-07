@@ -39,15 +39,23 @@ def load_persona_content(agent_name):
     return agent_file.read_text(encoding="utf-8")
 
 
-def extract_key_rules(content, max_lines=30):
-    """Extract only key rules from content."""
-    lines = content.split("\n")
-    key_lines = []
-    for line in lines[:max_lines]:
-        # Skip empty lines and comments
-        if line.strip() and not line.startswith("#"):
-            key_lines.append(line)
-    return "\n".join(key_lines)
+def extract_key_rules(content, max_lines=60):
+    """Extract key rules from content, code-fence safe.
+
+    Caps at max_lines (default 60), then guards against cutting mid-fence:
+    drops a trailing unterminated fence, and truncates at the last even
+    fence boundary if the slice has an odd number of fences.
+    """
+    lines = [ln for ln in content.split("\n") if ln.strip() and not ln.startswith("#")]
+    lines = lines[:max_lines]
+    # Drop trailing unterminated fence
+    if lines and lines[-1].lstrip().startswith("```"):
+        lines.pop()
+    # Odd fence count → slice at the last even boundary
+    fences = [i for i, ln in enumerate(lines) if ln.lstrip().startswith("```")]
+    if len(fences) % 2 == 1:
+        lines = lines[: fences[-1]]
+    return "\n".join(lines)
 
 
 def generate_skill_context(agent_name):
@@ -58,20 +66,35 @@ def generate_skill_context(agent_name):
     for skill_name in skills:
         content = load_skill_content(skill_name)
         if content:
-            # Extract only key rules (first 20 lines)
-            key_content = extract_key_rules(content, max_lines=20)
+            # Key rules up to 60 lines, fence-safe (no unterminated ```)
+            key_content = extract_key_rules(content, max_lines=60)
             context_parts.append(f"=== {skill_name} ===\n{key_content}")
 
     return "\n\n".join(context_parts)
 
 
 def generate_persona_context(agent_name):
-    """Generate compact persona context for an agent."""
+    """Generate persona context — full body, frontmatter stripped.
+
+    Safety rules (## Rules) sit near the END of every agent file, so a raw
+    line cap drops them. Files are 77-78 lines: keep the full body.
+    Only truncate oversized personas (> 120 lines).
+    """
     content = load_persona_content(agent_name)
     if not content:
         return ""
-    # Extract only key sections (first 50 lines)
-    return extract_key_rules(content, max_lines=50)
+    lines = content.split("\n")
+    # Strip YAML frontmatter block (--- ... ---)
+    if lines and lines[0].strip() == "---":
+        close = next(
+            (i for i in range(1, len(lines)) if lines[i].strip() == "---"), None
+        )
+        if close is not None:
+            lines = lines[close + 1 :]
+    body = "\n".join(lines).strip()
+    if len(body.split("\n")) > 120:
+        body = "\n".join(body.split("\n")[:120])
+    return body
 
 
 def main():

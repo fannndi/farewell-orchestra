@@ -57,9 +57,29 @@ def test_research_tag_far_from_ref_warns_adjacency():
 
 
 def test_review_priority_tags_and_blocking_ref_pass():
-    checks = check_stage_review("[BLOCKING] bug at .opencode/tools/verify.py:32", [])
+    checks = check_stage_review(
+        "[BLOCKING] bug at .opencode/tools/verify.py:32 [D3]", []
+    )
     assert _check(checks, "priority tags")["status"] == "PASS"
     assert _check(checks, "BLOCKING has file:line")["status"] == "PASS"
+
+
+def test_review_blocking_requires_depth_d3():
+    """BLOCKING finding without [D3]+ depth must FAIL the review depth gate."""
+    checks = check_stage_review("[BLOCKING] src/auth.py:42 - JWT tanpa expiry [D1]", [])
+    assert _check(checks, "depth [D1-D4]")["status"] == "FAIL"
+
+
+def test_review_blocking_with_d3_passes():
+    """BLOCKING finding with [D3] depth must PASS the review depth gate."""
+    checks = check_stage_review("[BLOCKING] src/auth.py:42 - JWT tanpa expiry [D3]", [])
+    assert _check(checks, "depth [D1-D4]")["status"] == "PASS"
+
+
+def test_review_should_requires_depth_d2():
+    """SHOULD finding with only [D1] must FAIL the review depth gate."""
+    checks = check_stage_review("[SHOULD] src/auth.py:42 - N+1 query [D1]", [])
+    assert _check(checks, "depth [D1-D4]")["status"] == "FAIL"
 
 
 def test_implement_files_exist_pass():

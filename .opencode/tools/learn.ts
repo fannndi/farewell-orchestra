@@ -16,7 +16,8 @@ export default tool({
 
   async execute(args, context) {
     const worktree = context.worktree
-    const lessonsPath = path.join(path.dirname(worktree), "Farewell-Knowlage", "Lessons.md")
+    const lessonsDir = path.join(path.dirname(worktree), "Farewell-Knowlage")
+    const lessonsPath = path.join(lessonsDir, "Lessons.md")
     const date = new Date().toISOString().slice(0, 10)
 
     // Escape pipe characters for markdown table
@@ -26,12 +27,15 @@ export default tool({
       : esc(args.fix)
     const row = `| ${date} | ${esc(args.trigger)} | ${esc(args.error)} | ${esc(args.root_cause)} | ${fixPart} |\n`
 
-    // Read existing content (pure Node FS, no shell)
+    // Ensure target dir exists (first call fails without it)
+    fs.mkdirSync(lessonsDir, { recursive: true })
+
+    // Read existing content (pure Node FS, no shell). Missing file → seed table header.
     let content: string
-    try {
+    if (fs.existsSync(lessonsPath)) {
       content = fs.readFileSync(lessonsPath, "utf-8")
-    } catch (e: any) {
-      return `## Learn Tool — ERROR\n\nCannot read Farewell-Knowlage/Lessons.md: ${e.message}\n\nPath: ${lessonsPath}`
+    } else {
+      content = "| Date | Trigger | Error | Root Cause | Fix |\n|---|---|---|---|---|\n"
     }
 
     const lines = content.split("\n")

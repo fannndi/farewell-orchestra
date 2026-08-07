@@ -2,12 +2,11 @@
 check-consistency.py — Automated drift detection.
 Cek konsistensi antara sumber kebenaran yang berbeda.
 
-Drift yang dicek:
+Drift yang dicek (4):
 1. Skills di agent frontmatter vs skill dirs di disk
-2. Skills di permission allowlist (generate.py) vs skill dirs di disk
-3. Agent count di ci.yaml vs agent files di disk
-4. Skill count di ci.yaml vs skill dirs di disk
-5. Test imports vs actual exports di generate.py
+2. Skills di permission allowlist (generate.py SKILL_ALLOWLIST) vs skill dirs di disk (bidirectional)
+3. Agent list di ci.yaml vs agent files di disk (skip kalau ci.yaml tidak ada)
+4. Skill allowlist tidak dekoratif: tidak ada '"skill": "allow"' bypass di generate.py / opencode.jsonc
 
 Usage:  python .opencode/scripts/check-consistency.py
 Exit:   0 if consistent, 1 if drift detected
@@ -25,7 +24,7 @@ AGENTS_DIR = ROOT / ".opencode" / "agents"
 SKILLS_DIR = ROOT / ".opencode" / "skills"
 CI_YAML = ROOT / ".github" / "workflows" / "ci.yaml"
 GENERATE_PY = ROOT / "profiles" / "generate.py"
-TEST_GENERATE = ROOT / "tests" / "test_generate.py"
+OPENCODE_JSONC = ROOT / "opencode.jsonc"
 
 
 def get_skill_dirs():
@@ -61,16 +60,38 @@ def get_agent_frontmatter_skills():
 
 
 def get_permission_allowlist():
-    """Extract skill allowlist from generate.py."""
+    """Extract skill allowlist from generate.py.
+
+    Handles both the shared SKILL_ALLOWLIST dict and a legacy inline
+    `"skill": {...}` dict.
+    """
     content = GENERATE_PY.read_text(encoding="utf-8")
-    # Find the skill permission dict
-    match = re.search(r'"skill":\s*\{([^}]+)\}', content)
+    match = re.search(r"SKILL_ALLOWLIST\s*=\s*\{([^}]+)\}", content)
+    if not match:
+        match = re.search(r'"skill":\s*\{([^}]+)\}', content)
     if not match:
         return []
 
     # Extract skill names (excluding "*" and "deny")
     skills = re.findall(r'"(\w[\w-]*)":\s*"allow"', match.group(1))
     return sorted(skills)
+
+
+def get_decorative_skill_entries():
+    """Find '"skill": "allow"' bypasses that override the allowlist.
+
+    Agents must reference the shared whitelist object, not an open
+    "allow" string — otherwise the 18-entry allowlist is decorative.
+    """
+    hits = []
+    for path in (GENERATE_PY, OPENCODE_JSONC):
+        if not path.is_file():
+            continue
+        content = path.read_text(encoding="utf-8")
+        for i, line in enumerate(content.splitlines(), 1):
+            if re.search(r'"skill"\s*:\s*"allow"', line):
+                hits.append(f"{path.name}:{i}")
+    return hits
 
 
 def get_ci_counts():
@@ -86,27 +107,6 @@ def get_ci_counts():
         expected_agents = re.findall(r"['\"](\w+\.md)['\"]", agent_match.group(1))
 
     return sorted(expected_agents)
-
-
-def get_test_imports():
-    """Extract imports from test_generate.py."""
-    content = TEST_GENERATE.read_text(encoding="utf-8")
-    imports = re.findall(r"from generate import \((.*?)\)", content, re.DOTALL)
-    if imports:
-        return re.findall(r"(\w+)", imports[0])
-    return []
-
-
-def get_actual_exports():
-    """Get actual exports from generate.py."""
-    content = GENERATE_PY.read_text(encoding="utf-8")
-    # Find all top-level definitions
-    exports = []
-    for match in re.finditer(r"^(\w+)\s*[=:]", content, re.MULTILINE):
-        name = match.group(1)
-        if not name.startswith("_"):
-            exports.append(name)
-    return exports
 
 
 def main():
@@ -126,12 +126,8 @@ def main():
     # 3. Permission allowlist
     allowlist = get_permission_allowlist()
 
-    # 4. CI counts
+    # 4. CI agent list
     expected_agents = get_ci_counts()
-
-    # 5. Test imports vs actual exports
-    test_imports = set(get_test_imports())
-    actual_exports = set(get_actual_exports())
 
     # === Drift Checks ===
 
@@ -163,12 +159,19 @@ def main():
                 f"DRIFT: Skill '{skill}' on disk but NOT in permission allowlist"
             )
 
-    # Check 3: CI agent count vs actual agents
+    # Check 3: CI agent list vs actual agents
     if expected_agents is None:
         print("SKIP: ci.yaml not found")
     elif sorted(expected_agents) != agent_files:
         errors.append(
             f"DRIFT: CI expects agents {expected_agents}, actual {agent_files}"
+        )
+
+    # Check 4: skill allowlist must be enforced, not decorative
+    decorative = get_decorative_skill_entries()
+    if decorative:
+        errors.append(
+            f"DRIFT: 'skill': 'allow' bypasses allowlist at {', '.join(decorative)}"
         )
 
     # Report

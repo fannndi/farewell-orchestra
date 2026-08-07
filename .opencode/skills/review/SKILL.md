@@ -29,6 +29,8 @@ Jangan pakai [TAG] kalau bingung, default: SHOULD.
 Format: `[TAG] file:line — apa yang salah, kenapa, dampak`
 **Depth requirement:** BLOCKING harus [D3]+ (deep read). SHOULD minimal [D2]. NICE boleh [D1].
 
+**Enforced by verify tool:** BLOCKING tanpa [D3]+ → FAIL. SHOULD tanpa [D2]+ → FAIL. Tulis depth tag di tiap finding: `[BLOCKING] file:line - desc [D3]`.
+
 **Depth:**
 - D1 = surface scan: nama file + function signature
 - D2 = baca function body + 1-hop callers
