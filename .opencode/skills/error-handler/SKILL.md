@@ -23,8 +23,8 @@ Error classification + recovery. Handle errors differently based on type.
 
 | Error Pattern | Type | Recovery |
 |---------------|------|----------|
-| Timeout | RETRY | Retry dengan prompt lebih pendek |
-| Rate limit | RETRY | Wait + retry |
+| Timeout | RETRY (max 2) | Retry dengan prompt lebih pendek |
+| Rate limit | RETRY (max 2) | Wait + retry |
 | Format salah | RETRY | Retry dengan format reminder |
 | File not found | FALLBACK | Cari file alternatif |
 | Permission denied | ESCALATE | Butuh Boss intervention |

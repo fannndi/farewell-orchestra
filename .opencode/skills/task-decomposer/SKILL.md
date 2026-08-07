@@ -2,7 +2,7 @@
 name: task-decomposer
 description: Break complex tasks into manageable pieces.
 activation: When task is large
-trigger: F=3 files
+trigger: Task ≥ MEDIUM — F≥3 OR Q≥3 OR O≥2 (match prepare §4)
 ---
 
 # Task Decomposer

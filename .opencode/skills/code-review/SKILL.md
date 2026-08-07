@@ -129,6 +129,7 @@ Quality checks sebelum task dianggap selesai. Jalankan setelah review, sebelum m
 ## Rules
 
 1. **All gates must pass** — tidak ada yang boleh skip
+   **Skip gate kalau tidak applicable** (contoh: Gate Documentation untuk script) + catat "Gate [N] skipped — not applicable: [alasan]".
 2. **Automate** — gunakan tools untuk check
 3. **Document** — catat hasil check
 4. **Review** — review quality setiap task

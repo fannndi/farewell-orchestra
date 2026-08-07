@@ -85,6 +85,8 @@ WAJIB sebelum nulis kode. Cek semua:
 | Dipakai 3x+ | Buat abstraction |
 | Complexity tinggi | Hindari abstraction |
 
+**Complexity tinggi =** file >200 baris OR function >50 baris OR nesting >3 OR cyclomatic >10 OR imports >8 modules (sinkron dengan ../../agents/reviewer.md).
+
 ### Decision: Tambah Dependency?
 
 | Kondisi | Keputusan |

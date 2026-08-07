@@ -49,6 +49,8 @@ task(subagent_type=<agent>, prompt='Reply with exactly: READY')
 
 **SKIP researcher** → reviewer-only audit + flag "Researcher offline. Reviewer-only." **SKIP reviewer** → researcher-only + flag. **SKIP both** → ESCALATE. **Executor DEAD** → ESCALATE langsung.
 
+**Valid ping response:** mengandung "READY" (case-insensitive). Selain itu → retry sekali, lalu DEAD.
+
 ## 5. Fan-Out
 Dispatch researcher + reviewer **PARALLEL**:
 ```python
@@ -259,4 +261,4 @@ Standard komunikasi antar agents.
 3. **Actionable** — selalu ada next step
 4. **Evidence-based** — sertakan file:line untuk claims
 5. **Interrupt-aware** — BLOCKING = escalate langsung
-6. **Max response:** sub-agent total output ≤1500 tokens. Researcher ≤15 findings, reviewer ≤20 findings (sisanya overflow note). Executor ≤500 tokens response.
+6. **Max response (count-based, bukan token — LLM tidak punya token counter):** researcher ≤15 findings, reviewer ≤20 findings, executor ≤500 words. Total per response ≤50 findings.

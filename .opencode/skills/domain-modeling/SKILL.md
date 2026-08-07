@@ -9,6 +9,10 @@ trigger: Nama variabel/function inkonsisten antar file OR tidak ada glossary OR 
 
 Build dan sharpen project domain model. Challenge terms, stress-test dengan edge cases.
 
+## Kapan JANGAN Pakai
+- Skip: project single-feature, domain sudah terdokumentasi, utility code murni
+- Pakai: sistem multi-entity, business rules ambigu, integrasi cross-module
+
 ## Process
 
 ### 1. Identify Domain Terms

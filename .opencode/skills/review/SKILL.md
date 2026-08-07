@@ -35,6 +35,8 @@ Format: `[TAG] file:line — apa yang salah, kenapa, dampak`
 - D3 = full code path + data flow + cross-file trace
 - BLOCKING = minimal D3. SHOULD = minimal D2. NICE = D1 cukup.
 
+**D3 scope:** max 3 files per BLOCKING finding. Lebih dalam → note "requires extended investigation" + flag ke orchestrator.
+
 ## STRIDE
 | Threat | Cek |
 |--------|-----|
@@ -86,6 +88,8 @@ Flag kalau nemu pattern ini:
 - **Pass 1 (Scan):** Baca README + docs. List semua klaim. Output: `Claims: [list]`
 - **Pass 2 (Detail):** Untuk TIAP klaim, cari kode-nya. Output: `Verified: [claim] → file:line`
 - **Pass 3 (Cross-Ref):** Klaim yang TIDAK ada di kode → flag. Output: `[BLOCKING] Claim in docs but not in code: [claim]`
+
+**Max 20 claims per audit.** Overflow → prioritize security > correctness > style. Sisanya: "N claims omitted (overflow)."
 **Self-Check sebelum report:**
 - Udah baca file kode asli (bukan cuma README)?
 - Udah ikutin minimal 1 import chain?
@@ -140,9 +144,7 @@ Lapor `[BLOCKING]` on discovery + partial-report + residual list. Default: lanju
 
 ## Output
 Summary: "X BLOCKING, Y SHOULD, Z NICE, W FYI" — lalu list findings 1 baris per finding.
-**Overflow guard:** Max 5 BLOCKING per report. Kalau lebih → report 5 terkritis, sisanya downgrade ke SHOULD dengan catat "[downgraded from BLOCKING — overflow]".
-
-**Keep 5 paling critical:** (1) data loss, (2) security, (3) crash, (4) data corruption, (5) by recency. Sisanya downgrade + note `[downgraded — overflow, severity: [reason]]`.
+**Overflow guard:** Max 5 BLOCKING per report. Priority: data loss > security > crash > data corruption > recency. Overflow → downgrade ke SHOULD + note "[downgraded — overflow, severity: [reason]]".
 **Examples:**
 
 ```

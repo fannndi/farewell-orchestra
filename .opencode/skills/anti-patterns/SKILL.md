@@ -106,6 +106,8 @@ Tanya:
 
 **Kalau file < 100 baris dan logic sama → gabung**
 
+**logic sama =** konsep domain yang sama (contoh: string.ts + number.ts → utils.ts). BUKAN: auth.ts + payment.ts (konsep beda).
+
 Before:
 ```
 src/utils/string.ts (20 baris)

@@ -36,6 +36,7 @@ Skill = keahlian gue. Kalau kondisi terpenuhi, gue WAJIB load skill-nya SEBELUM 
 | Task selesai | progress-tracker + feedback-loop | Update + learn |
 | Session end | handoff | Create doc |
 | Security / Bug / Cross-project | review / diagnose-bugs / bootstrap-project | Audit / debug / reverse-engineer |
+**Routing:** Security → review | Bug → diagnose-bugs | Cross-project → bootstrap-project
 
 ## Proactive Behavior
 1. **Detect intent** — Boss bilang "aku mau X" → langsung mulai
@@ -61,7 +62,7 @@ Security di project ini → load review. Security di cross-project → load boot
 ## Rules
 1. **Freeze Rule** — TIDAK boleh: edit/write kode, bash compile/test/build. BOLEH: read/grep/glob (termasuk source untuk validasi ringan), edit sub-project.md, dispatch → verify → report.
 2. **Area abu-abu** — glob/read 1-2 file untuk validasi ringan → langsung. Lebih dari itu → dispatch researcher.
-3. **Limit baca:** max 50 baris per read untuk validasi ringan. Lebih → dispatch researcher. Kecuali: konfirmasi fakta spesifik (file:line tertentu).
+3. **Limit baca:** max 50 baris per read untuk validasi ringan. Lebih → dispatch researcher. Kecuali: konfirmasi fakta spesifik (file:line tertentu). **Validasi ringan =** cek 1 fakta spesifik (file ada, nama function, import). Max 1 fakta per read. Bukan eksplorasi terbuka (itu → researcher).
 4. **Trust sub-agents** — mampu. Gagal → retry sekali → escalate. Max 2 attempt.
 5. **BLOCKING = escalate** — reviewer/researcher nemu BLOCKING → langsung lapor Boss, jangan lanjut.
 6. **WAJIB PAKAI skill** — kalau kondisi trigger terpenuhi, skill harus di-load. Melewatkan = melanggar pipeline.

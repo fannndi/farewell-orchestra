@@ -29,10 +29,10 @@ Waktu pertama kali gue lihat project ini, ada 5 masalah besar:
 **Kesimpulan:** Fondasi sudah kuat. Project sekarang: 4 agent berkarakter (Kapten/Detektif/Auditor/Tukang), 18 skill dengan WAJIB PAKAI enforcement, 49 tests sebagai safety net, context budget terukur.
 
 ### Update Sesi (2026-08-08)
-- **Prioritas 2 (Feedback Loop) SELESAI** — 3 recurring patterns → rules durable di AGENTS.md (Free Model Capacity 6x, Evidence Prohibition 4x, Path Verification 3x); Lessons.md + Recurring Patterns summary
-- **Prioritas 4 (Task Context) SELESAI** — compaction reserved 14K→8K, preserve 4K→6K, tool_output 1000/20K→500/12K; response limits (researcher ≤15, reviewer ≤20, sub-agent ≤1500 tok); step-based context estimation
-- **Prioritas 1 (Presisi Lanjutan) SEBAGIAN** — 10 dari 30 residual ambiguity di-fix (size contradiction, handoff trigger, learn() clarity, cross-platform, tdd when-NOT, dll)
-- **Design for 128K floor** — asumsi semua model 128K (worst case), 1M = bonus; benchmark floor mode
+
+Pagi ini gue tutup dua prioritas dan satu lagi hampir beres. Feedback loop sekarang beneran jalan — 3 pattern yang berulang (free model kosong 6x, researcher ngarang 4x, permission/path 3x) akhirnya jadi rule permanen di AGENTS.md, bukan cuma catatan. Task context juga gue tuning: compaction lebih agresif (reserved 8K), tool output di-cap (500 baris/12KB), dan tiap sub-agent punya batas response. Yang paling penting: gue dan project ini sekarang **design for 128K floor** — asumsi semua model 128K, realita 1M cuma bonus. Kalau aman di floor, aman di mana pun.
+
+Presisi lanjutan hampir tuntas: 30 ambiguitas ditemukan, dan sudah 24 yang gue bersihin (sisa 6 ada di level nice-to-have). Skill nggak ada yang "impossible to misuse" 100%, tapi kita udah deket banget.
 
 ---
 
@@ -45,7 +45,7 @@ Project sudah sehat. Tapi gue masih lihat peluang:
 - Persona sudah berkarakter, tapi apakah karakter-nya konsisten di semua scenario?
 - Ada skill yang jarang di-trigger (tdd, domain-modeling, handoff) — apakah karena jarang dibutuhkan, atau karena trigger-nya kurang jelas?
 
-**2. Feedback loop belum maksimal**
+**2. Feedback loop sekarang jalan** — 3 pattern → rules durable; sisanya: 3x rule otomatis + Lessons → rule → behavior loop yang rutin
 - learn tool ada, tapi Lessons.md belum dianalisis untuk pattern
 - "3x rule" (flag recurring pattern) belum pernah dijalankan
 - Belum ada loop: Lessons → rule update → behavior change
@@ -69,7 +69,7 @@ Project sudah sehat. Tapi gue masih lihat peluang:
 ## Apa yang Akan Gue Lakukan
 
 ### Prioritas 1: Presisi Lanjutan
-*(10/30 residual ambiguity fixed 2026-08-08 — lanjutkan scan berikutnya)*
+*(24/30 residual ambiguity fixed 2026-08-08 — 6 sisa nice-to-have)*
 
 Gue akan scan ulang 18 skill + 4 persona untuk ambiguitas tersisa:
 - **Hapus** ambiguitas — ganti "pertimbangkan" dengan decision rule

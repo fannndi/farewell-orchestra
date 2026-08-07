@@ -2,7 +2,7 @@
 name: progress-tracker
 description: Persistent task tracking. Track progress across sessions.
 activation: After task completion
-trigger: Task selesai
+trigger: Task start OR Task selesai OR Blocker found OR Decision made
 ---
 
 # Progress Tracker
