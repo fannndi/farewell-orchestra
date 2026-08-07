@@ -95,16 +95,48 @@ class TestAutoLoadOutput:
 
 
 class TestConfigSafety:
-    """Config safety — permission model."""
+    """Config safety — permission model (parsed JSON, not string grep)."""
+
+    @staticmethod
+    def _parse_opencode():
+        """Strip full-line // comments (header only) then parse JSON."""
+        import json
+
+        raw = read(ROOT / "opencode.jsonc")
+        lines = [l for l in raw.splitlines() if not l.lstrip().startswith("//")]
+        return json.loads("\n".join(lines))
 
     def test_env_read_denied_for_all_agents(self):
-        oc = read(ROOT / "opencode.jsonc")
-        assert ".env" in oc and "deny" in oc, "no .env deny in opencode.jsonc"
+        js = self._parse_opencode()
+        with_dict_read = [
+            a
+            for a in js["agent"].values()
+            if isinstance(a.get("permission", {}).get("read"), dict)
+        ]
+        assert len(with_dict_read) >= 4, (
+            f"expected 4 agents with granular read perms, got {len(with_dict_read)}"
+        )
+        for name, agent in js["agent"].items():
+            read_perm = agent.get("permission", {}).get("read")
+            if isinstance(read_perm, dict):
+                assert read_perm.get("**/.env*") == "deny", (
+                    f"{name} read must deny .env"
+                )
 
     def test_executor_edit_denies_secrets(self):
-        oc = read(ROOT / "opencode.jsonc")
-        assert "**/.env*" in oc, "executor edit missing .env deny"
-        assert "profiles/generate.py" in oc, "executor edit missing generate.py deny"
+        js = self._parse_opencode()
+        edit = js["agent"]["executor"]["permission"]["edit"]
+        assert edit.get("**/.env*") == "deny", "executor edit must deny .env"
+        assert edit.get("profiles/generate.py") == "deny", (
+            "executor edit must deny profiles/generate.py"
+        )
+        assert edit.get(".opencode/**") == "deny", (
+            "executor edit must deny .opencode/** (hooks/tools/skills/soul)"
+        )
+        assert edit.get("AGENTS.md") == "deny", "executor edit must deny AGENTS.md"
+        assert edit.get("cross-project/guide.md") == "deny", (
+            "executor edit must deny cross-project/guide.md"
+        )
 
     def test_skill_allowlist_matches_disk(self):
         # count skills on disk

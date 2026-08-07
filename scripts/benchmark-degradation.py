@@ -1,11 +1,7 @@
 """
-benchmark-degradation.py — Empirical context-degradation harness.
-Menjawab: di % context utilization berapa output LLM mulai degrade?
-
-CATATAN: ini harness struktural + runbook. Runtime aktual butuh akses model
-(dispatch sub-agent dengan context fill berbeda). Jalankan manual per sesi
-kalau mau data empiris; atau cukup pastikan harness ini PASS sebagai
-readiness check.
+benchmark-degradation.py — Readiness check + runbook untuk empirical degradation test.
+BUKAN pengukuran nyata — verifikasi struktur harness siap. Jalankan manual per sesi
+untuk data empiris (butuh model access). Lihat TRAINING.md Mode B untuk prosedur.
 
 Run:  python scripts/benchmark-degradation.py
 """

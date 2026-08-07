@@ -168,7 +168,20 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
     checks = []
 
     # 1. Priority tags present
-    valid_tags = {"BLOCKING", "SHOULD", "NICE", "FYI", "D1", "D2", "D3", "D4"}
+    valid_tags = {
+        "BLOCKING",
+        "SHOULD",
+        "NICE",
+        "FYI",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "P",
+        "W",
+        "E",
+        "O",
+    }
     found_tags = re.findall(r"\[(\w+)\]", claims)
     bad_tags = [t for t in found_tags if t not in valid_tags and t != "CHUNK_REQUIRED"]
     checks.append(
@@ -193,11 +206,14 @@ def check_stage_review(claims: str, files: list[str]) -> list[dict]:
     )
 
     # 3. Depth enforcement: BLOCKING requires [D3]+, SHOULD requires [D2]+
+    #    Depth tag may sit on the finding line OR a continuation line (next 2).
     depth_issues = []
-    for line in claims.splitlines():
-        if "[BLOCKING]" in line and not re.search(r"\[D[34]\]", line):
+    lines = claims.splitlines()
+    for i, line in enumerate(lines):
+        window = "\n".join(lines[i : i + 3])
+        if "[BLOCKING]" in line and not re.search(r"\[D[34]\]", window):
             depth_issues.append("BLOCKING requires [D3]+ depth")
-        if "[SHOULD]" in line and not re.search(r"\[D[234]\]", line):
+        if "[SHOULD]" in line and not re.search(r"\[D[234]\]", window):
             depth_issues.append("SHOULD requires [D2]+ depth")
     checks.append(
         {

@@ -2,11 +2,12 @@
 check-consistency.py — Automated drift detection.
 Cek konsistensi antara sumber kebenaran yang berbeda.
 
-Drift yang dicek (4):
+Drift yang dicek (5):
 1. Skills di agent frontmatter vs skill dirs di disk
 2. Skills di permission allowlist (generate.py SKILL_ALLOWLIST) vs skill dirs di disk (bidirectional)
 3. Agent list di ci.yaml vs agent files di disk (skip kalau ci.yaml tidak ada)
 4. Skill allowlist tidak dekoratif: tidak ada '"skill": "allow"' bypass di generate.py / opencode.jsonc
+5. Konten skill/agent tidak mereferensikan dir yang sudah dihapus (.opencode/workflows/, protocols/, snapshots/)
 
 Usage:  python .opencode/scripts/check-consistency.py
 Exit:   0 if consistent, 1 if drift detected
@@ -25,6 +26,13 @@ SKILLS_DIR = ROOT / ".opencode" / "skills"
 CI_YAML = ROOT / ".github" / "workflows" / "ci.yaml"
 GENERATE_PY = ROOT / "profiles" / "generate.py"
 OPENCODE_JSONC = ROOT / "opencode.jsonc"
+
+# Dir yang sudah dihapus — konten skill/agent tidak boleh mereferensikannya
+DELETED_DIRS = [
+    ".opencode/workflows/",
+    ".opencode/protocols/",
+    ".opencode/snapshots/",
+]
 
 
 def get_skill_dirs():
@@ -109,6 +117,22 @@ def get_ci_counts():
     return sorted(expected_agents)
 
 
+def get_stale_dir_refs():
+    """Grep skill/agent content for references to deleted dirs.
+
+    Referensi ke dir yang sudah dihapus = stale ref: agent/skill menunjuk ke
+    file yang tidak ada lagi.
+    """
+    hits = []
+    for path in sorted(SKILLS_DIR.glob("*/SKILL.md")) + sorted(AGENTS_DIR.glob("*.md")):
+        content = path.read_text(encoding="utf-8")
+        for i, line in enumerate(content.splitlines(), 1):
+            refs = [d for d in DELETED_DIRS if d in line]
+            if refs:
+                hits.append(f"{path.relative_to(ROOT)}:{i} refs {', '.join(refs)}")
+    return hits
+
+
 def main():
     errors = []
     warnings = []
@@ -173,6 +197,10 @@ def main():
         errors.append(
             f"DRIFT: 'skill': 'allow' bypasses allowlist at {', '.join(decorative)}"
         )
+
+    # Check 5: no stale refs to deleted dirs in skill/agent content
+    for hit in get_stale_dir_refs():
+        errors.append(f"DRIFT: {hit}")
 
     # Report
     if errors:

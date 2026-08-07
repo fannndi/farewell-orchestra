@@ -26,6 +26,7 @@ def _audit_persona_completeness():
     ]
 
     for agent_file in AGENTS_DIR.glob("*.md"):
+        # boss.md = reference profile (bukan agent persona), soul.md = project identity — skip
         if agent_file.name == "boss.md" or agent_file.name == "soul.md":
             continue
 

@@ -217,16 +217,14 @@ class TestGenerateSmoke:
 
 
 class TestPermissionScoping:
-    """Guard: executor MUST have granular bash (git/npm allow, * ask); researcher/reviewer MUST NOT have edit/bash."""
+    """Guard: executor MUST have granular bash (git allow, npm ask, * ask); researcher/reviewer MUST NOT have edit/bash."""
 
     def test_executor_has_granular_bash(self):
         assert AGENT_TEMPLATES["executor"]["permission"]["bash"] == {
             "git status": "allow",
             "git diff": "allow",
             "git log": "allow",
-            "npm test": "allow",
-            "npm run build": "allow",
-            "npm run lint": "allow",
+            "npm*": "ask",
             "*": "ask",
         }
 

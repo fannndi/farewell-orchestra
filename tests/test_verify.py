@@ -82,6 +82,26 @@ def test_review_should_requires_depth_d2():
     assert _check(checks, "depth [D1-D4]")["status"] == "FAIL"
 
 
+def test_review_blocking_depth_on_continuation_line_passes():
+    """[D3] on the line after [BLOCKING] must PASS (multi-line finding)."""
+    claims = "[BLOCKING] src/auth.py:42 - JWT tanpa expiry\n[D3] production impact"
+    checks = check_stage_review(claims, [])
+    assert _check(checks, "depth [D1-D4]")["status"] == "PASS"
+
+
+def test_review_blocking_quoted_in_prose_no_depth_fails():
+    """[BLOCKING] quoted in prose with no depth nearby must FAIL."""
+    claims = "[BLOCKING] src/auth.py:42 - issue\nNo depth tag in this finding."
+    checks = check_stage_review(claims, [])
+    assert _check(checks, "depth [D1-D4]")["status"] == "FAIL"
+
+
+def test_review_evidence_tags_valid():
+    """[P]/[W]/[E]/[O] evidence tags must not be flagged invalid."""
+    checks = check_stage_review("[BLOCKING] src/auth.py:42 [D3] [E]", [])
+    assert _check(checks, "priority tags")["status"] == "PASS"
+
+
 def test_implement_files_exist_pass():
     checks = check_stage_implement("done", ["tests/test_generate.py"])
     assert _check(checks, "files exist")["status"] == "PASS"

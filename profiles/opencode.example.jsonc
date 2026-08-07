@@ -389,7 +389,9 @@
           "profiles/generate.py": "deny",
           "profiles/profiles.json": "deny",
           "opencode.jsonc": "deny",
-          ".opencode/agents/*": "deny",
+          ".opencode/**": "deny",
+          "AGENTS.md": "deny",
+          "cross-project/guide.md": "deny",
           "*": "allow"
         },
         "glob": "allow",
@@ -399,9 +401,7 @@
           "git status": "allow",
           "git diff": "allow",
           "git log": "allow",
-          "npm test": "allow",
-          "npm run build": "allow",
-          "npm run lint": "allow",
+          "npm*": "ask",
           "*": "ask"
         },
         "lsp": "allow",

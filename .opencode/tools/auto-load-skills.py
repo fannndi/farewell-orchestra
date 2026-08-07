@@ -40,11 +40,13 @@ def load_persona_content(agent_name):
 
 
 def extract_key_rules(content, max_lines=60):
-    """Extract key rules from content, code-fence safe.
+    """Extract key rules from content, code-fence AND table safe.
 
     Caps at max_lines (default 60), then guards against cutting mid-fence:
     drops a trailing unterminated fence, and truncates at the last even
     fence boundary if the slice has an odd number of fences.
+    Table-safe: a slice ending inside a markdown table leaves an incomplete
+    table (rows with no trailing section) — drop the whole truncated table.
     """
     lines = [ln for ln in content.split("\n") if ln.strip() and not ln.startswith("#")]
     lines = lines[:max_lines]
@@ -55,6 +57,13 @@ def extract_key_rules(content, max_lines=60):
     fences = [i for i, ln in enumerate(lines) if ln.lstrip().startswith("```")]
     if len(fences) % 2 == 1:
         lines = lines[: fences[-1]]
+    # Table-safe: slice ended inside a table → scan back to the first table line
+    # (header/separator/rows all start with "|") and drop the incomplete table.
+    if lines and lines[-1].lstrip().startswith("|"):
+        i = len(lines) - 1
+        while i >= 0 and lines[i].lstrip().startswith("|"):
+            i -= 1
+        lines = lines[: i + 1]
     return "\n".join(lines)
 
 

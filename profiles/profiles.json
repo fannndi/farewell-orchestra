@@ -83,7 +83,7 @@
     },
     {
       "name": "Unlimited",
-      "label": "MIMO",
+      "label": "Unlimited",
       "small_model": "9router/mimo/mimo-v2.5-pro",
       "agents": {
         "orchestrator": {"model": "9router/mimo/mimo-v2.5-pro"},

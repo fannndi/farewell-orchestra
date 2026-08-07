@@ -11,11 +11,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# Derive test-file count so the label never goes stale
+TEST_FILES = sorted((ROOT / "tests").glob("test_*.py"))
+
 # Windows console default cp1252 — paksa UTF-8 biar output Unicode aman
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 CHECKS = [
-    ("pytest (64 tests)", ["python", "-m", "pytest", "tests/", "-q"]),
+    (
+        "pytest ({} test files)".format(len(TEST_FILES)),
+        ["python", "-m", "pytest", "tests/", "-q"],
+    ),
     ("effectiveness (persona/skill)", ["python", "tests/test_effectiveness.py"]),
     ("consistency (drift)", ["python", ".opencode/scripts/check-consistency.py"]),
     ("links (broken refs)", ["python", ".opencode/scripts/check-links.py"]),

@@ -1,10 +1,26 @@
 import { tool } from "@opencode-ai/plugin"
-import { execFileSync } from "child_process"
+import { execFileSync, spawnSync } from "child_process"
 
-const pythonCmd = (() => {
-  try { execFileSync('python3', ['--version'], { stdio: 'ignore', timeout: 5000 }); return 'python3'; }
-  catch { return 'python'; }
-})();
+// Python-first: 'python' terbukti respond; 'python3' di Windows sering WindowsApps
+// stub yang hang atau return garbage. Probe via spawnSync + timeout pendek (2000ms)
+// + status check, supaya stub terdeteksi cepat (ETIMEDOUT / non-zero) dan fallback
+// graceful ke 'python' — bukan hang di module load.
+function detectPython(): string {
+  for (const cmd of ["python", "python3"]) {
+    try {
+      const probe = spawnSync(cmd, ["--version"], {
+        timeout: 2000,
+        stdio: "pipe",
+        encoding: "utf-8",
+      })
+      if (probe.status === 0) return cmd
+    } catch {
+      // hang/timeout atau spawn error — lanjut ke command berikutnya
+    }
+  }
+  return "python" // graceful fallback; callers handle failure
+}
+const pythonCmd = detectPython()
 import * as fs from "fs"
 import * as path from "path"
 

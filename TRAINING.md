@@ -24,13 +24,13 @@ Cost urusan Boss. Gue fokus kualitas. Token untuk dibakar.
 
 ---
 
-## Step 0 — Konteks (baca 3 file, ~3K tokens)
+## Step 0 — Konteks (baca 3 file dulu, ~3K tokens)
 
 1. `.opencode/soul.md` — identitas + esensi. **PALING PENTING.** Pahami factory vs product.
 2. `README.md` — gambaran sistem (agent, skill, pipeline, struktur).
 3. `AGENTS.md` — rules operasional (Freeze Rule, Evidence, Free Model Capacity, dll).
 
-Skill files: load on-demand sesuai trigger di persona (`Keahlian — WAJIB PAKAI`). Jangan baca semua.
+File ini (TRAINING.md) adalah referensi sesi — kamu sudah membacanya. `.opencode/soul.md` bilang "4 file" karena menghitung file ini. Skill files: load on-demand sesuai trigger di persona (`Keahlian — WAJIB PAKAI`). Jangan baca semua.
 
 ---
 
@@ -90,8 +90,9 @@ Pola yang sudah pernah ditemukan di deep audit. Kalau kamu scan, cek pola ini LE
 4. **Auto-load truncation** — context file dipotong raw-line, safety rules (## Rules) hilang → model tidak dapat constraint. Cek: truncation per-section, bukan per-line.
 5. **Stale refs** — referensi ke skill/file yang sudah di-merge/dihapus (quality-gates → code-review). Cek: grep nama lama.
 6. **Test gap** — critical path tanpa test (cross-project, hooks, generated output). Cek: setiap flow punya test?
-7. **Config drift** — opencode.example.jsonc stale (10 skill, no .env deny) → kalau dipakai, hilangkan proteksi. Cek: example = real config minus profile.
+7. **Config drift** — opencode.example.jsonc bisa ketinggalan dari generate.py (misal: skill allowlist, permission). Cek: example = real config minus profile; regenerate + diff.
 8. **Orphan trigger** — skill di trigger table tapi tidak ada jalur real untuk di-load. Cek: trigger → jalur eksekusi.
+9. **Deny-map hole** — deny permission-defining SURFACE (hooks/tools/skills), bukan cuma config files. Kalau deny cuma di config files, executor masih bisa edit .opencode/** → auto-run code / subprocess / instruction injection. Cek: deny mencakup hooks/tools/skills/agents, bukan hanya opencode.jsonc.
 
 ---
 
@@ -112,6 +113,8 @@ Pola yang sudah pernah ditemukan di deep audit. Kalau kamu scan, cek pola ini LE
 _(isi di akhir sesi, 2-5 baris naratif: apa yang dikerjakan, celah apa yang ditemukan, pelajaran. Update juga pola temuan historis kalau ada pola baru.)_
 
 **Sesi deep audit (2026-08-08):** fan-out researcher+reviewer nemu 50 temuan. Fix: security hardening (executor edit deny map, learn.ts mkdir, auto-load full persona), verify gate depth beneran di-enforce (BLOCKING=[D3]+), allowlist tidak dekoratif, 64 tests (dari 49). Pelajaran: dua perspektif (cari-celah + cari-salah) nemu hal yang beda — gabung keduanya. Pola baru #1 (gate palsu) dan #2 (permission satu arah) ditemukan di sesi ini.
+
+**Sesi deep audit R2 (2026-08-08):** deny-map hole — round-1 cuma blok config files, tapi executor masih bisa edit .opencode/** (hooks = auto-run code, tools = subprocess, skills = instruction injection) → ditutup (.opencode/** + AGENTS.md + cross-project/guide.md). verify.py: review stage reject [P/W/E/O] (false gate) + multi-line depth — fixed. learn.ts atomic append (lock) + insertion bound ke main table. npm* → ask (RCE via editable package.json). ci.yaml ||true dihapus (drift bikin CI FAIL). Pola baru #9: "deny-map hole" — deny permission-defining SURFACE (hooks/tools/skills), bukan cuma config files.
 
 ---
 
